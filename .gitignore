@@ -259,5 +259,4 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/SoundBot/Properties/Resources.Designer.cs
-/SoundBot/Properties/Resources.resx
+/ScrubBot/[Pp]roperties/[Rr]esources
