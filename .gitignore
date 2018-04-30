@@ -260,3 +260,7 @@ paket-files/
 __pycache__/
 *.pyc
 ScrubBot/[Pp]roperties/[Rr]esources
+
+ScrubBot/Properties/Resources\.Designer\.cs
+
+ScrubBot/Properties/Resources\.resx
