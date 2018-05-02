@@ -10,6 +10,7 @@ namespace ScrubBot
     {
         private string _token;
         private DiscordSocketClient _client;
+        private string _activeGame = "some scrub sh*t";
         private CommandHandler _commandHandler;
         private EventHandler _eventHandler;
 
@@ -31,7 +32,7 @@ namespace ScrubBot
 
             await _client.LoginAsync(TokenType.Bot, _token);
             await _client.StartAsync();
-            await _client.SetGameAsync(Properties.Resources.ActiveGame);
+            await _client.SetGameAsync(_activeGame);
 
             await Task.Delay(-1);
         }

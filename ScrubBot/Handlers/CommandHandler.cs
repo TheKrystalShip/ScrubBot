@@ -11,9 +11,12 @@ namespace ScrubBot.Handlers
 {
     public class CommandHandler
     {
-        private DiscordSocketClient _client;
-        private CommandService _commandService;
-        private IServiceProvider _serviceCollection;
+        private char _commandPrefix = '#';
+        private string _commandString = "ScrubBot, I order thee to";
+
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commandService;
+        private readonly IServiceProvider _serviceCollection;
 
         public CommandHandler(DiscordSocketClient client)
         {
@@ -37,12 +40,14 @@ namespace ScrubBot.Handlers
         private async Task HandleCommand(SocketMessage arg)
         {
             var message = arg as SocketUserMessage;
-            if (message == null || message.Author.IsBot) return;
-
+            if (message is null || message.Author.IsBot) return;
+            
             int argPos = 0;
-            bool mention = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
+            bool hasCharPrefix = message.HasCharPrefix(_commandPrefix, ref argPos);
+            bool hasStringPrefix = message.HasStringPrefix(_commandString, ref argPos);
+            bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
-            if (!mention) return;
+            if (!hasCharPrefix && !hasStringPrefix && !isMentioned) return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);
             IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceCollection);
