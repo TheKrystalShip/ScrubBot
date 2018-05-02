@@ -12,7 +12,6 @@ namespace ScrubBot.Handlers
     public class CommandHandler
     {
         private char _commandPrefix = '#';
-        private string _commandString = "ScrubBot, I order thee to";
 
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
@@ -33,7 +32,7 @@ namespace ScrubBot.Handlers
 
             _serviceCollection = new ServiceCollection().BuildServiceProvider();
 
-            Console.Title = @"ScrubBot";
+            Console.Title = "ScrubBot";
             _client.MessageReceived += HandleCommand;
         }
 
@@ -44,10 +43,9 @@ namespace ScrubBot.Handlers
             
             int argPos = 0;
             bool hasCharPrefix = message.HasCharPrefix(_commandPrefix, ref argPos);
-            bool hasStringPrefix = message.HasStringPrefix(_commandString, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
-            if (!hasCharPrefix && !hasStringPrefix && !isMentioned) return;
+            if (!hasCharPrefix && !isMentioned) return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);
             IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceCollection);
