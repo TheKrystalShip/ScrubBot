@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-
-using ScrubBot.Data;
+using ScrubBot.Database;
+using ScrubBot.Properties;
 
 namespace ScrubBot.Handlers
 {
@@ -17,7 +15,6 @@ namespace ScrubBot.Handlers
         private DiscordSocketClient _client;
         private CommandService _commandService;
         private IServiceProvider _serviceCollection;
-        private DatabaseContext _dbContext;
 
         public CommandHandler(DiscordSocketClient client) => Initialize(client).Wait();
 
@@ -27,8 +24,8 @@ namespace ScrubBot.Handlers
 
             _commandService = new CommandService(new CommandServiceConfig()
             {
-                CaseSensitiveCommands = false,
                 DefaultRunMode = RunMode.Async,
+                CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug
             });
 
@@ -45,16 +42,49 @@ namespace ScrubBot.Handlers
             _client.MessageReceived += HandleCommand;
         }
 
-        private async Task HandleCommand(SocketMessage arg)
+        private string GetCharPrefix(SocketUserMessage message)
         {
-            var message = arg as SocketUserMessage;
-            if (message is null || message.Author.IsBot) return;
-            var guildChannel = (SocketGuildChannel)message.Channel;
-            string socketGuildId = guildChannel.Guild.Id.ToString();
+            try
+            {
+                var guildChannel = message.Channel as SocketGuildChannel;
+                string socketGuildId = guildChannel.Guild.Id.ToString();
+                return PrefixHandler.GetCharPrefix(socketGuildId);
+            }
+            catch (Exception e)
+            {
+                //LogHandler.WriteLine(LogTarget.Console, e);
+                Console.WriteLine(e);
+                return null;
+            }
+        }
 
+        private string GetStringPrefix(SocketUserMessage message)
+        {
+            try
+            {
+                var guildChannel = message.Channel as SocketGuildChannel;
+                string socketGuildId = guildChannel.Guild.Id.ToString();
+                return PrefixHandler.GetStringPrefix(socketGuildId);
+            }
+            catch (Exception e)
+            {
+                //LogHandler.WriteLine(LogTarget.Console, e);
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private async Task HandleCommand(SocketMessage msg)
+        {
+            var message = msg as SocketUserMessage;
+            if (message is null || message.Author.IsBot) return;
+
+            string charPrefix = GetCharPrefix(message) ?? Resources.DefaultCharPrefix;
+            string stringPrefix = GetStringPrefix(message) ?? Resources.DefaultStringPrefix;
             int argPos = 0;
-            bool hasCharPrefix = message.HasCharPrefix(PrefixHandler.GetCharPrefix(socketGuildId).ToCharArray()[0], ref argPos);
-            bool hasStringPrefix = message.HasStringPrefix(PrefixHandler.GetStringPrefix(socketGuildId), ref argPos);
+
+            bool hasCharPrefix = message.HasCharPrefix(charPrefix.ToCharArray()[0], ref argPos);
+            bool hasStringPrefix = message.HasStringPrefix(stringPrefix, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
             if (!hasCharPrefix && !hasStringPrefix && !isMentioned) return;

@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
-using ScrubBot.Data;
+using ScrubBot.Database;
+using ScrubBot.Database.Models;
+using ScrubBot.Handlers;
 
 namespace ScrubBot.Modules
 {
@@ -13,17 +15,19 @@ namespace ScrubBot.Modules
     {
         [Command("UrMomGay")] public async Task UrMomGay() => await ReplyAsync($"{Context.Message.Author.Mention} No u");
 
-        [Command("FuckOff")] public async Task FuckOff() => await ReplyAsync("Na fam");
-
-        [Command("ShowSettings")] public async Task ShowSettings()
+        [Command("Help")] public async Task Help()
         {
             DatabaseContext db = new DatabaseContext();
             string guildId = Context.Guild.Id.ToString();
             Guild guild = db.Guilds.FirstOrDefault(x => x.Id == guildId);
 
-            await ReplyAsync($"Server:\t\t{guild.Name}\n" +
-                             $"Char prefix:\t\t{guild.CharPrefix}\n" +
-                             $"String prefix:\t\t{guild.StringPrefix}");
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.Color = Color.DarkBlue;
+            embed.AddField("Server", guild.Name ?? "null");
+            embed.AddField("Char prefix:", guild.CharPrefix ?? "null");
+            embed.AddField("String prefix", guild.StringPrefix ?? "null");
+
+            await ReplyAsync(string.Empty, false, embed.Build());
         }
         
         [Command("ChangeCharPrefix")]
@@ -36,14 +40,16 @@ namespace ScrubBot.Modules
 
             if (guild is null) return;
 
-            await ReplyAsync($"`Changing Command Char Prefix from {guild.CharPrefix} to {newPrefix}`");
+            string old = guild.CharPrefix;
             guild.CharPrefix = newPrefix;
             db.Guilds.Update(guild);
             await db.SaveChangesAsync();
+            PrefixHandler.SetCharPrefix(guildId, newPrefix);
+            await ReplyAsync($"`Changing Command Char Prefix from {old} to {newPrefix}`");
         }
 
         [Command("ChangeStringPrefix")]
-        public async Task ChengeStringPrefix(string newPrefix)
+        public async Task ChengeStringPrefix([Remainder]string newPrefix)
         {
             DatabaseContext db = new DatabaseContext();
 
@@ -52,9 +58,14 @@ namespace ScrubBot.Modules
 
             if (guild is null) return;
 
+            if (!newPrefix.EndsWith(" ")) newPrefix += " ";
+            
+            string old = guild.StringPrefix;
             guild.StringPrefix = newPrefix;
             db.Guilds.Update(guild);
             await db.SaveChangesAsync();
+            PrefixHandler.SetStringPrefix(guildId, newPrefix);
+            await ReplyAsync($"`Changing Command String Prefix from {old} to {newPrefix}`");
         }
     }
 }

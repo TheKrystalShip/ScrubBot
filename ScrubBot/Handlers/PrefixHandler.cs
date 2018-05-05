@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using ScrubBot.Data;
+using ScrubBot.Database;
+using ScrubBot.Database.Models;
 
 namespace ScrubBot.Handlers
 {
@@ -16,17 +17,9 @@ namespace ScrubBot.Handlers
 
         private void Initialize()
         {
-            List<Guild> Guilds = new List<Guild>();
             db = new DatabaseContext();
-            try
-            {
-                Guilds = db.Guilds.ToList();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
+            List<Guild> Guilds = db.Guilds.ToList();
+            
             foreach (Guild guild in Guilds)
             {
                 CharPrefixDictionary.Add(guild.Id, guild.CharPrefix);
@@ -37,16 +30,16 @@ namespace ScrubBot.Handlers
         public static string GetCharPrefix(string guildId)
         {
             bool hasValue = CharPrefixDictionary.TryGetValue(guildId, out string value);
-            return value ?? "#";
+            return value;
         }
 
         public static string GetStringPrefix(string guildId)
         {
             bool hasValue = StringPrefixDictionary.TryGetValue(guildId, out string value);
-            return value ?? "ScrubBot, ";
+            return value;
         }
 
-        public static void SetCharPrefix(string guildId, char prefix) => CharPrefixDictionary[guildId] = prefix.ToString();
+        public static void SetCharPrefix(string guildId, string prefix) => CharPrefixDictionary[guildId] = prefix;
 
         public static void SetStringPrefix(string guildId, string prefix) => StringPrefixDictionary[guildId] = prefix;
 

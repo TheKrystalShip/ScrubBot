@@ -11,7 +11,8 @@
           "Discord.Net": "1.0.2",
           "Microsoft.EntityFrameworkCore": "2.0.2",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.0.2",
-          "Microsoft.EntityFrameworkCore.Tools": "2.0.2"
+          "Microsoft.EntityFrameworkCore.Tools": "2.0.2",
+          "ScrubBot.Database": "1.0.0"
         },
         "runtime": {
           "ScrubBot.dll": {}
@@ -1233,6 +1234,17 @@
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
         }
+      },
+      "ScrubBot.Database/1.0.0": {
+        "dependencies": {
+          "Discord.Net": "1.0.2",
+          "Microsoft.EntityFrameworkCore": "2.0.2",
+          "Microsoft.EntityFrameworkCore.SqlServer": "2.0.2",
+          "Microsoft.EntityFrameworkCore.Tools": "2.0.2"
+        },
+        "runtime": {
+          "ScrubBot.Database.dll": {}
+        }
       }
     }
   },
@@ -2060,6 +2072,11 @@
       "sha512": "sha512-lJ8AxvkX7GQxpC6GFCeBj8ThYVyQczx2+f/cWHJU8tjS7YfI6Cv6bon70jVEgs2CiFbmmM8b9j1oZVx0dSI2Ww==",
       "path": "system.xml.xmldocument/4.3.0",
       "hashPath": "system.xml.xmldocument.4.3.0.nupkg.sha512"
+    },
+    "ScrubBot.Database/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

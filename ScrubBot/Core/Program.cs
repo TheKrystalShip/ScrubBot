@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
-
 using System.Threading.Tasks;
 using ScrubBot.Handlers;
+using ScrubBot.Properties;
 
 namespace ScrubBot
 {
@@ -13,25 +13,26 @@ namespace ScrubBot
 
         private CommandHandler _commandHandler;
         private Handlers.EventHandler _eventHandler;
-        //private ServiceHandler _serviceHandler;
+        private ServiceHandler _serviceHandler;
         private PrefixHandler _prefixHandler;
 
         static void Main(string[] args) => new Program().Initialize().Wait();
 
         private async Task Initialize()
         {
-            _token = Properties.Resources.LoginToken;
+            _token = Resources.LoginToken;
+
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
+                LogLevel = LogSeverity.Debug,
                 DefaultRetryMode = RetryMode.AlwaysRetry,
                 ConnectionTimeout = 5000,
-                LogLevel = LogSeverity.Debug,
                 AlwaysDownloadUsers = true
             });
 
             _commandHandler = new CommandHandler(_client);
-            _eventHandler = new Handlers.EventHandler(_client);
-            //_serviceHandler = new ServiceHandler(_client);
+            _eventHandler = new EventHandler(_client);
+            _serviceHandler = new ServiceHandler(_client);
             _prefixHandler = new PrefixHandler();
 
             await _client.LoginAsync(TokenType.Bot, _token);
