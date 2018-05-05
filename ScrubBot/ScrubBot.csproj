@@ -10,13 +10,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;DEBUG;NETCOREAPP2_0</DefineConstants>
-    <OutputPath>bin\Debug\ScrubBot\builds\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <OutputPath>builds\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
-    <PackageReference Include="EntityFramework" Version="6.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
