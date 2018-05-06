@@ -14,23 +14,23 @@ before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: dotnet restore ./src/src.csproj --verbosity m
+  - cmd: dotnet restore ./ScrubBot/ScrubBot.csproj --verbosity m
 build_script:
   # output will be in ./src/bin/debug/netcoreapp2.0/publish
-  - cmd: dotnet publish ./src/src.csproj
+  - cmd: dotnet publish ./ScrubBot/ScrubBot.csproj
 after_build:
   # For once the build has completed
 artifacts:
- - path: '\src\bin\Debug\netcoreapp2.0\publish'
+ - path: '\builds\netcoreapp2.0\publish'
    name: WebSite
    type: WebDeployPackage
 clone_depth: 1
-test_script:
-  # restore packages for our unit tests
-  - cmd: dotnet restore ./tests/tests.csproj --verbosity m
-  # run the unit tests (requires changing into the test directory)
-  - cmd: cd tests
-  - cmd: dotnet xunit
+# test_script:
+#   # restore packages for our unit tests
+#   - cmd: dotnet restore ./tests/tests.csproj --verbosity m
+#   # run the unit tests (requires changing into the test directory)
+#   - cmd: cd tests
+#   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
 deploy: off
