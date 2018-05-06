@@ -8,7 +8,7 @@ using Discord.Commands;
 namespace ScrubBot.Modules
 {
     [RequireOwner]
-    class OwnerModule : ModuleBase<SocketCommandContext>
+    public class OwnerModule : ModuleBase<SocketCommandContext>
     {
         [Command("ChangeGame")]
         public async Task ChangeGame([Remainder]string newGame)

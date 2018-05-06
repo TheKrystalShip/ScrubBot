@@ -9,7 +9,7 @@ using ScrubBot.Properties;
 
 namespace ScrubBot.Modules
 {
-    class SettingsModule  : ModuleBase<SocketCommandContext>
+    public class SettingsModule  : ModuleBase<SocketCommandContext>
     {
         //[Command("Info"), Alias("BotInfo")]
         //public async Task Info()
