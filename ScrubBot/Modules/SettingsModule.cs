@@ -1,35 +1,45 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using ScrubBot.Database;
 using ScrubBot.Database.Models;
-using ScrubBot.Properties;
 
 namespace ScrubBot.Modules
 {
-    class SettingsModule  : ModuleBase<SocketCommandContext>
+    public class SettingsModule  : ModuleBase<SocketCommandContext>
     {
-        //[Command("Info"), Alias("BotInfo")]
-        //public async Task Info()
-        //{
-        //    DatabaseContext db = new DatabaseContext();
+        [Command("Info"), Alias("BotInfo")]
+        public async Task Info()
+        {
+            DatabaseContext db = new DatabaseContext();
 
-        //    if (!GetGuild(db, out Guild guild))
-        //    {
-        //        await OnGuildNotFound();
-        //        return;
-        //    }
+            if (!GetGuild(db, out Guild guild))
+            {
+                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+                return;
+            }
+            
+            EmbedBuilder embed = new EmbedBuilder { Color = Color.Magenta, Title = "Bot Info"};
+            embed.AddField("Server:", guild.Name ?? "null");
 
-        //    EmbedBuilder embed = new EmbedBuilder { Color = Color.Magenta, Title = "Bot Info"};
-        //    embed.AddField("Server:", guild.Name ?? "null");
-        //    embed.AddField("Audit Channel:", Context.Guild.GetChannel(ulong.Parse(guild.AuditChannelId)).ToString() ?? "null");
-        //    embed.AddField("Char prefix:", guild.CharPrefix ?? "null");
-        //    embed.AddField("String prefix:", guild.StringPrefix ?? "null");
+            if (guild.AuditChannelId != null)
+            {
+                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
+                embed.AddField("Audit Channel:", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
+            } 
+            else
+            {
+                embed.AddField("Audit Channel:", "null");
+            }
+            
+            embed.AddField("Char prefix:", guild.CharPrefix ?? "null");
+            embed.AddField("String prefix:", guild.StringPrefix ?? "null");
 
-        //    await ReplyAsync(string.Empty, false, embed.Build());
-        //}
+            await ReplyAsync("", false, embed.Build());
+        }
 
         private bool GetGuild(DatabaseContext dbContext, out Guild outGuild)
         {
