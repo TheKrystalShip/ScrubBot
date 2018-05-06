@@ -70,38 +70,7 @@ namespace ScrubBot.Modules
             db.SaveChanges();
             await ReplyAsync($"```Successfully changed ScrubBot's Audit Channel to {newChannel.Name} for {newChannel.Guild.Name}!```");
         }
-
-        [Command("Info"), Alias("BotInfo")]
-        public async Task Info()
-        {
-            DatabaseContext db = new DatabaseContext();
-
-            if (!GetGuild(db, out Guild guild))
-            {
-                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
-                return;
-            }
-            
-            EmbedBuilder embed = new EmbedBuilder { Color = Color.Magenta, Title = "Bot Info"};
-            embed.AddField("Server:", guild.Name ?? "null");
-
-            if (guild.AuditChannelId != null)
-            {
-                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
-                embed.AddField("Audit Channel:", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
-            } 
-            else
-            {
-                embed.AddField("Audit Channel:", "null");
-            }
-
-            await ReplyAsync("Adding `Audit Channel` field to EmbedBuilder embed completed");
-            embed.AddField("Char prefix:", guild.CharPrefix ?? "null");
-            embed.AddField("String prefix:", guild.StringPrefix ?? "null");
-
-            await ReplyAsync("", false, embed.Build());
-        }
-
+        
         private bool GetGuild(DatabaseContext dbContext, out Guild outGuild)
         {
             string guildId = Context.Guild.Id.ToString();
