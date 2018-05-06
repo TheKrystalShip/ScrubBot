@@ -18,61 +18,61 @@ namespace ScrubBot.Services
 
         public async Task ChannelCreated(SocketChannel socketChannel)
         {
-            
+            await Task.CompletedTask;
         }
 
         public async Task ChannelUpdated(SocketChannel beforeSocketChannel, SocketChannel afterSocketChannel)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task ChannelDestroyed(SocketChannel socketChannel)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task GuildMemberUpdated(SocketGuildUser before, SocketGuildUser after)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task GuildUpdated(SocketGuild before, SocketGuild after)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task RoleCreated(SocketRole role)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task RoleDeleted(SocketRole role)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task RoleUpdated(SocketRole before, SocketRole after)
         {
-
+            await Task.CompletedTask;
         }
         
         public async Task UserBanned(SocketUser user, SocketGuild guild)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task UserUnbanned(SocketUser user, SocketGuild guild)
         {
-
+            await Task.CompletedTask;
         }
 
-        public async Task UserJoined(SocketGuildUser user) => ConversionHandler.AddUser(user);
+        public async Task UserJoined(SocketGuildUser user) => await Task.Run(() => ConversionHandler.AddUser(user));
 
-        public async Task UserLeft(SocketGuildUser user) => ConversionHandler.RemoveUser(user);
+        public async Task UserLeft(SocketGuildUser user) => await Task.Run(() => ConversionHandler.RemoveUser(user));
         
         public async Task UserUpdated(SocketUser before, SocketUser after)
         {
-
+            await Task.CompletedTask;
         }
     }
 }

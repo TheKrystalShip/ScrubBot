@@ -18,7 +18,9 @@ namespace ScrubBot.Modules
 
             if (!GetGuild(db, out Guild guild))
             {
-                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
+                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
             

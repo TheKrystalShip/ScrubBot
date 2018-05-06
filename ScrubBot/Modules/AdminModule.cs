@@ -22,7 +22,17 @@ namespace ScrubBot.Modules
 
             if (!GetGuild(db, out Guild guild))
             {
-                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
+                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
+                return;
+            }
+
+            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+            {
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
+                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
@@ -41,7 +51,17 @@ namespace ScrubBot.Modules
 
             if (!GetGuild(db, out Guild guild))
             {
-                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
+                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
+                return;
+            }
+            
+            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+            {
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
+                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
@@ -62,7 +82,17 @@ namespace ScrubBot.Modules
 
             if (!GetGuild(db, out Guild guild))
             {
-                await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
+                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
+                return;
+            }
+            
+            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+            {
+                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
+                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
