@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
   - master
+  - development
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
@@ -27,10 +28,6 @@ build_script:
   - cmd: dotnet publish ./ScrubBot/ScrubBot.csproj
 after_build:
   # For once the build has completed
-artifacts:
- - path: '\builds\netcoreapp2.0\publish'
-   name: WebSite
-   type: WebDeployPackage
 clone_depth: 1
 # test_script:
 #   # restore packages for our unit tests
