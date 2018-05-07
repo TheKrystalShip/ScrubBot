@@ -13,54 +13,57 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator)]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
-        [Command("UrMomGay")] public async Task UrMomGay() => await ReplyAsync($"{Context.Message.Author.Mention} No u");
+        [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")] public async Task UrMomGay() => await ReplyAsync($"{Context.Message.Author.Mention} No u");
 
-        [Command("ChangeCharPrefix")]
-        public async Task ChengeCharPrefix(string newPrefix)
+        [Command("SetCharPrefix"), Summary("Change this server's current command character prefix")]
+        public async Task SetCharPrefix(string newPrefix)
         {
             DatabaseContext db = new DatabaseContext();
 
             if (!GetGuild(db, out Guild guild))
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
-                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation"};
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
-            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+            if (Context.Guild.GetTextChannel(Convert.ToUInt64(guild.AuditChannelId)) != null && guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
-                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
+                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
+                errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
             string old = guild.CharPrefix;
+
+            EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success", Description = $"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '"};
+
             guild.CharPrefix = newPrefix;
             db.Guilds.Update(guild);
             await db.SaveChangesAsync();
             PrefixHandler.SetCharPrefix(guild.Id, newPrefix);
-            await ReplyAsync($"`Changing Command Char Prefix from {old} to {newPrefix}`");
+            await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("ChangeStringPrefix")]
-        public async Task ChengeStringPrefix([Remainder]string newPrefix)
+        [Command("SetStringPrefix"), Summary("Change this server's current command string prefix")]
+        public async Task SetStringPrefix([Remainder]string newPrefix)
         {
             DatabaseContext db = new DatabaseContext();
 
             if (!GetGuild(db, out Guild guild))
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
-                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation" };
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
-            
-            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+
+            if (Context.Guild.GetTextChannel(Convert.ToUInt64(guild.AuditChannelId)) != null && guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
-                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
+                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
+                errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
@@ -68,39 +71,45 @@ namespace ScrubBot.Modules
             if (!newPrefix.EndsWith(" ")) newPrefix += " ";
 
             string old = guild.StringPrefix;
+
+            EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success", Description = $"Changed Command String Prefix from ' {old} ' to ' {newPrefix} '" };
+
             guild.StringPrefix = newPrefix;
             db.Guilds.Update(guild);
             await db.SaveChangesAsync();
             PrefixHandler.SetStringPrefix(guild.Id, newPrefix);
-            await ReplyAsync($"`Changing Command String Prefix from {old} to {newPrefix}`");
+            await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("SetAuditChannel")]
-        public async Task SetAuditChannel([Remainder]SocketGuildChannel newChannel)
+        [Command("SetAuditChannel"), Summary("Change this server's current audit channel")]
+        public async Task SetAuditChannel([Remainder]SocketTextChannel newChannel)
         {
             DatabaseContext db = new DatabaseContext();
 
             if (!GetGuild(db, out Guild guild))
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "ERROR"};
-                errorEmbed.AddField("Reason", "Current guild was not found in the database...\nAborting operation");
-                await ReplyAsync("", false, errorEmbed.Build());
-                return;
-            }
-            
-            if (guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
-            {
-                EmbedBuilder errorEmbed = new EmbedBuilder {Color = Color.Red, Description = "CANNOT PERFORM"};
-                errorEmbed.AddField("Reason", "Admin commands are not allowed in this channel...\nAborting operation");
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation"};
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
+            if (Context.Guild.GetTextChannel(Convert.ToUInt64(guild.AuditChannelId)) != null && guild.AuditChannelId != null && Context.Channel.Id.ToString() != guild.AuditChannelId)
+            {
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION"};
+                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
+                errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
+                await ReplyAsync("", false, errorEmbed.Build());
+                return;
+            }
+
+            EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Description = "Success" };
+            embed.AddField("Audit Channel:", $"Set this server's audit channel to {newChannel.Mention}");
+
             guild.AuditChannelId = newChannel.Id.ToString();
             db.SaveChanges();
-            await ReplyAsync($"```Successfully changed ScrubBot's Audit Channel to {newChannel.Name} for {newChannel.Guild.Name}!```");
+            await ReplyAsync("", false, embed.Build());
         }
-        
+
         private bool GetGuild(DatabaseContext dbContext, out Guild outGuild)
         {
             string guildId = Context.Guild.Id.ToString();

@@ -14,7 +14,7 @@ namespace ScrubBot.Handlers
     {
         private DiscordSocketClient _client;
         private CommandService _commandService;
-        private IServiceProvider _serviceCollection;
+        private IServiceProvider _serviceProvider;
 
         public CommandHandler(DiscordSocketClient client) => Initialize(client).Wait();
 
@@ -31,7 +31,7 @@ namespace ScrubBot.Handlers
 
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
 
-            _serviceCollection = new ServiceCollection()
+            _serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
@@ -90,7 +90,7 @@ namespace ScrubBot.Handlers
             if (!hasCharPrefix && !hasStringPrefix && !isMentioned) return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);
-            IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceCollection);
+            IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
 
             if (result.IsSuccess) return;
             Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
