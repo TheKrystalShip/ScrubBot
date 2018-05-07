@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
   - master
+  - development
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
