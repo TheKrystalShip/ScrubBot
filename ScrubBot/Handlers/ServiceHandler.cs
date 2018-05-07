@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Discord.WebSocket;
 using ScrubBot.Services;
 
@@ -53,6 +54,8 @@ namespace ScrubBot.Handlers
             // RegisterService(new YourService());
 
             //StartAllLoops();
+
+            await Task.CompletedTask;
         }
     }
 }
