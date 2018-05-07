@@ -15,6 +15,13 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./ScrubBot/ScrubBot.csproj --verbosity m
+  notifications:
+  - provider: Webhook
+    url: https://discordapp.com/api/webhooks/414001424943415296/D0KxgjbWL1CwX10AnFJwrksWW1JWb7Cy5ymR0TLv6aDF_8_aJhT3CM8asA-d4QCh7vTs
+    method: POST
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: false
 build_script:
   # output will be in ./src/bin/debug/netcoreapp2.0/publish
   - cmd: dotnet publish ./ScrubBot/ScrubBot.csproj
