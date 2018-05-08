@@ -10,11 +10,11 @@ using ScrubBot.Database.Models;
 
 namespace ScrubBot.Modules
 {
-    public class SettingsModule : ModuleBase<SocketCommandContext>
+    public class EveryoneModule : ModuleBase<SocketCommandContext>
     {
         private CommandService _commandService;
 
-        public SettingsModule(CommandService commandService) => Initialize(commandService);
+        public EveryoneModule(CommandService commandService) => Initialize(commandService);
 
         private void Initialize(CommandService commandService) => _commandService = commandService;
 
@@ -64,7 +64,7 @@ namespace ScrubBot.Modules
                 string embedFieldText = command.Summary;
 
                 if (command.Parameters.Count > 0)
-                    embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
+                    embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param}\t");
 
                 embed.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
             }
