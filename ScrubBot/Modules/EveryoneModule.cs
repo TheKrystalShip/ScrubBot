@@ -49,6 +49,46 @@ namespace ScrubBot.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
+        [Command("Avatar"), Summary("Post an image of your avatar.")]
+        public async Task Avatar(bool sendAsDM = true)
+        {
+            try
+            {
+                var imageEmbed = new EmbedBuilder { Color = Color.Purple, Title = $"Avatar: {Context.User}", ImageUrl = Context.User.GetAvatarUrl() }.Build();
+                if (sendAsDM)
+                {
+                    var channel = await Context.User.GetOrCreateDMChannelAsync();
+                    await channel.SendMessageAsync("", false, imageEmbed);
+                }
+                else
+                    await ReplyAsync("", false, imageEmbed);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        [Command("Avatar"), Summary("Post an image of a specific specificUser.")]
+        public async Task Avatar(SocketUser specificUser, bool sendAsDM = true)
+        {
+            try
+            {
+                var imageEmbed = new EmbedBuilder { Color = Color.Purple, Title = $"Avatar: {specificUser}", ImageUrl = specificUser.GetAvatarUrl() }.Build();
+                if (sendAsDM)
+                {
+                    var channel = await Context.User.GetOrCreateDMChannelAsync();
+                    await channel.SendMessageAsync("", false, imageEmbed);
+                }
+                else
+                await ReplyAsync("", false, imageEmbed);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         [Command("Help")]
         public async Task Help()
         {
@@ -58,13 +98,13 @@ namespace ScrubBot.Modules
             foreach (var command in commands)
             {
                 if (command.Name == "Help") continue;
-                
+
                 if (command.Module.Name == typeof(OwnerModule).Name) continue;
 
                 string embedFieldText = command.Summary;
 
                 if (command.Parameters.Count > 0)
-                    embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param}\t");
+                    embedFieldText = command.Parameters.Aggregate(embedFieldText + $"\nParameter" + (command.Parameters.Count > 1 ? "s:" : ":") + "\t\t", (current, param) => current + $"{param}\t\t");
 
                 embed.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
             }
