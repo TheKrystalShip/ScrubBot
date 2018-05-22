@@ -37,7 +37,7 @@ namespace ScrubBot
 
             await _client.LoginAsync(TokenType.Bot, _token);
             await _client.StartAsync();
-            await _client.SetGameAsync(">Help");
+            await _client.SetGameAsync(">Help for help");
 
             await Task.Delay(-1);
         }
