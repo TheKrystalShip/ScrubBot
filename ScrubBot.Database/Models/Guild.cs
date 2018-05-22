@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ScrubBot.Database.Properties;
 
 namespace ScrubBot.Database.Models
 {
@@ -13,8 +14,8 @@ namespace ScrubBot.Database.Models
         public string IconUrl { get; set; }
         public int MemberCount { get; set; }
         public string AuditChannelId { get; set; }
-        public string CharPrefix { get; set; } = "#";
-        public string StringPrefix { get; set; } = "ScrubBot, ";
+        public string CharPrefix { get; set; }
+        public string StringPrefix { get; set; }
 
         public virtual List<User> Users { get; set; } = new List<User>();
     }
