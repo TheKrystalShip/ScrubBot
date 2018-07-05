@@ -1,14 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using ScrubBot.Properties;
 
 namespace ScrubBot.Modules
 {
     [RequireOwner]
     public class OwnerModule : ModuleBase<SocketCommandContext>
     {
-        [Command("ChangeGame"), Summary("You do not have access to this command.")]
+        [Command("ChangeGame"), Summary("You do not have access to this command")]
         public async Task ChangeGame([Remainder]string newGame)
         {
             EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success" };

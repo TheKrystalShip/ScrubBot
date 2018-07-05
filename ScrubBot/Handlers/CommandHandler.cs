@@ -48,8 +48,7 @@ namespace ScrubBot.Handlers
             {
                 var guildChannel = message.Channel as SocketGuildChannel;
                 string socketGuildId = guildChannel.Guild.Id.ToString();
-                PrefixHandler.GetCharPrefix(socketGuildId, out string charPrefix);
-                return charPrefix;
+                return PrefixHandler.GetCharPrefix(socketGuildId);
             }
             catch (Exception e)
             {
@@ -65,8 +64,7 @@ namespace ScrubBot.Handlers
             {
                 var guildChannel = message.Channel as SocketGuildChannel;
                 string socketGuildId = guildChannel.Guild.Id.ToString();
-                PrefixHandler.GetStringPrefix(socketGuildId, out var stringPrefix);
-                return stringPrefix;
+                return PrefixHandler.GetStringPrefix(socketGuildId);
             }
             catch (Exception e)
             {
