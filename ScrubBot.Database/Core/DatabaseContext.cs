@@ -1,6 +1,4 @@
 ﻿using ScrubBot.Database.Models;
-using ScrubBot.Database.Properties;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace ScrubBot.Database
@@ -18,7 +16,7 @@ namespace ScrubBot.Database
         {
             base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.UseSqlServer(Resources.ConnectionString);
+            optionsBuilder.UseSqlite("Data source='WhateverTheFuck.db'");
             optionsBuilder.EnableSensitiveDataLogging(true);
         }
 

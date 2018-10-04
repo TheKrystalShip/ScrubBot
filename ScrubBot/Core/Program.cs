@@ -8,11 +8,11 @@ namespace ScrubBot
 {
     public class Program
     {
-        private string _token;
         private DiscordSocketClient _client;
+        private readonly string _token = Resources.LoginToken;
 
         private CommandHandler _commandHandler;
-        private Handlers.EventHandler _eventHandler;
+        private EventHandler _eventHandler;
         private ServiceHandler _serviceHandler;
         private PrefixHandler _prefixHandler;
 
@@ -20,8 +20,6 @@ namespace ScrubBot
 
         private async Task Initialize()
         {
-            _token = Resources.LoginToken;
-
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Debug,
@@ -37,7 +35,7 @@ namespace ScrubBot
 
             await _client.LoginAsync(TokenType.Bot, _token);
             await _client.StartAsync();
-            await _client.SetGameAsync(">Help for help");
+            await _client.SetGameAsync("Type >Help for help");
 
             await Task.Delay(-1);
         }

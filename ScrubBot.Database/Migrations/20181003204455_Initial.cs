@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
 
 namespace ScrubBot.Database.Migrations
 {
-    public partial class Maintenance3 : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,11 +11,11 @@ namespace ScrubBot.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    AuditChannelId = table.Column<string>(nullable: true),
-                    CharPrefix = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 100, nullable: true),
                     IconUrl = table.Column<string>(nullable: true),
                     MemberCount = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 100, nullable: true),
+                    AuditChannelId = table.Column<string>(nullable: true),
+                    CharPrefix = table.Column<string>(nullable: true),
                     StringPrefix = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -30,12 +28,12 @@ namespace ScrubBot.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(maxLength: 20, nullable: false),
-                    AvatarUrl = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(maxLength: 20, nullable: true),
-                    GuildId = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(maxLength: 50, nullable: true),
                     Nickname = table.Column<string>(maxLength: 50, nullable: true),
+                    Discriminator = table.Column<string>(maxLength: 20, nullable: true),
+                    AvatarUrl = table.Column<string>(nullable: true),
                     TimezoneOffset = table.Column<int>(nullable: true),
-                    Username = table.Column<string>(maxLength: 50, nullable: true)
+                    GuildId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
