@@ -1,8 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
+
 using ScrubBot.Services;
+
+using System;
+using System.Threading.Tasks;
 
 namespace ScrubBot.Handlers
 {
@@ -10,13 +12,13 @@ namespace ScrubBot.Handlers
     {
         private DiscordSocketClient _client;
         private EventService _eventService;
+        private readonly ConversionHandler _conversionHandler;
 
-        public EventHandler(DiscordSocketClient client) => Initialize(client);
-
-        private void Initialize(DiscordSocketClient client)
+        public EventHandler(DiscordSocketClient client, EventService eventService, ConversionHandler conversionHandler)
         {
             _client = client;
-            _eventService = new EventService(_client);
+            _eventService = eventService;
+            _conversionHandler = conversionHandler;
 
             _client.Log += LogMessage;
             _client.Ready += Ready;
@@ -24,19 +26,21 @@ namespace ScrubBot.Handlers
             SubscribeToAuditService();
         }
 
-        private async Task LogMessage(LogMessage message)
+        private Task LogMessage(LogMessage message)
         {
-            if (message.Message.Contains("OpCode")) return;
+            if (!message.Message.Contains("OpCode"))
+            {
+                Console.WriteLine(message);
+            }
 
-            await Task.Run(() => { Console.WriteLine(message); });
+            return Task.CompletedTask;
         }
 
-        private async Task Ready() => await Task.Run(() => RegisterUsers());
+        // .ConfigureAwait(false) doesn't wait for the call to finish and just returns to the caller
+        private async Task Ready() => await Task.Run(() => RegisterUsers()).ConfigureAwait(false);
 
         private void RegisterUsers()
         {
-            //LogHandler.WriteLine(LogTarget.Console, "Stargint user registration...");
-
             try
             {
                 foreach (SocketGuild guild in _client.Guilds)
@@ -45,19 +49,17 @@ namespace ScrubBot.Handlers
                     {
                         if (user.IsBot) continue;
                         
-                        ConversionHandler.AddUser(user);
+                        _conversionHandler.AddUser(user);
                     }
                 }
             }
             catch (Exception e)
             {
-                //LogHandler.WriteLine(LogTarget.Console, e);
                 Console.WriteLine(e);
             }
             finally
             {
                 Console.WriteLine(new LogMessage(LogSeverity.Info, "Conversion", $"Added {ConversionHandler.UsersAdded} users"));
-                //LogHandler.WriteLine(LogTarget.Console, ConversionHandler.UsersAdded > 0 ? $"Done, {ConversionHandler.UsersAdded} user(s)" : "Done, no new users were added");
             }
         }
 

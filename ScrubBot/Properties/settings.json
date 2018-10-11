@@ -1,0 +1,9 @@
+{
+  "Prefix": {
+    "DefaultChar": ">",
+    "DefaultString": "ScrubBot"
+  },
+  "ConnectionStrings": {
+    "SQLite": "Data source=ScrubBot.db"
+  }
+}

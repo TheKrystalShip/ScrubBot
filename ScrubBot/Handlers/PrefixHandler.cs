@@ -1,53 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ScrubBot.Database;
 
-using ScrubBot.Database;
-using ScrubBot.Database.Models;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace ScrubBot.Handlers
 {
-    class PrefixHandler
+    public class PrefixHandler
     {
-        private DatabaseContext db;
-        private static Dictionary<string, string> CharPrefixDictionary { get; set; } = new Dictionary<string, string>();
-        private static Dictionary<string, string> StringPrefixDictionary { get; set; } = new Dictionary<string, string>();
+        private readonly DatabaseContext _db;
 
-        public PrefixHandler() => Initialize();
+        // Thread-safe dictionaries for async operations
+        private ConcurrentDictionary<ulong, string> CharPrefixDictionary { get; }
+        private ConcurrentDictionary<ulong, string> StringPrefixDictionary { get; }
 
-        private void Initialize()
+        public PrefixHandler(DatabaseContext dbContext)
         {
-            db = new DatabaseContext();
-            List<Guild> Guilds = db.Guilds.ToList();
-            
-            foreach (Guild guild in Guilds)
+            _db = dbContext;
+            CharPrefixDictionary = new ConcurrentDictionary<ulong, string>();
+            StringPrefixDictionary = new ConcurrentDictionary<ulong, string>();
+
+            var Guilds = _db.Guilds.Select(x => new { Id = ulong.Parse(x.Id), x.CharPrefix, x.StringPrefix }).ToList();
+
+            foreach (var guild in Guilds)
             {
-                CharPrefixDictionary.Add(guild.Id, guild.CharPrefix);
-                StringPrefixDictionary.Add(guild.Id, guild.StringPrefix);
+                CharPrefixDictionary.TryAdd(guild.Id, guild.CharPrefix);
+                StringPrefixDictionary.TryAdd(guild.Id, guild.StringPrefix);
             }
         }
 
-        public static string GetCharPrefix(string guildId)
+        public string GetCharPrefix(ulong guildId)
         {
             bool hasValue = CharPrefixDictionary.TryGetValue(guildId, out string value);
             return value;
         }
 
-        public static string GetStringPrefix(string guildId)
+        public string GetStringPrefix(ulong guildId)
         {
             bool hasValue = StringPrefixDictionary.TryGetValue(guildId, out string value);
             return value;
         }
 
-        public static void SetCharPrefix(string guildId, string prefix) => CharPrefixDictionary[guildId] = prefix;
-
-        public static void SetStringPrefix(string guildId, string prefix) => StringPrefixDictionary[guildId] = prefix;
-
-        public void Dispose()
+        public bool SetCharPrefix(string guildId, string prefix)
         {
-            db = null;
-            CharPrefixDictionary = null;
-            StringPrefixDictionary = null;
+            return CharPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
+        }
+
+        public bool SetStringPrefix(string guildId, string prefix)
+        {
+            return StringPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
         }
     }
 }

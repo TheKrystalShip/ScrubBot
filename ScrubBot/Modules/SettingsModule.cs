@@ -1,29 +1,32 @@
-﻿using System;
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+
+using ScrubBot.Database;
+using ScrubBot.Database.Models;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using ScrubBot.Database;
-using ScrubBot.Database.Models;
 
 namespace ScrubBot.Modules
 {
     public class SettingsModule : ModuleBase<SocketCommandContext>
     {
-        private CommandService _commandService;
+        private readonly DatabaseContext _db;
+        private readonly CommandService _commandService;
 
-        public SettingsModule(CommandService commandService) => Initialize(commandService);
-
-        private void Initialize(CommandService commandService) => _commandService = commandService;
+        public SettingsModule(DatabaseContext dbContext, CommandService commandService)
+        {
+            _db = dbContext;
+            _commandService = commandService;
+        }
 
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
         public async Task Info()
         {
-            DatabaseContext db = new DatabaseContext();
-
-            if (!GetGuild(db, out Guild guild))
+            if (!GetGuild(out Guild guild))
             {
                 EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation" };
                 await ReplyAsync("", false, errorEmbed.Build());
@@ -35,7 +38,7 @@ namespace ScrubBot.Modules
 
             if (guild.AuditChannelId != null)
             {
-                var auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
+                SocketTextChannel auditChannel = Context.Guild.GetChannel(Convert.ToUInt64(guild.AuditChannelId)) as SocketTextChannel;
                 embed.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
             }
             else
@@ -55,7 +58,7 @@ namespace ScrubBot.Modules
             List<CommandInfo> commands = _commandService.Commands.ToList();
             EmbedBuilder embed = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
 
-            foreach (var command in commands)
+            foreach (CommandInfo command in commands)
             {
                 if (command.Name == "Help") continue;
                 
@@ -72,10 +75,10 @@ namespace ScrubBot.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        private bool GetGuild(DatabaseContext dbContext, out Guild outGuild)
+        private bool GetGuild(out Guild outGuild)
         {
             string guildId = Context.Guild.Id.ToString();
-            Guild localGuild = dbContext.Guilds.FirstOrDefault(x => x.Id == guildId);
+            Guild localGuild = _db.Guilds.FirstOrDefault(x => x.Id == guildId);
 
             if (localGuild == null)
             {
@@ -87,6 +90,9 @@ namespace ScrubBot.Modules
             return true;
         }
 
-        private async Task OnGuildNotFound() => await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+        private async Task OnGuildNotFound()
+        {
+            await ReplyAsync($"```Current guild was not found in the database...\nAborting operation```");
+        }
     }
 }
