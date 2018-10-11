@@ -1,21 +1,26 @@
 ﻿using Discord.WebSocket;
-using System.Linq;
+
+using Microsoft.EntityFrameworkCore;
+
 using ScrubBot.Database;
 using ScrubBot.Database.Models;
+
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ScrubBot.Handlers
 {
     public class ConversionHandler
     {
-        private static readonly DatabaseContext _db;
+        private readonly DatabaseContext _db;
         public static int UsersAdded = 0;
 
-        static ConversionHandler()
+        public ConversionHandler(DatabaseContext dbContext)
         {
-            _db = new DatabaseContext();
+            _db = dbContext;
         }
 
-        public static void AddUser(SocketGuildUser socketGuildUser)
+        public void AddUser(SocketGuildUser socketGuildUser)
         {
             string socketUserId = socketGuildUser.Id.ToString();
 
@@ -37,7 +42,30 @@ namespace ScrubBot.Handlers
             UsersAdded++;
         }
 
-        public static void RemoveUser(SocketGuildUser user)
+        public async Task AddUserAsync(SocketGuildUser socketGuildUser)
+        {
+            string socketUserId = socketGuildUser.Id.ToString();
+
+            if (_db.Users.Any(x => x.Id == socketUserId))
+                return;
+
+            User user = new User
+            {
+                Username = socketGuildUser.Username,
+                Id = socketUserId,
+                Nickname = socketGuildUser.Nickname,
+                AvatarUrl = socketGuildUser.GetAvatarUrl(),
+                Discriminator = socketGuildUser.Discriminator,
+                Guild = ToGuild(socketGuildUser.Guild)
+            };
+
+            await _db.Users.AddAsync(user);
+            await _db.SaveChangesAsync();
+
+            UsersAdded++;
+        }
+
+        public void RemoveUser(SocketGuildUser user)
         {
             string userId = user.Id.ToString();
 
@@ -49,7 +77,19 @@ namespace ScrubBot.Handlers
             _db.SaveChanges();
         }
 
-        private static Guild ToGuild(SocketGuild socketGuild)
+        public async Task RemoveUserAsync(SocketGuildUser user)
+        {
+            string userId = user.Id.ToString();
+
+            if (!_db.Users.Any(x => x.Id == userId))
+                return;
+
+            User userToRemove = await _db.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            _db.Users.Remove(userToRemove);
+            await _db.SaveChangesAsync();
+        }
+
+        private Guild ToGuild(SocketGuild socketGuild)
         {
             string socketGuildId = socketGuild.Id.ToString();
             return _db.Guilds.FirstOrDefault(x => x.Id == socketGuildId) ??

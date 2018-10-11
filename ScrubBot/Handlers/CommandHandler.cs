@@ -20,6 +20,8 @@ namespace ScrubBot.Handlers
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly IServiceProvider _serviceProvider;
+
+        private PrefixHandler _prefixHandler;
         
         public CommandHandler(ref DiscordSocketClient client)
         {
@@ -52,6 +54,7 @@ namespace ScrubBot.Handlers
             // it will get injected into the constructors automatically.
             _serviceProvider.GetRequiredService<EventHandler>();
             _serviceProvider.GetRequiredService<ServiceHandler>();
+            _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
 
             _commandService.Log += CommandServiceLog;
             _client.MessageReceived += HandleCommand;
@@ -69,7 +72,7 @@ namespace ScrubBot.Handlers
             {
                 SocketGuildChannel guildChannel = message.Channel as SocketGuildChannel;
                 ulong socketGuildId = guildChannel.Guild.Id;
-                return PrefixHandler.GetCharPrefix(socketGuildId);
+                return _prefixHandler.GetCharPrefix(socketGuildId);
             }
             catch (Exception e)
             {
@@ -85,7 +88,7 @@ namespace ScrubBot.Handlers
             {
                 var guildChannel = message.Channel as SocketGuildChannel;
                 ulong socketGuildId = guildChannel.Guild.Id;
-                return PrefixHandler.GetStringPrefix(socketGuildId);
+                return _prefixHandler.GetStringPrefix(socketGuildId);
             }
             catch (Exception e)
             {

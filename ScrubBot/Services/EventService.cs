@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
+
 using ScrubBot.Database;
 using ScrubBot.Handlers;
+
+using System.Threading.Tasks;
 
 namespace ScrubBot.Services
 {
     public class EventService : Service
     {
-        private DiscordSocketClient _client;
-        private static DatabaseContext _db;
-
-        static EventService() => _db = new DatabaseContext();
-        public EventService(DiscordSocketClient client) => _client = client;
+        private readonly DiscordSocketClient _client;
+        private readonly ConversionHandler _conversionHandler;
+        private readonly DatabaseContext _db;
+        
+        public EventService(DiscordSocketClient client, ConversionHandler conversionHandler, DatabaseContext dbContext)
+        {
+            _client = client;
+            _conversionHandler = conversionHandler;
+            _db = dbContext;
+        }
 
         public async Task ChannelCreated(SocketChannel socketChannel)
         {
@@ -66,9 +70,15 @@ namespace ScrubBot.Services
             await Task.CompletedTask;
         }
 
-        public async Task UserJoined(SocketGuildUser user) => await Task.Run(() => ConversionHandler.AddUser(user));
+        public async Task UserJoined(SocketGuildUser user)
+        {
+            await _conversionHandler.AddUserAsync(user);
+        }
 
-        public async Task UserLeft(SocketGuildUser user) => await Task.Run(() => ConversionHandler.RemoveUser(user));
+        public async Task UserLeft(SocketGuildUser user)
+        {
+            await _conversionHandler.RemoveUserAsync(user);
+        }
         
         public async Task UserUpdated(SocketUser before, SocketUser after)
         {

@@ -12,6 +12,7 @@ namespace ScrubBot.Extensions
             services.AddSingleton<ConversionHandler>();
             services.AddSingleton<EventHandler>();
             services.AddSingleton<ServiceHandler>();
+            services.AddSingleton<PrefixHandler>();
 
             return services;
         }

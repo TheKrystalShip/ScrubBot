@@ -5,24 +5,17 @@ using System.Linq;
 
 namespace ScrubBot.Handlers
 {
-    // This entire class needs to be static, there's only gonna be one instance during the
-    // lifespan of the application, no need to create instances all over the place
-    // and call the database everytime.
-    // This way you ensure the Prefix dictionaries always have the same values
-    // for each call.
-    public static class PrefixHandler
+    public class PrefixHandler
     {
-        private static readonly DatabaseContext _db;
+        private readonly DatabaseContext _db;
 
         // Thread-safe dictionaries for async operations
-        private static ConcurrentDictionary<ulong, string> CharPrefixDictionary { get; }
-        private static ConcurrentDictionary<ulong, string> StringPrefixDictionary { get; }
+        private ConcurrentDictionary<ulong, string> CharPrefixDictionary { get; }
+        private ConcurrentDictionary<ulong, string> StringPrefixDictionary { get; }
 
-        // This constructor will only be called ONE time,
-        // the first time this class is accessed.
-        static PrefixHandler()
+        public PrefixHandler(DatabaseContext dbContext)
         {
-            _db = new DatabaseContext();
+            _db = dbContext;
             CharPrefixDictionary = new ConcurrentDictionary<ulong, string>();
             StringPrefixDictionary = new ConcurrentDictionary<ulong, string>();
 
@@ -35,24 +28,24 @@ namespace ScrubBot.Handlers
             }
         }
 
-        public static string GetCharPrefix(ulong guildId)
+        public string GetCharPrefix(ulong guildId)
         {
             bool hasValue = CharPrefixDictionary.TryGetValue(guildId, out string value);
             return value;
         }
 
-        public static string GetStringPrefix(ulong guildId)
+        public string GetStringPrefix(ulong guildId)
         {
             bool hasValue = StringPrefixDictionary.TryGetValue(guildId, out string value);
             return value;
         }
 
-        public static bool SetCharPrefix(string guildId, string prefix)
+        public bool SetCharPrefix(string guildId, string prefix)
         {
             return CharPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
         }
 
-        public static bool SetStringPrefix(string guildId, string prefix)
+        public bool SetStringPrefix(string guildId, string prefix)
         {
             return StringPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
         }

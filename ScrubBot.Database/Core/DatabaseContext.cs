@@ -1,5 +1,6 @@
-﻿using ScrubBot.Database.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+
+using ScrubBot.Database.Models;
 
 namespace ScrubBot.Database
 {
@@ -8,7 +9,10 @@ namespace ScrubBot.Database
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public DatabaseContext() : base() => Database.Migrate();
+        public DatabaseContext(DbContextOptions options) : base(options)
+        {
+
+        }
 
         public void MigrateDatabase() => Database.Migrate();
 

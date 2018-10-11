@@ -15,10 +15,12 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator)]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
+        private readonly PrefixHandler _prefixHandler;
         private readonly DatabaseContext _db;
 
-        public AdminModule(DatabaseContext dbContext)
+        public AdminModule(PrefixHandler prefixHandler, DatabaseContext dbContext)
         {
+            _prefixHandler = prefixHandler;
             _db = dbContext;
         }
 
@@ -54,7 +56,7 @@ namespace ScrubBot.Modules
             guild.CharPrefix = newPrefix;
             _db.Guilds.Update(guild);
             await _db.SaveChangesAsync();
-            PrefixHandler.SetCharPrefix(guild.Id, newPrefix);
+            _prefixHandler.SetCharPrefix(guild.Id, newPrefix);
             await ReplyAsync("", false, embed.Build());
         }
 
@@ -86,7 +88,7 @@ namespace ScrubBot.Modules
             guild.StringPrefix = newPrefix;
             _db.Guilds.Update(guild);
             await _db.SaveChangesAsync();
-            PrefixHandler.SetStringPrefix(guild.Id, newPrefix);
+            _prefixHandler.SetStringPrefix(guild.Id, newPrefix);
             await ReplyAsync("", false, embed.Build());
         }
 

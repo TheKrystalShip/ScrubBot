@@ -12,11 +12,13 @@ namespace ScrubBot.Handlers
     {
         private DiscordSocketClient _client;
         private EventService _eventService;
+        private readonly ConversionHandler _conversionHandler;
 
-        public EventHandler(DiscordSocketClient client)
+        public EventHandler(DiscordSocketClient client, EventService eventService, ConversionHandler conversionHandler)
         {
             _client = client;
-            _eventService = new EventService(_client);
+            _eventService = eventService;
+            _conversionHandler = conversionHandler;
 
             _client.Log += LogMessage;
             _client.Ready += Ready;
@@ -47,7 +49,7 @@ namespace ScrubBot.Handlers
                     {
                         if (user.IsBot) continue;
                         
-                        ConversionHandler.AddUser(user);
+                        _conversionHandler.AddUser(user);
                     }
                 }
             }
