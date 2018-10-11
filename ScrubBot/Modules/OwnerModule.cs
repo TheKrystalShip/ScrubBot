@@ -1,19 +1,32 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+
 using ScrubBot.Database;
 using ScrubBot.Database.Models;
 using ScrubBot.Handlers;
+
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ScrubBot.Modules
 {
     [RequireOwner]
     public class OwnerModule : ModuleBase<SocketCommandContext>
     {
-        [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")] public async Task UrMomGay() => await ReplyAsync($"{Context.Message.Author.Mention} No u");
+        private readonly DatabaseContext _db;
+
+        public OwnerModule(DatabaseContext dbContext)
+        {
+            _db = dbContext;
+        }
+
+        [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
+        public async Task UrMomGay()
+        {
+            await ReplyAsync($"{Context.Message.Author.Mention} No u");
+        }
 
         [Command("ChangeGame"), Summary("You do not have access to this command")]
         public async Task ChangeGame([Remainder]string newGame)
@@ -27,9 +40,7 @@ namespace ScrubBot.Modules
         [Command("SetCharPrefix"), Summary("Change this server's current command character prefix")]
         public async Task SetCharPrefix(string newPrefix)
         {
-            DatabaseContext db = new DatabaseContext();
-
-            if (!GetGuild(db, out Guild guild))
+            if (!GetGuild(out Guild guild))
             {
                 EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation"};
                 await ReplyAsync("", false, errorEmbed.Build());
@@ -50,8 +61,8 @@ namespace ScrubBot.Modules
             EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success", Description = $"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '"};
 
             guild.CharPrefix = newPrefix;
-            db.Guilds.Update(guild);
-            await db.SaveChangesAsync();
+            _db.Guilds.Update(guild);
+            await _db.SaveChangesAsync();
             PrefixHandler.SetCharPrefix(guild.Id, newPrefix);
             await ReplyAsync("", false, embed.Build());
         }
@@ -59,9 +70,7 @@ namespace ScrubBot.Modules
         [Command("SetStringPrefix"), Summary("Change this server's current command string prefix")]
         public async Task SetStringPrefix([Remainder]string newPrefix)
         {
-            DatabaseContext db = new DatabaseContext();
-
-            if (!GetGuild(db, out Guild guild))
+            if (!GetGuild(out Guild guild))
             {
                 EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation" };
                 await ReplyAsync("", false, errorEmbed.Build());
@@ -84,8 +93,8 @@ namespace ScrubBot.Modules
             EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success", Description = $"Changed Command String Prefix from ' {old} ' to ' {newPrefix} '" };
 
             guild.StringPrefix = newPrefix;
-            db.Guilds.Update(guild);
-            await db.SaveChangesAsync();
+            _db.Guilds.Update(guild);
+            await _db.SaveChangesAsync();
             PrefixHandler.SetStringPrefix(guild.Id, newPrefix);
             await ReplyAsync("", false, embed.Build());
         }
@@ -93,9 +102,7 @@ namespace ScrubBot.Modules
         [Command("SetAuditChannel"), Summary("Change this server's current audit channel")]
         public async Task SetAuditChannel([Remainder]SocketTextChannel newChannel)
         {
-            DatabaseContext db = new DatabaseContext();
-
-            if (!GetGuild(db, out Guild guild))
+            if (!GetGuild(out Guild guild))
             {
                 EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation"};
                 await ReplyAsync("", false, errorEmbed.Build());
@@ -115,14 +122,14 @@ namespace ScrubBot.Modules
             embed.AddField("Audit Channel:", $"Set this server's audit channel to {newChannel.Mention}");
 
             guild.AuditChannelId = newChannel.Id.ToString();
-            db.SaveChanges();
+            _db.SaveChanges();
             await ReplyAsync("", false, embed.Build());
         }
 
-        private bool GetGuild(DatabaseContext dbContext, out Guild outGuild)
+        private bool GetGuild(out Guild outGuild)
         {
             string guildId = Context.Guild.Id.ToString();
-            Guild localGuild = dbContext.Guilds.FirstOrDefault(x => x.Id == guildId);
+            Guild localGuild = _db.Guilds.FirstOrDefault(x => x.Id == guildId);
 
             if (localGuild == null)
             {
