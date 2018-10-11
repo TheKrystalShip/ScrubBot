@@ -59,7 +59,7 @@ namespace ScrubBot.Handlers
 
         private Task CommandServiceLog(LogMessage arg)
         {
-
+            Console.WriteLine(arg.ToString());
             return Task.CompletedTask;
         }
 
@@ -67,7 +67,7 @@ namespace ScrubBot.Handlers
         {
             try
             {
-                var guildChannel = message.Channel as SocketGuildChannel;
+                SocketGuildChannel guildChannel = message.Channel as SocketGuildChannel;
                 ulong socketGuildId = guildChannel.Guild.Id;
                 return PrefixHandler.GetCharPrefix(socketGuildId);
             }
@@ -97,8 +97,10 @@ namespace ScrubBot.Handlers
 
         private async Task HandleCommand(SocketMessage msg)
         {
-            var message = msg as SocketUserMessage;
-            if (message is null || message.Author.IsBot) return;
+            SocketUserMessage message = msg as SocketUserMessage;
+
+            if (message is null || message.Author.IsBot)
+                return;
 
             string charPrefix = GetCharPrefix(message) ?? Resources.DefaultCharPrefix;
             string stringPrefix = GetStringPrefix(message) ?? Resources.DefaultStringPrefix;
@@ -108,13 +110,16 @@ namespace ScrubBot.Handlers
             bool hasStringPrefix = message.HasStringPrefix(stringPrefix, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
-            if (!hasCharPrefix && !hasStringPrefix && !isMentioned) return;
+            if (!hasCharPrefix && !hasStringPrefix && !isMentioned)
+                return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);
             IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
 
-            if (result.IsSuccess) return;
-            Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
+            if (!result.IsSuccess)
+            {
+                Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
+            }
         }
     }
 }

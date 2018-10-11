@@ -7,16 +7,20 @@ namespace ScrubBot.Handlers
 {
     public class ConversionHandler
     {
-        private static readonly DatabaseContext db;
+        private static readonly DatabaseContext _db;
         public static int UsersAdded = 0;
 
-        static ConversionHandler() => db = new DatabaseContext();
+        static ConversionHandler()
+        {
+            _db = new DatabaseContext();
+        }
 
         public static void AddUser(SocketGuildUser socketGuildUser)
         {
             string socketUserId = socketGuildUser.Id.ToString();
 
-            if (db.Users.Any(x => x.Id == socketUserId)) return;
+            if (_db.Users.Any(x => x.Id == socketUserId))
+                return;
             
             User user = new User
             {
@@ -28,25 +32,27 @@ namespace ScrubBot.Handlers
                 Guild = ToGuild(socketGuildUser.Guild)
             };
 
-            db.Users.Add(user);
-            db.SaveChanges();
+            _db.Users.Add(user);
+            _db.SaveChanges();
             UsersAdded++;
         }
 
         public static void RemoveUser(SocketGuildUser user)
         {
             string userId = user.Id.ToString();
-            if (!db.Users.Any(x => x.Id == userId)) return;
 
-            User userToRemove = db.Users.FirstOrDefault(x => x.Id == userId);
-            db.Users.Remove(userToRemove);
-            db.SaveChanges();
+            if (!_db.Users.Any(x => x.Id == userId))
+                return;
+
+            User userToRemove = _db.Users.FirstOrDefault(x => x.Id == userId);
+            _db.Users.Remove(userToRemove);
+            _db.SaveChanges();
         }
 
         private static Guild ToGuild(SocketGuild socketGuild)
         {
             string socketGuildId = socketGuild.Id.ToString();
-            return db.Guilds.FirstOrDefault(x => x.Id == socketGuildId) ??
+            return _db.Guilds.FirstOrDefault(x => x.Id == socketGuildId) ??
                    new Guild
                    {
                        Name = socketGuild.Name,

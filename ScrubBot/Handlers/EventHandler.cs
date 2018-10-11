@@ -1,8 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
+
 using ScrubBot.Services;
+
+using System;
+using System.Threading.Tasks;
 
 namespace ScrubBot.Handlers
 {
@@ -11,9 +13,7 @@ namespace ScrubBot.Handlers
         private DiscordSocketClient _client;
         private EventService _eventService;
 
-        public EventHandler(DiscordSocketClient client) => Initialize(client);
-
-        private void Initialize(DiscordSocketClient client)
+        public EventHandler(DiscordSocketClient client)
         {
             _client = client;
             _eventService = new EventService(_client);
@@ -24,19 +24,21 @@ namespace ScrubBot.Handlers
             SubscribeToAuditService();
         }
 
-        private async Task LogMessage(LogMessage message)
+        private Task LogMessage(LogMessage message)
         {
-            if (message.Message.Contains("OpCode")) return;
+            if (!message.Message.Contains("OpCode"))
+            {
+                Console.WriteLine(message);
+            }
 
-            await Task.Run(() => { Console.WriteLine(message); });
+            return Task.CompletedTask;
         }
 
-        private async Task Ready() => await Task.Run(() => RegisterUsers());
+        // .ConfigureAwait(false) doesn't wait for the call to finish and just returns to the caller
+        private async Task Ready() => await Task.Run(() => RegisterUsers()).ConfigureAwait(false);
 
         private void RegisterUsers()
         {
-            //LogHandler.WriteLine(LogTarget.Console, "Stargint user registration...");
-
             try
             {
                 foreach (SocketGuild guild in _client.Guilds)
@@ -51,13 +53,11 @@ namespace ScrubBot.Handlers
             }
             catch (Exception e)
             {
-                //LogHandler.WriteLine(LogTarget.Console, e);
                 Console.WriteLine(e);
             }
             finally
             {
                 Console.WriteLine(new LogMessage(LogSeverity.Info, "Conversion", $"Added {ConversionHandler.UsersAdded} users"));
-                //LogHandler.WriteLine(LogTarget.Console, ConversionHandler.UsersAdded > 0 ? $"Done, {ConversionHandler.UsersAdded} user(s)" : "Done, no new users were added");
             }
         }
 
