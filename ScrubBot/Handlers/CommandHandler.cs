@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using ScrubBot.Database;
@@ -45,7 +46,7 @@ namespace ScrubBot.Handlers
                 .AddHandlers() // See ServiceCollectionExtensions.cs
                 .AddServices() // See ServiceCollectionExtensions.cs
                 .AddDbContext<DatabaseContext>(options => {
-                    options.UseSqlite(Resources.ConnectionString);
+                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
                 })
                 .BuildServiceProvider();
 
@@ -105,8 +106,8 @@ namespace ScrubBot.Handlers
             if (message is null || message.Author.IsBot)
                 return;
 
-            string charPrefix = GetCharPrefix(message) ?? Resources.DefaultCharPrefix;
-            string stringPrefix = GetStringPrefix(message) ?? Resources.DefaultStringPrefix;
+            string charPrefix = GetCharPrefix(message) ?? Settings.Instance["Prefix:DefaultChar"];
+            string stringPrefix = GetStringPrefix(message) ?? Settings.Instance["Prefix:DefaultString"];
             int argPos = 0;
 
             bool hasCharPrefix = message.HasCharPrefix(charPrefix.ToCharArray()[0], ref argPos);

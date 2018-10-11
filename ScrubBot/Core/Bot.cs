@@ -26,7 +26,7 @@ namespace ScrubBot
 
             _commandHandler = new CommandHandler(ref _client);
 
-            _token = Resources.LoginToken;
+            _token = Settings.Instance["Bot:Token"];
         }
 
         public async Task InitAsync()
