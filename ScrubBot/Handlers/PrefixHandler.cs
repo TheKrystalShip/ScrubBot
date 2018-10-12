@@ -19,7 +19,7 @@ namespace ScrubBot.Handlers
             CharPrefixDictionary = new ConcurrentDictionary<ulong, string>();
             StringPrefixDictionary = new ConcurrentDictionary<ulong, string>();
 
-            var Guilds = _db.Guilds.Select(x => new { Id = ulong.Parse(x.Id), x.CharPrefix, x.StringPrefix }).ToList();
+            var Guilds = _db.Guilds.Select(x => new { x.Id, x.CharPrefix, x.StringPrefix }).ToList();
 
             foreach (var guild in Guilds)
             {
@@ -40,14 +40,14 @@ namespace ScrubBot.Handlers
             return value;
         }
 
-        public bool SetCharPrefix(string guildId, string prefix)
+        public bool SetCharPrefix(ulong guildId, string prefix)
         {
-            return CharPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
+            return CharPrefixDictionary.TryAdd(guildId, prefix);
         }
 
-        public bool SetStringPrefix(string guildId, string prefix)
+        public bool SetStringPrefix(ulong guildId, string prefix)
         {
-            return StringPrefixDictionary.TryAdd(ulong.Parse(guildId), prefix);
+            return StringPrefixDictionary.TryAdd(guildId, prefix);
         }
     }
 }
