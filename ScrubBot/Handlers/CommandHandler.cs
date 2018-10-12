@@ -49,10 +49,10 @@ namespace ScrubBot.Handlers
                 })
                 .BuildServiceProvider();
 
+            _serviceProvider.GetRequiredService<DatabaseContext>().MigrateDatabase();
             _serviceProvider.GetRequiredService<EventHandler>();
             _serviceProvider.GetRequiredService<ServiceHandler>();
             _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
-            _serviceProvider.GetRequiredService<DatabaseContext>().MigrateDatabase();
 
             _commandService.Log += CommandServiceLog;
             _client.MessageReceived += HandleCommand;
