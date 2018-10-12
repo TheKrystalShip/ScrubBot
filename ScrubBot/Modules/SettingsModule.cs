@@ -14,8 +14,7 @@ namespace ScrubBot.Modules
     {
         public SettingsModule(Tools tools) : base(tools)
         {
-            Guild = Tools.Database.Guilds.Find(Context.Guild.Id);
-            User = Tools.Database.Users.Find(Context.User.Id);
+
         }
 
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]

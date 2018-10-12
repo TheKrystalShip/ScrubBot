@@ -23,7 +23,7 @@ namespace ScrubBot.Handlers
         private readonly IServiceProvider _serviceProvider;
 
         private PrefixHandler _prefixHandler;
-        
+
         public CommandHandler(ref DiscordSocketClient client)
         {
             _client = client;
@@ -38,15 +38,16 @@ namespace ScrubBot.Handlers
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
 
             _serviceProvider = new ServiceCollection()
-                .AddLogging()
+                .AddDbContext<DatabaseContext>(options =>
+                {
+                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
+                })
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
                 .AddHandlers()
                 .AddServices()
+                .AddLogging()
                 .AddTools()
-                .AddDbContext<DatabaseContext>(options => {
-                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
-                })
                 .BuildServiceProvider();
 
             _serviceProvider.GetRequiredService<DatabaseContext>().MigrateDatabase();
@@ -88,7 +89,7 @@ namespace ScrubBot.Handlers
 
             string stringPrefix = GetPrefix(message) ?? Settings.Instance["Prefix:DefaultString"];
             int argPos = 0;
-            
+
             bool hasStringPrefix = message.HasStringPrefix(stringPrefix, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 

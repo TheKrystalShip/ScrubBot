@@ -1,12 +1,12 @@
-﻿using Discord.Commands;
+﻿using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
 
 using ScrubBot.Database.Models;
 
-using System;
-
 namespace ScrubBot
 {
-    public abstract class Module : ModuleBase<SocketCommandContext>, IDisposable
+    public abstract class Module : ModuleBase<SocketCommandContext>
     {
         public Tools Tools { get; private set; }
         public Guild Guild { get; protected set; }
@@ -17,11 +17,24 @@ namespace ScrubBot
             Tools = tools;
         }
 
-        public void Dispose()
+        protected override void BeforeExecute(CommandInfo command)
         {
+            base.BeforeExecute(command);
+            Guild = Tools.Database.Guilds.Find(Context.Guild?.Id);
+            User = Tools.Database.Users.Find(Context.User?.Id);
+        }
+
+        protected override void AfterExecute(CommandInfo command)
+        {
+            base.AfterExecute(command);
             Tools.Database.Guilds.Update(Guild);
             Tools.Database.Users.Update(User);
             Tools.Database.SaveChanges();
+        }
+
+        protected virtual async Task<IUserMessage> ReplyAsync(EmbedBuilder embedBuilder)
+        {
+            return await Context.Channel.SendMessageAsync(string.Empty, false, embedBuilder.Build(), null).ConfigureAwait(false);
         }
     }
 }
