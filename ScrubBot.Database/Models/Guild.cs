@@ -13,9 +13,8 @@ namespace ScrubBot.Database.Models
 
         public string IconUrl { get; set; }
         public int MemberCount { get; set; }
-        public string AuditChannelId { get; set; }
-        public string CharPrefix { get; set; } = "#";
-        public string StringPrefix { get; set; } = "ScrubBot, ";
+        public ulong AuditChannelId { get; set; }
+        public string Prefix { get; set; } = "#";
 
         public virtual List<User> Users { get; set; } = new List<User>();
     }

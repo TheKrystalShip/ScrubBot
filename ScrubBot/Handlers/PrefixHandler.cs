@@ -1,53 +1,44 @@
 ﻿using ScrubBot.Database;
+using ScrubBot.Database.Models;
 
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ScrubBot.Handlers
 {
     public class PrefixHandler
     {
-        private readonly DatabaseContext _db;
-
-        // Thread-safe dictionaries for async operations
-        private ConcurrentDictionary<ulong, string> CharPrefixDictionary { get; }
-        private ConcurrentDictionary<ulong, string> StringPrefixDictionary { get; }
+        private readonly DatabaseContext _context;
+        private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
         public PrefixHandler(DatabaseContext dbContext)
         {
-            _db = dbContext;
-            CharPrefixDictionary = new ConcurrentDictionary<ulong, string>();
-            StringPrefixDictionary = new ConcurrentDictionary<ulong, string>();
+            _context = dbContext;
+            _prefixes = new ConcurrentDictionary<ulong, string>();
 
-            var Guilds = _db.Guilds.Select(x => new { x.Id, x.CharPrefix, x.StringPrefix }).ToList();
+            var Guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
 
             foreach (var guild in Guilds)
             {
-                CharPrefixDictionary.TryAdd(guild.Id, guild.CharPrefix);
-                StringPrefixDictionary.TryAdd(guild.Id, guild.StringPrefix);
+                _prefixes.TryAdd(guild.Id, guild.Prefix);
             }
         }
 
-        public string GetCharPrefix(ulong guildId)
+        public string Get(ulong guildId)
         {
-            bool hasValue = CharPrefixDictionary.TryGetValue(guildId, out string value);
+            bool hasValue = _prefixes.TryGetValue(guildId, out string value);
             return value;
         }
 
-        public string GetStringPrefix(ulong guildId)
+        public async Task<bool> SetAsync(ulong guildId, string prefix)
         {
-            bool hasValue = StringPrefixDictionary.TryGetValue(guildId, out string value);
-            return value;
-        }
+            Guild guild = _context.Guilds.Find(guildId);
+            guild.Prefix = prefix;
+            _context.Guilds.Update(guild);
 
-        public bool SetCharPrefix(ulong guildId, string prefix)
-        {
-            return CharPrefixDictionary.TryAdd(guildId, prefix);
-        }
-
-        public bool SetStringPrefix(ulong guildId, string prefix)
-        {
-            return StringPrefixDictionary.TryAdd(guildId, prefix);
+            await _context.SaveChangesAsync();
+            return _prefixes.TryAdd(guildId, prefix);
         }
     }
 }

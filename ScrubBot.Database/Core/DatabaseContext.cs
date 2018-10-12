@@ -29,6 +29,10 @@ namespace ScrubBot.Database
                 .Property(x => x.Id)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<Guild>()
+                .Property(x => x.AuditChannelId)
+                .HasConversion<string>();
+
             modelBuilder.Entity<User>()
                 .Property(x => x.Id)
                 .HasConversion<string>();
