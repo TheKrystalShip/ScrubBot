@@ -37,24 +37,18 @@ namespace ScrubBot.Handlers
 
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
 
-            // Register everything into the IoC container, so that it
-            // can be called upon later
             _serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
-                .AddHandlers() // See ServiceCollectionExtensions.cs
+                .AddHandlers()
                 .AddServices()
-                .AddManagers()
                 .AddTools()
                 .AddDbContext<DatabaseContext>(options => {
                     options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
                 })
                 .BuildServiceProvider();
 
-            // Launch any necessary services here, DI takes care of injection
-            // since the DiscordSocketClient was registered into the container,
-            // it will get injected into the constructors automatically.
             _serviceProvider.GetRequiredService<EventHandler>();
             _serviceProvider.GetRequiredService<ServiceHandler>();
             _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
@@ -70,33 +64,16 @@ namespace ScrubBot.Handlers
             return Task.CompletedTask;
         }
 
-        private string GetCharPrefix(SocketUserMessage message)
-        {
-            try
-            {
-                SocketGuildChannel guildChannel = message.Channel as SocketGuildChannel;
-                ulong socketGuildId = guildChannel.Guild.Id;
-                return _prefixHandler.GetCharPrefix(socketGuildId);
-            }
-            catch (Exception e)
-            {
-                //LogHandler.WriteLine(LogTarget.Console, e);
-                Console.WriteLine(e);
-                return null;
-            }
-        }
-
-        private string GetStringPrefix(SocketUserMessage message)
+        private string GetPrefix(SocketUserMessage message)
         {
             try
             {
                 var guildChannel = message.Channel as SocketGuildChannel;
                 ulong socketGuildId = guildChannel.Guild.Id;
-                return _prefixHandler.GetStringPrefix(socketGuildId);
+                return _prefixHandler.Get(socketGuildId);
             }
             catch (Exception e)
             {
-                //LogHandler.WriteLine(LogTarget.Console, e);
                 Console.WriteLine(e);
                 return null;
             }
@@ -109,15 +86,13 @@ namespace ScrubBot.Handlers
             if (message is null || message.Author.IsBot)
                 return;
 
-            string charPrefix = GetCharPrefix(message) ?? Settings.Instance["Prefix:DefaultChar"];
-            string stringPrefix = GetStringPrefix(message) ?? Settings.Instance["Prefix:DefaultString"];
+            string stringPrefix = GetPrefix(message) ?? Settings.Instance["Prefix:DefaultString"];
             int argPos = 0;
-
-            bool hasCharPrefix = message.HasCharPrefix(charPrefix.ToCharArray()[0], ref argPos);
+            
             bool hasStringPrefix = message.HasStringPrefix(stringPrefix, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
-            if (!hasCharPrefix && !hasStringPrefix && !isMentioned)
+            if (!hasStringPrefix && !isMentioned)
                 return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);

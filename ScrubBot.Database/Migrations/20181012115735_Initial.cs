@@ -14,9 +14,8 @@ namespace ScrubBot.Database.Migrations
                     Name = table.Column<string>(maxLength: 100, nullable: true),
                     IconUrl = table.Column<string>(nullable: true),
                     MemberCount = table.Column<int>(nullable: false),
-                    AuditChannelId = table.Column<string>(nullable: true),
-                    CharPrefix = table.Column<string>(nullable: true),
-                    StringPrefix = table.Column<string>(nullable: true)
+                    AuditChannelId = table.Column<string>(nullable: false),
+                    Prefix = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -27,7 +26,7 @@ namespace ScrubBot.Database.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(maxLength: 20, nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     Username = table.Column<string>(maxLength: 50, nullable: true),
                     Nickname = table.Column<string>(maxLength: 50, nullable: true),
                     Discriminator = table.Column<string>(maxLength: 20, nullable: true),

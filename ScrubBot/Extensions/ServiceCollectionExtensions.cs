@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using ScrubBot.Database.Models;
 using ScrubBot.Handlers;
-using ScrubBot.Managers;
 using ScrubBot.Services;
 
 namespace ScrubBot.Extensions
@@ -15,13 +13,6 @@ namespace ScrubBot.Extensions
             services.AddSingleton<EventHandler>();
             services.AddSingleton<ServiceHandler>();
             services.AddSingleton<PrefixHandler>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddManagers(this IServiceCollection services)
-        {
-            services.AddSingleton<IManager<User>, UserManager>();
 
             return services;
         }

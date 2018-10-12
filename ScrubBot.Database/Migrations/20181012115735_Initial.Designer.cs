@@ -9,7 +9,7 @@ using ScrubBot.Database;
 namespace ScrubBot.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20181003204455_Initial")]
+    [Migration("20181012115735_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,11 +21,12 @@ namespace ScrubBot.Database.Migrations
             modelBuilder.Entity("ScrubBot.Database.Models.Guild", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
-                    b.Property<string>("AuditChannelId");
-
-                    b.Property<string>("CharPrefix");
+                    b.Property<string>("AuditChannelId")
+                        .IsRequired()
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
                     b.Property<string>("IconUrl");
 
@@ -34,7 +35,7 @@ namespace ScrubBot.Database.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(100);
 
-                    b.Property<string>("StringPrefix");
+                    b.Property<string>("Prefix");
 
                     b.HasKey("Id");
 
@@ -45,14 +46,15 @@ namespace ScrubBot.Database.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(20);
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
                     b.Property<string>("AvatarUrl");
 
                     b.Property<string>("Discriminator")
                         .HasMaxLength(20);
 
-                    b.Property<string>("GuildId");
+                    b.Property<string>("GuildId")
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
                     b.Property<string>("Nickname")
                         .HasMaxLength(50);
