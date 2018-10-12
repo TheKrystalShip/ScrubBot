@@ -12,11 +12,12 @@ namespace ScrubBot.Extensions
                 .WithDescription(errorMessage);
         }
 
-        public static EmbedBuilder CreateSuccess(this EmbedBuilder embedBuilder)
+        public static EmbedBuilder CreateSuccess(this EmbedBuilder embedBuilder, string message)
         {
             return embedBuilder
                 .WithColor(Color.Green)
-                .WithTitle("Success");
+                .WithTitle("Success")
+                .WithDescription(message);
         }
     }
 }
