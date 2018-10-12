@@ -2,8 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Database;
 using ScrubBot.Database.Models;
+using ScrubBot.Extensions;
 
 using System;
 using System.Collections.Generic;
@@ -12,15 +12,11 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Modules
 {
-    public class SettingsModule : ModuleBase<SocketCommandContext>
+    public class SettingsModule : Module
     {
-        private readonly DatabaseContext _db;
-        private readonly CommandService _commandService;
-
-        public SettingsModule(DatabaseContext dbContext, CommandService commandService)
+        public SettingsModule(Tools tools) : base(tools)
         {
-            _db = dbContext;
-            _commandService = commandService;
+            
         }
 
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
@@ -28,7 +24,7 @@ namespace ScrubBot.Modules
         {
             if (!GetGuild(out Guild guild))
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "ERROR", Description = "Current guild was not found in the database...\nAborting operation" };
+                EmbedBuilder errorEmbed = new EmbedBuilder().CreateError("Current guild was not found in the database...\nAborting operation");
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
@@ -55,7 +51,7 @@ namespace ScrubBot.Modules
         [Command("Help")]
         public async Task Help()
         {
-            List<CommandInfo> commands = _commandService.Commands.ToList();
+            List<CommandInfo> commands = Tools.CommandService.Commands.ToList();
             EmbedBuilder embed = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
 
             foreach (CommandInfo command in commands)
@@ -77,7 +73,7 @@ namespace ScrubBot.Modules
 
         private bool GetGuild(out Guild outGuild)
         {
-            Guild localGuild = _db.Guilds.FirstOrDefault(x => x.Id == Context.Guild.Id);
+            Guild localGuild = Tools.Database.Guilds.FirstOrDefault(x => x.Id == Context.Guild.Id);
 
             if (localGuild is null)
             {

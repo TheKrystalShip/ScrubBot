@@ -44,7 +44,9 @@ namespace ScrubBot.Handlers
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
                 .AddHandlers() // See ServiceCollectionExtensions.cs
-                .AddServices() // See ServiceCollectionExtensions.cs
+                .AddServices()
+                .AddManagers()
+                .AddTools()
                 .AddDbContext<DatabaseContext>(options => {
                     options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
                 })
