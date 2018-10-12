@@ -10,8 +10,8 @@ namespace ScrubBot.Handlers
 {
     public class EventHandler
     {
-        private DiscordSocketClient _client;
-        private EventService _eventService;
+        private readonly DiscordSocketClient _client;
+        private readonly EventService _eventService;
         private readonly ConversionHandler _conversionHandler;
 
         public EventHandler(DiscordSocketClient client, EventService eventService, ConversionHandler conversionHandler)
@@ -37,21 +37,24 @@ namespace ScrubBot.Handlers
         }
 
         // .ConfigureAwait(false) doesn't wait for the call to finish and just returns to the caller
-        private async Task Ready() => await Task.Run(() => RegisterUsers()).ConfigureAwait(false);
+        // private async Task Ready() => await Task.Run(async () => await RegisterUsers()).ConfigureAwait(false);
 
-        private void RegisterUsers()
+        private async Task Ready()
         {
             try
             {
-                foreach (SocketGuild guild in _client.Guilds)
+                await Task.Run(() =>
                 {
-                    foreach (SocketGuildUser user in guild.Users)
+                    foreach (SocketGuild guild in _client.Guilds)
                     {
-                        if (user.IsBot) continue;
+                        foreach (SocketGuildUser user in guild.Users)
+                        {
+                            if (user.IsBot) continue;
                         
-                        _conversionHandler.AddUser(user);
+                            _conversionHandler.AddUser(user);
+                        }
                     }
-                }
+                }).ConfigureAwait(false);
             }
             catch (Exception e)
             {

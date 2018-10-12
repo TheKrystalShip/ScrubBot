@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using System.Collections.Generic;
+using Discord;
+using ScrubBot.Database.Models;
 
 namespace ScrubBot.Extensions
 {
@@ -18,6 +20,29 @@ namespace ScrubBot.Extensions
                 .WithColor(Color.Green)
                 .WithTitle("Success")
                 .WithDescription(message);
+        }
+
+        public static EmbedBuilder CreateMessage(this EmbedBuilder embedBuilder, string title, string message)
+        {
+            return embedBuilder
+                .WithColor(Color.Purple)
+                .WithTitle(title)
+                .WithDescription(message);
+        }
+
+        public static EmbedBuilder CreateEventEmbed(this EmbedBuilder embedBuilder, string title, List<Event> events)
+        {
+            embedBuilder
+                .WithColor(Color.Purple)
+                .WithTitle(title);
+
+            foreach (var _event in events)
+            {
+                embedBuilder.AddField(_event.Title, 
+                    $"Occurence date: {_event.OccurenceDate:dd-MM-yyyy hh:mm}\nDescription: {_event.Description}\n");
+            }
+
+            return embedBuilder;
         }
     }
 }

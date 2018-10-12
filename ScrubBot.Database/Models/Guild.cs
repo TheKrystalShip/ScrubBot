@@ -17,5 +17,7 @@ namespace ScrubBot.Database.Models
         public string Prefix { get; set; } = "#";
 
         public virtual List<User> Users { get; set; } = new List<User>();
+
+        public virtual List<Event> Events { get; set; } = new List<Event>();
     }
 }
