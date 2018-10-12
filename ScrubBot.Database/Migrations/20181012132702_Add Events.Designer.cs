@@ -9,14 +9,47 @@ using ScrubBot.Database;
 namespace ScrubBot.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20181012115735_Initial")]
-    partial class Initial
+    [Migration("20181012132702_Add Events")]
+    partial class AddEvents
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
+
+            modelBuilder.Entity("ScrubBot.Database.Models.Event", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AuthorId")
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("GuildId")
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
+
+                    b.Property<DateTime>("OccurenceDate");
+
+                    b.Property<string>("Title");
+
+                    b.Property<string>("UserId")
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("GuildId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Events");
+                });
 
             modelBuilder.Entity("ScrubBot.Database.Models.Guild", b =>
                 {
@@ -53,26 +86,47 @@ namespace ScrubBot.Database.Migrations
                     b.Property<string>("Discriminator")
                         .HasMaxLength(20);
 
+                    b.Property<Guid?>("EventId");
+
                     b.Property<string>("GuildId")
                         .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
                     b.Property<string>("Nickname")
                         .HasMaxLength(50);
 
-                    b.Property<int?>("TimezoneOffset");
-
                     b.Property<string>("Username")
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId");
 
                     b.HasIndex("GuildId");
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ScrubBot.Database.Models.Event", b =>
+                {
+                    b.HasOne("ScrubBot.Database.Models.User", "Author")
+                        .WithMany("AuthoringEvents")
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("ScrubBot.Database.Models.Guild", "Guild")
+                        .WithMany("Events")
+                        .HasForeignKey("GuildId");
+
+                    b.HasOne("ScrubBot.Database.Models.User")
+                        .WithMany("SubscribedEvents")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("ScrubBot.Database.Models.User", b =>
                 {
+                    b.HasOne("ScrubBot.Database.Models.Event")
+                        .WithMany("Subscribers")
+                        .HasForeignKey("EventId");
+
                     b.HasOne("ScrubBot.Database.Models.Guild", "Guild")
                         .WithMany("Users")
                         .HasForeignKey("GuildId")

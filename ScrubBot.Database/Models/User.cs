@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ScrubBot.Database.Models
 {
@@ -17,8 +18,11 @@ namespace ScrubBot.Database.Models
         public string Discriminator { get; set; }
 
         public string AvatarUrl { get; set; }
-        public int? TimezoneOffset { get; set; } = null;
 
         public virtual Guild Guild { get; set; }
+
+        public virtual List<Event> AuthoringEvents { get; set; } = new List<Event>();
+
+        public virtual List<Event> SubscribedEvents { get; set; } = new List<Event>();
     }
 }
