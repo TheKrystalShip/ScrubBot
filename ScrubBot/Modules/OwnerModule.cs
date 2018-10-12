@@ -28,7 +28,7 @@ namespace ScrubBot.Modules
         [Command("ChangeGame"), Summary("You do not have access to this command")]
         public async Task ChangeGame([Remainder]string newGame)
         {
-            EmbedBuilder embed = new EmbedBuilder().CreateSuccess();
+            EmbedBuilder embed = new EmbedBuilder().CreateSuccess("Done");
 
             embed.AddField("Change Game:", $"Changed active game from {Context.Client.CurrentUser.Game} to {newGame}");
 
