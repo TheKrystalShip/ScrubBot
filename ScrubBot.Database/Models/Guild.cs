@@ -5,11 +5,12 @@ namespace ScrubBot.Database.Models
 {
     public class Guild
     {
-        /// <summary>The Guild's ulong ID, mapped to a string.</summary>
         [Key]
-        public string Id { get; set; }
+        public ulong Id { get; set; }
+
         [MaxLength(100)]
         public string Name { get; set; }
+
         public string IconUrl { get; set; }
         public int MemberCount { get; set; }
         public string AuditChannelId { get; set; }

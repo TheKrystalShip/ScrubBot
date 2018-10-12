@@ -77,10 +77,9 @@ namespace ScrubBot.Modules
 
         private bool GetGuild(out Guild outGuild)
         {
-            string guildId = Context.Guild.Id.ToString();
-            Guild localGuild = _db.Guilds.FirstOrDefault(x => x.Id == guildId);
+            Guild localGuild = _db.Guilds.FirstOrDefault(x => x.Id == Context.Guild.Id);
 
-            if (localGuild == null)
+            if (localGuild is null)
             {
                 outGuild = null;
                 return false;

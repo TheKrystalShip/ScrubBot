@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Database;
 using ScrubBot.Database.Models;
+using ScrubBot.Extensions;
 
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,42 +23,25 @@ namespace ScrubBot.Handlers
 
         public void AddUser(SocketGuildUser socketGuildUser)
         {
-            string socketUserId = socketGuildUser.Id.ToString();
-
-            if (_db.Users.Any(x => x.Id == socketUserId))
+            if (_db.Users.Any(x => x.Id == socketGuildUser.Id))
                 return;
-            
-            User user = new User
-            {
-                Username = socketGuildUser.Username,
-                Id = socketUserId,
-                Nickname = socketGuildUser.Nickname,
-                AvatarUrl = socketGuildUser.GetAvatarUrl(),
-                Discriminator = socketGuildUser.Discriminator,
-                Guild = ToGuild(socketGuildUser.Guild)
-            };
+
+            User user = socketGuildUser.ToUser(); // See .\Extensions\SocketGuildUserExtensions.cs
+            user.Guild = ToGuild(socketGuildUser.Guild);
 
             _db.Users.Add(user);
             _db.SaveChanges();
+
             UsersAdded++;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)
         {
-            string socketUserId = socketGuildUser.Id.ToString();
-
-            if (_db.Users.Any(x => x.Id == socketUserId))
+            if (_db.Users.Any(x => x.Id == socketGuildUser.Id))
                 return;
 
-            User user = new User
-            {
-                Username = socketGuildUser.Username,
-                Id = socketUserId,
-                Nickname = socketGuildUser.Nickname,
-                AvatarUrl = socketGuildUser.GetAvatarUrl(),
-                Discriminator = socketGuildUser.Discriminator,
-                Guild = ToGuild(socketGuildUser.Guild)
-            };
+            User user = socketGuildUser.ToUser(); // See .\Extensions\SocketGuildUserExtensions.cs
+            user.Guild = ToGuild(socketGuildUser.Guild);
 
             await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
@@ -67,37 +51,36 @@ namespace ScrubBot.Handlers
 
         public void RemoveUser(SocketGuildUser user)
         {
-            string userId = user.Id.ToString();
+            // .FirstOrDefault returns null is no value is found.
+            User userToRemove = _db.Users.FirstOrDefault(x => x.Id == user.Id);
 
-            if (!_db.Users.Any(x => x.Id == userId))
+            if (userToRemove is null)
                 return;
 
-            User userToRemove = _db.Users.FirstOrDefault(x => x.Id == userId);
             _db.Users.Remove(userToRemove);
             _db.SaveChanges();
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)
         {
-            string userId = user.Id.ToString();
+            // .FirstOrDefault returns null is no value is found.
+            User userToRemove = await _db.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
 
-            if (!_db.Users.Any(x => x.Id == userId))
+            if (userToRemove is null)
                 return;
 
-            User userToRemove = await _db.Users.FirstOrDefaultAsync(x => x.Id == userId);
             _db.Users.Remove(userToRemove);
             await _db.SaveChangesAsync();
         }
 
         private Guild ToGuild(SocketGuild socketGuild)
         {
-            string socketGuildId = socketGuild.Id.ToString();
-            return _db.Guilds.FirstOrDefault(x => x.Id == socketGuildId) ??
+            return _db.Guilds.FirstOrDefault(x => x.Id == socketGuild.Id) ??
                    new Guild
                    {
                        Name = socketGuild.Name,
                        IconUrl = socketGuild.IconUrl,
-                       Id = socketGuild.Id.ToString(),
+                       Id = socketGuild.Id,
                        MemberCount = socketGuild.MemberCount
                    };
         }

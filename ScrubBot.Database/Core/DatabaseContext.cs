@@ -16,14 +16,6 @@ namespace ScrubBot.Database
 
         public void MigrateDatabase() => Database.Migrate();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            optionsBuilder.UseSqlite("Data source='WhateverTheFuck.db'");
-            optionsBuilder.EnableSensitiveDataLogging(true);
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -32,6 +24,14 @@ namespace ScrubBot.Database
                 .HasMany(x => x.Users)
                 .WithOne(x => x.Guild)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Guild>()
+                .Property(x => x.Id)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Id)
+                .HasConversion<string>();
         }
     }
 }
