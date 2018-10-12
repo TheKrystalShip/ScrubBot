@@ -268,3 +268,4 @@ ScrubBot\.Database/Properties/
 ScrubBot/Properties
 ScrubBot/builds
 *.db
+\.vscode/
