@@ -15,10 +15,10 @@ namespace ScrubBot.Services
             Timer = new Timer(Loop, null, startDelay, interval);
             Start?.Invoke(this);
         }
-    
+
         public virtual void Loop(object state) => Tick?.Invoke(this);
-    
-        public override string ToString() => base.ToString().Replace("ScrubBot.Services.", string.Empty);
+
+        public override string ToString() => GetType().Name;
 
         public void Dispose()
         {

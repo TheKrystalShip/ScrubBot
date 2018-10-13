@@ -16,8 +16,7 @@ namespace ScrubBot.Modules
     {
         public AdminModule(Tools tools) : base(tools)
         {
-            Guild = Tools.Database.Guilds.Find(Context.Guild.Id);
-            User = Tools.Database.Users.Find(Context.User.Id);
+
         }
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
@@ -39,7 +38,7 @@ namespace ScrubBot.Modules
                 return;
             }
 
-            string old = Guild.Prefix;            
+            string old = Guild.Prefix;
 
             await Tools.Prefix.SetAsync(Guild.Id, newPrefix);
 
@@ -54,7 +53,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION"};
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
                 errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
@@ -62,9 +61,7 @@ namespace ScrubBot.Modules
 
             Guild.AuditChannelId = newChannel.Id;
 
-            EmbedBuilder embed = new EmbedBuilder().CreateSuccess($"Set this server's audit channel to {newChannel.Mention}");
-
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Set this server's audit channel to {newChannel.Mention}"));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ScrubBot.Services
         private readonly DiscordSocketClient _client;
         private readonly ConversionHandler _conversionHandler;
         private readonly DatabaseContext _db;
-        
+
         public EventService(DiscordSocketClient client, ConversionHandler conversionHandler, DatabaseContext dbContext)
         {
             _client = client;
@@ -59,7 +59,7 @@ namespace ScrubBot.Services
         {
             await Task.CompletedTask;
         }
-        
+
         public async Task UserBanned(SocketUser user, SocketGuild guild)
         {
             await Task.CompletedTask;
@@ -79,7 +79,7 @@ namespace ScrubBot.Services
         {
             await _conversionHandler.RemoveUserAsync(user);
         }
-        
+
         public async Task UserUpdated(SocketUser before, SocketUser after)
         {
             await Task.CompletedTask;

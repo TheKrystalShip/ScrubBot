@@ -38,7 +38,7 @@ namespace ScrubBot.Extensions
 
             foreach (var _event in events)
             {
-                embedBuilder.AddField(_event.Title, 
+                embedBuilder.AddField(_event.Title,
                     $"Occurence date: {_event.OccurenceDate:dd-MM-yyyy hh:mm}\nDescription: {_event.Description}\n");
             }
 

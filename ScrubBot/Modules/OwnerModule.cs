@@ -14,8 +14,7 @@ namespace ScrubBot.Modules
     {
         public OwnerModule(Tools tools) : base(tools)
         {
-            Guild = Tools.Database.Guilds.Find(Context.Guild.Id);
-            User = Tools.Database.Users.Find(Context.User.Id);
+
         }
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
@@ -27,12 +26,13 @@ namespace ScrubBot.Modules
         [Command("ChangeGame"), Summary("You do not have access to this command")]
         public async Task ChangeGame([Remainder]string newGame)
         {
-            EmbedBuilder embed = new EmbedBuilder().CreateSuccess("Done");
-
-            embed.AddField("Change Game:", $"Changed active game from {Context.Client.CurrentUser.Game} to {newGame}");
-
             await Context.Client.SetGameAsync(newGame);
-            await ReplyAsync("", false, embed.Build());
+
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                .CreateSuccess("Done")
+                .AddField("Change Game:", $"Changed active game from {Context.Client.CurrentUser.Game} to {newGame}");
+
+            await ReplyAsync(embedBuilder);
         }
 
         [Command("SetStringPrefix"), Summary("Change this server's current command string prefix")]
@@ -47,16 +47,17 @@ namespace ScrubBot.Modules
                 return;
             }
 
-            if (!newPrefix.EndsWith(" ")) newPrefix += " ";
+            if (!newPrefix.EndsWith(" "))
+            {
+                newPrefix += " ";
+            }
 
             string old = Guild.Prefix;
 
-            EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Title = "Success", Description = $"Changed Command String Prefix from ' {old} ' to ' {newPrefix} '" };
-
             Guild.Prefix = newPrefix;
-            await Tools.Prefix.SetAsync(Guild.Id, newPrefix);
+            await Tools.Prefix.SetAsync(Guild.Id, newPrefix).ConfigureAwait(false);
 
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(new EmbedBuilder().CreateSuccess("Changed Command String Prefix from ' {old} ' to ' {newPrefix} '"));
         }
 
         [Command("SetAuditChannel"), Summary("Change this server's current audit channel")]
@@ -65,18 +66,15 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION"};
+                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
                 errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
                 await ReplyAsync("", false, errorEmbed.Build());
                 return;
             }
 
-            EmbedBuilder embed = new EmbedBuilder { Color = Color.Green, Description = "Success" };
-            embed.AddField("Audit Channel:", $"Set this server's audit channel to {newChannel.Mention}");
-
             Guild.AuditChannelId = newChannel.Id;
 
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Set this server's audit channel to {newChannel.Mention}"));
         }
     }
 }

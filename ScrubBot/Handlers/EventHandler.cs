@@ -21,7 +21,7 @@ namespace ScrubBot.Handlers
             _conversionHandler = conversionHandler;
 
             _client.Log += LogMessage;
-            _client.Ready += Ready;
+            _client.Ready += () => Task.Run(Ready);
 
             SubscribeToAuditService();
         }
@@ -36,9 +36,6 @@ namespace ScrubBot.Handlers
             return Task.CompletedTask;
         }
 
-        // .ConfigureAwait(false) doesn't wait for the call to finish and just returns to the caller
-        // private async Task Ready() => await Task.Run(async () => await RegisterUsers()).ConfigureAwait(false);
-
         private async Task Ready()
         {
             try
@@ -50,7 +47,7 @@ namespace ScrubBot.Handlers
                         foreach (SocketGuildUser user in guild.Users)
                         {
                             if (user.IsBot) continue;
-                        
+
                             _conversionHandler.AddUser(user);
                         }
                     }
