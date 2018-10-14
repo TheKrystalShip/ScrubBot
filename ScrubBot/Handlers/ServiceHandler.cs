@@ -25,7 +25,7 @@ namespace ScrubBot.Handlers
             //LogHandler.WriteLine(LogTarget.Console, "Starting all loops...");
 
             foreach (Service service in ServiceList)
-                service.Initialize(InitializeDelay, Interval);
+                service.Init(InitializeDelay, Interval);
         }
 
         public static void StopAllLoops()

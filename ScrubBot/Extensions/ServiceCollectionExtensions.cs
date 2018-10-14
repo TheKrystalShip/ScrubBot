@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using ScrubBot.Handlers;
+using ScrubBot.Managers;
 using ScrubBot.Services;
 
 namespace ScrubBot.Extensions
@@ -10,9 +11,19 @@ namespace ScrubBot.Extensions
         public static IServiceCollection AddHandlers(this IServiceCollection services)
         {
             services.AddSingleton<ConversionHandler>();
-            services.AddSingleton<EventHandler>();
             services.AddSingleton<ServiceHandler>();
             services.AddSingleton<PrefixHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddManagers(this IServiceCollection services)
+        {
+            services.AddSingleton<ChannelManager>();
+            services.AddSingleton<EventManager>();
+            services.AddSingleton<GuildManager>();
+            services.AddSingleton<RoleManager>();
+            services.AddSingleton<UserManager>();
 
             return services;
         }
