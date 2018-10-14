@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ScrubBot.Database;
 using ScrubBot.Extensions;
+using ScrubBot.Managers;
 using ScrubBot.Properties;
 
 using System;
@@ -45,13 +46,14 @@ namespace ScrubBot.Handlers
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
                 .AddHandlers()
+                .AddManagers()
                 .AddServices()
                 .AddLogging()
                 .AddTools()
                 .BuildServiceProvider();
 
             _serviceProvider.GetRequiredService<SQLiteContext>().MigrateDatabase();
-            _serviceProvider.GetRequiredService<EventHandler>();
+            _serviceProvider.GetRequiredService<EventManager>();
             _serviceProvider.GetRequiredService<ServiceHandler>();
             _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
 

@@ -9,30 +9,15 @@ using ScrubBot.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ScrubBot.Handlers
+namespace ScrubBot.Managers
 {
-    public class ConversionHandler
+    public class UserManager
     {
         private readonly SQLiteContext _dbContext;
-        public static int UsersAdded = 0;
 
-        public ConversionHandler(SQLiteContext dbContext)
+        public UserManager(SQLiteContext dbContext)
         {
             _dbContext = dbContext;
-        }
-
-        public void AddUser(SocketGuildUser socketGuildUser)
-        {
-            if (_dbContext.Users.Any(x => x.Id == socketGuildUser.Id))
-                return;
-
-            User user = socketGuildUser.ToUser();
-            user.Guild = ToGuild(socketGuildUser.Guild);
-
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-
-            UsersAdded++;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)
@@ -45,19 +30,6 @@ namespace ScrubBot.Handlers
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-
-            UsersAdded++;
-        }
-
-        public void RemoveUser(SocketGuildUser user)
-        {
-            User userToRemove = _dbContext.Users.FirstOrDefault(x => x.Id == user.Id);
-
-            if (userToRemove is null)
-                return;
-
-            _dbContext.Users.Remove(userToRemove);
-            _dbContext.SaveChanges();
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)
@@ -81,6 +53,36 @@ namespace ScrubBot.Handlers
                        Id = socketGuild.Id,
                        MemberCount = socketGuild.MemberCount
                    };
+        }
+
+        public async Task UserBannedAsync(SocketUser user, SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task UserJoinedAsync(SocketGuildUser user)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task UserLeftAsync(SocketGuildUser user)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task UserUnbannedAsync(SocketUser user, SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task UserUpdatedAsync(SocketUser before, SocketUser after)
+        {
+
+            await Task.CompletedTask;
         }
     }
 }
