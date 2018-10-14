@@ -19,4 +19,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

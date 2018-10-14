@@ -38,7 +38,7 @@ namespace ScrubBot.Handlers
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
 
             _serviceProvider = new ServiceCollection()
-                .AddDbContext<DatabaseContext>(options =>
+                .AddDbContext<SQLiteContext>(options =>
                 {
                     options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
                 })
@@ -50,7 +50,7 @@ namespace ScrubBot.Handlers
                 .AddTools()
                 .BuildServiceProvider();
 
-            _serviceProvider.GetRequiredService<DatabaseContext>().MigrateDatabase();
+            _serviceProvider.GetRequiredService<SQLiteContext>().MigrateDatabase();
             _serviceProvider.GetRequiredService<EventHandler>();
             _serviceProvider.GetRequiredService<ServiceHandler>();
             _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();

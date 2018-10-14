@@ -11,9 +11,9 @@ namespace ScrubBot.Services
     {
         private readonly DiscordSocketClient _client;
         private readonly ConversionHandler _conversionHandler;
-        private readonly DatabaseContext _db;
+        private readonly SQLiteContext _db;
 
-        public EventService(DiscordSocketClient client, ConversionHandler conversionHandler, DatabaseContext dbContext)
+        public EventService(DiscordSocketClient client, ConversionHandler conversionHandler, SQLiteContext dbContext)
         {
             _client = client;
             _conversionHandler = conversionHandler;

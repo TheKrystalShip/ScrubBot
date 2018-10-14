@@ -2,7 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -20,21 +20,21 @@ namespace ScrubBot.Modules
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
         public async Task Info()
         {
-            EmbedBuilder embed = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };
-            embed.AddField("Server:", (Guild.Name ?? "null") + "\n");
+            EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };
+            embedBuilder.AddField("Server:", (Guild.Name ?? "null") + "\n");
 
             SocketTextChannel auditChannel = Context.Guild.GetChannel(Guild.AuditChannelId) as SocketTextChannel;
-            embed.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
-            embed.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null") + "\n");
+            embedBuilder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
+            embedBuilder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null") + "\n");
 
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(embedBuilder);
         }
 
         [Command("Help")]
         public async Task Help()
         {
             List<CommandInfo> commands = Tools.CommandService.Commands.ToList();
-            EmbedBuilder embed = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
+            EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
 
             foreach (CommandInfo command in commands)
             {
@@ -47,10 +47,10 @@ namespace ScrubBot.Modules
                 if (command.Parameters.Count > 0)
                     embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
 
-                embed.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
+                embedBuilder.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
             }
 
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(embedBuilder);
         }
     }
 }

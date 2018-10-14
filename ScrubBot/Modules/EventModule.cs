@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore.Internal;
 
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
 using System;
@@ -24,7 +24,7 @@ namespace ScrubBot.Modules
         [Command("ShowEvents")]
         public async Task ShowEvents(int amount = 10)
         {
-            List<Event> events = Tools.Database.Events
+            List<Event> events = Database.Events
                 .Where(x => x.Guild.Id == Context.Guild.Id)
                 .OrderByDescending(x => x.CreationDate)
                 .Take(amount)
@@ -43,7 +43,7 @@ namespace ScrubBot.Modules
         [Command("CreateEvent")]
         public async Task CreateEvent(string title, string description, DateTime occurenceDateTime, int maxSubscribers)
         {
-            if (Tools.Database.Events.Any(x => x.Title == title && x.Guild.Id == Context.Guild.Id))
+            if (Database.Events.Any(x => x.Title == title && x.Guild.Id == Context.Guild.Id))
             {
                 await ReplyAsync(new EmbedBuilder().CreateError("An event with this name already exists!"));
                 return;
@@ -58,7 +58,7 @@ namespace ScrubBot.Modules
                 MaxSubscribers = maxSubscribers
             };
 
-            await Tools.Database.Events.AddAsync(newEvent);
+            await Database.Events.AddAsync(newEvent);
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Event {title} has been successfully added for {occurenceDateTime} with a max of {maxSubscribers} subscribers!"));
         }
@@ -66,7 +66,7 @@ namespace ScrubBot.Modules
         [Command("DeleteEvent")]
         public async Task DeleteEvent(string title)
         {
-            Event _event = Tools.Database.Events.FirstOrDefault(x => x.Guild.Id == Context.Guild.Id && x.Title == title);
+            Event _event = Database.Events.FirstOrDefault(x => x.Guild.Id == Context.Guild.Id && x.Title == title);
 
             if (_event is null)
             {
@@ -76,15 +76,13 @@ namespace ScrubBot.Modules
 
             if (_event.Author.Id != Context.User.Id)
             {
-
                 await ReplyAsync(new EmbedBuilder().CreateError("You are not allowed to modify someone else's event"));
                 return;
             }
 
-            Tools.Database.Events.Remove(_event);
+            Database.Events.Remove(_event);
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Successfully removed event {_event.Title}!"));
-            return;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using ScrubBot.Database;
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 
 using System.Collections.Concurrent;
 using System.Linq;
@@ -9,10 +9,10 @@ namespace ScrubBot.Handlers
 {
     public class PrefixHandler
     {
-        private readonly DatabaseContext _context;
+        private readonly SQLiteContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
-        public PrefixHandler(DatabaseContext dbContext)
+        public PrefixHandler(SQLiteContext dbContext)
         {
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
@@ -38,7 +38,8 @@ namespace ScrubBot.Handlers
             _context.Guilds.Update(guild);
 
             await _context.SaveChangesAsync();
-            return _prefixes.TryAdd(guildId, prefix);
+            _prefixes.AddOrUpdate(guildId, prefix, (key, oldValue) => prefix);
+            return await Task.FromResult(true);
         }
     }
 }
