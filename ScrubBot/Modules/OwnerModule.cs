@@ -2,7 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
 using System.Threading.Tasks;

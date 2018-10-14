@@ -8,7 +8,7 @@ using ScrubBot.Database;
 
 namespace ScrubBot.Database.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(SQLiteContext))]
     [Migration("20181012132702_Add Events")]
     partial class AddEvents
     {

@@ -2,15 +2,13 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 using ScrubBot.Extensions;
-using ScrubBot.Preconditions;
 
 using System.Threading.Tasks;
 
 namespace ScrubBot.Modules
 {
-    [GuildRegistered]
     [RequireUserPermission(GuildPermission.Administrator)]
     public class AdminModule : Module
     {
@@ -42,9 +40,7 @@ namespace ScrubBot.Modules
 
             await Tools.Prefix.SetAsync(Guild.Id, newPrefix);
 
-            EmbedBuilder embed = new EmbedBuilder().CreateSuccess($"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '");
-
-            await ReplyAsync("", false, embed.Build());
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '"));
         }
 
         [Command("SetAuditChannel"), Summary("Change this server's current audit channel")]

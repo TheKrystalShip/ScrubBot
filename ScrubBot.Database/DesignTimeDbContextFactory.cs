@@ -6,22 +6,22 @@ using System.IO;
 
 namespace ScrubBot.Database.Core
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<SQLiteContext>
     {
-        public DatabaseContext CreateDbContext(string[] args)
+        public SQLiteContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"))
                 .AddJsonFile("settings.json", optional: false)
                 .Build();
 
-            DbContextOptionsBuilder<DatabaseContext> builder = new DbContextOptionsBuilder<DatabaseContext>();
+            DbContextOptionsBuilder<SQLiteContext> builder = new DbContextOptionsBuilder<SQLiteContext>();
 
             string connectionString = configuration.GetConnectionString("SQLite");
 
             builder.UseSqlite(connectionString);
 
-            return new DatabaseContext(builder.Options);
+            return new SQLiteContext(builder.Options);
         }
     }
 }

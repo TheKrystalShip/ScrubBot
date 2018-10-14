@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using ScrubBot.Database.Models;
+using ScrubBot.Domain;
 
 namespace ScrubBot.Database
 {
-    public class DatabaseContext : DbContext
+    public class SQLiteContext : DbContext
     {
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
 
-        public DatabaseContext(DbContextOptions options) : base(options)
+        public SQLiteContext(DbContextOptions options) : base(options)
         {
 
         }

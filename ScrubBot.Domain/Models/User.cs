@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ScrubBot.Database.Models
+namespace ScrubBot.Domain
 {
     public class User
     {

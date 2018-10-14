@@ -7,11 +7,11 @@ namespace ScrubBot
 {
     public class Tools
     {
-        public DatabaseContext Database { get; set; }
+        public SQLiteContext Database { get; set; }
         public CommandService CommandService { get; set; }
         public PrefixHandler Prefix { get; set; }
 
-        public Tools(DatabaseContext database, CommandService commandService, PrefixHandler prefix)
+        public Tools(SQLiteContext database, CommandService commandService, PrefixHandler prefix)
         {
             Database = database;
             CommandService = commandService;
