@@ -39,7 +39,7 @@ namespace ScrubBot.Modules
             foreach (CommandInfo command in commands)
             {
                 if (command.Name == "Help") continue;
-                
+
                 if (command.Module.Name == typeof(OwnerModule).Name) continue;
 
                 string embedFieldText = command.Summary;
