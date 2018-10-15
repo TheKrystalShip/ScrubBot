@@ -1,88 +1,40 @@
-﻿using Discord.WebSocket;
-
+﻿
 using ScrubBot.Database;
-using ScrubBot.Handlers;
 
-using System.Threading.Tasks;
+using System;
+using System.Threading;
 
 namespace ScrubBot.Services
 {
     public class EventService : Service
     {
-        private readonly DiscordSocketClient _client;
-        private readonly ConversionHandler _conversionHandler;
-        private readonly SQLiteContext _db;
+        protected override Timer Timer { get; set; }
+        public override event Action<Service> Start;
+        public override event Action<Service> Stop;
+        public override event Action<Service> Tick;
+        private readonly SQLiteContext _dbContext;
 
-        public EventService(DiscordSocketClient client, ConversionHandler conversionHandler, SQLiteContext dbContext)
+        public EventService(SQLiteContext dbContext)
         {
-            _client = client;
-            _conversionHandler = conversionHandler;
-            _db = dbContext;
+            _dbContext = dbContext;
         }
 
-        public async Task ChannelCreated(SocketChannel socketChannel)
+        public override void Init(int startDelay = 0, int interval = 1000)
         {
-            await Task.CompletedTask;
+            Timer = new Timer(Loop, null, startDelay, interval);
+            Start?.Invoke(this);
         }
 
-        public async Task ChannelUpdated(SocketChannel beforeSocketChannel, SocketChannel afterSocketChannel)
+        public override void Loop(object state)
         {
-            await Task.CompletedTask;
+
+            Tick?.Invoke(this);
         }
 
-        public async Task ChannelDestroyed(SocketChannel socketChannel)
+        public override void Dispose()
         {
-            await Task.CompletedTask;
-        }
-
-        public async Task GuildMemberUpdated(SocketGuildUser before, SocketGuildUser after)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task GuildUpdated(SocketGuild before, SocketGuild after)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task RoleCreated(SocketRole role)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task RoleDeleted(SocketRole role)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task RoleUpdated(SocketRole before, SocketRole after)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task UserBanned(SocketUser user, SocketGuild guild)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task UserUnbanned(SocketUser user, SocketGuild guild)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task UserJoined(SocketGuildUser user)
-        {
-            await _conversionHandler.AddUserAsync(user);
-        }
-
-        public async Task UserLeft(SocketGuildUser user)
-        {
-            await _conversionHandler.RemoveUserAsync(user);
-        }
-
-        public async Task UserUpdated(SocketUser before, SocketUser after)
-        {
-            await Task.CompletedTask;
+            Timer.Dispose();
+            Stop.Invoke(this);
         }
     }
 }

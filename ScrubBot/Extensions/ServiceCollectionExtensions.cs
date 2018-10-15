@@ -10,7 +10,6 @@ namespace ScrubBot.Extensions
     {
         public static IServiceCollection AddHandlers(this IServiceCollection services)
         {
-            services.AddSingleton<ConversionHandler>();
             services.AddSingleton<ServiceHandler>();
             services.AddSingleton<PrefixHandler>();
 

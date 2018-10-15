@@ -14,10 +14,18 @@ namespace ScrubBot.Managers
     public class UserManager
     {
         private readonly SQLiteContext _dbContext;
+        private readonly DiscordSocketClient _client;
 
-        public UserManager(SQLiteContext dbContext)
+        public UserManager(SQLiteContext dbContext, DiscordSocketClient client)
         {
             _dbContext = dbContext;
+            _client = client;
+
+            _client.UserBanned += UserBannedAsync;
+            _client.UserJoined += UserJoinedAsync;
+            _client.UserLeft += UserLeftAsync;
+            _client.UserUnbanned += UserUnbannedAsync;
+            _client.UserUpdated += UserUpdatedAsync;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)

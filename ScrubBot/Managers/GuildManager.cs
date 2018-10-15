@@ -9,10 +9,15 @@ namespace ScrubBot.Managers
     public class GuildManager
     {
         private readonly SQLiteContext _dbContext;
+        private readonly DiscordSocketClient _client;
 
-        public GuildManager(SQLiteContext dbContext)
+        public GuildManager(SQLiteContext dbContext, DiscordSocketClient client)
         {
             _dbContext = dbContext;
+            _client = client;
+
+            _client.GuildMemberUpdated += GuildMemberUpdatedAsync;
+            _client.GuildUpdated += GuildUpdatedAsync;
         }
 
         public async Task GuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)

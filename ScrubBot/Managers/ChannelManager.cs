@@ -9,10 +9,16 @@ namespace ScrubBot.Managers
     public class ChannelManager
     {
         private readonly SQLiteContext _dbContext;
+        private readonly DiscordSocketClient _client;
 
-        public ChannelManager(SQLiteContext dbContext)
+        public ChannelManager(SQLiteContext dbContext, DiscordSocketClient client)
         {
             _dbContext = dbContext;
+            _client = client;
+
+            _client.ChannelCreated += ChannelCreatedAsync;
+            _client.ChannelDestroyed += ChannelDestroyedAsync;
+            _client.ChannelUpdated += ChannelUpdatedAsync;
         }
 
         public async Task ChannelCreatedAsync(SocketChannel channel)

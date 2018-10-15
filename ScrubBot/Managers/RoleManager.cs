@@ -9,10 +9,16 @@ namespace ScrubBot.Managers
     public class RoleManager
     {
         private readonly SQLiteContext _dbContext;
+        private readonly DiscordSocketClient _client;
 
-        public RoleManager(SQLiteContext dbContext)
+        public RoleManager(SQLiteContext dbContext, DiscordSocketClient client)
         {
             _dbContext = dbContext;
+            _client = client;
+
+            _client.RoleCreated += RoleCreatedAsync;
+            _client.RoleDeleted += RoleDeletedAsync;
+            _client.RoleUpdated += RoleUpdatedAsync;
         }
 
         public async Task RoleCreatedAsync(SocketRole role)

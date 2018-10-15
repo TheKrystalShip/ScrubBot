@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ScrubBot.Database;
 using ScrubBot.Extensions;
-using ScrubBot.Managers;
 using ScrubBot.Properties;
 
 using System;
@@ -38,23 +37,8 @@ namespace ScrubBot.Handlers
 
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
 
-            _serviceProvider = new ServiceCollection()
-                .AddDbContext<SQLiteContext>(options =>
-                {
-                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
-                })
-                .AddSingleton(_client)
-                .AddSingleton(_commandService)
-                .AddHandlers()
-                .AddManagers()
-                .AddServices()
-                .AddLogging()
-                .AddTools()
-                .BuildServiceProvider();
-
-            _serviceProvider.GetRequiredService<SQLiteContext>().MigrateDatabase();
-            _serviceProvider.GetRequiredService<EventManager>();
-            _serviceProvider.GetRequiredService<ServiceHandler>();
+            _serviceProvider = ConfigureServiceProvider();
+            _serviceProvider.Init();
             _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
 
             _commandService.Log += CommandServiceLog;
@@ -80,6 +64,23 @@ namespace ScrubBot.Handlers
                 Console.WriteLine(e);
                 return null;
             }
+        }
+
+        private IServiceProvider ConfigureServiceProvider()
+        {
+            return new ServiceCollection()
+                .AddDbContext<SQLiteContext>(options =>
+                {
+                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
+                })
+                .AddSingleton(_client)
+                .AddSingleton(_commandService)
+                .AddHandlers()
+                .AddManagers()
+                .AddServices()
+                .AddLogging()
+                .AddTools()
+                .BuildServiceProvider();
         }
 
         private async Task HandleCommand(SocketMessage msg)

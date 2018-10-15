@@ -3,27 +3,15 @@ using System.Threading;
 
 namespace ScrubBot.Services
 {
-    public class Service : IDisposable
+    public abstract class Service : IDisposable
     {
-        public Timer Timer { get; set; }
-        public event Action<Service> Start;
-        public event Action<Service> Stop;
-        public event Action<Service> Tick;
+        protected abstract Timer Timer { get; set; }
+        public abstract event Action<Service> Start;
+        public abstract event Action<Service> Stop;
+        public abstract event Action<Service> Tick;
 
-        public virtual void Initialize(int startDelay = 0, int interval = 1000)
-        {
-            Timer = new Timer(Loop, null, startDelay, interval);
-            Start?.Invoke(this);
-        }
-
-        public virtual void Loop(object state) => Tick?.Invoke(this);
-
-        public override string ToString() => GetType().Name;
-
-        public void Dispose()
-        {
-            Timer.Dispose();
-            Stop?.Invoke(this);
-        }
+        public abstract void Init(int startDelay = 0, int interval = 1000);
+        public abstract void Loop(object state);
+        public abstract void Dispose();
     }
 }
