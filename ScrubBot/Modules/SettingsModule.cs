@@ -1,9 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-
-using ScrubBot.Domain;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +9,7 @@ namespace ScrubBot.Modules
 {
     public class SettingsModule : Module
     {
-        public SettingsModule(Tools tools) : base(tools)
-        {
-
-        }
+        public SettingsModule(Tools tools) : base(tools) {}
 
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
         public async Task Info()
@@ -40,7 +34,7 @@ namespace ScrubBot.Modules
             {
                 if (command.Name == "Help") continue;
 
-                string embedFieldText = command.Summary;
+                string embedFieldText = command.Summary ?? "No description available\n";
 
                 if (command.Parameters.Count > 0)
                     embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
