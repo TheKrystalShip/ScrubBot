@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -6,16 +7,14 @@ using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
 using System.Threading.Tasks;
+using ScrubBot.Attributes;
 
 namespace ScrubBot.Modules
 {
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireRoleOrOwner(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
-        public AdminModule(Tools tools) : base(tools)
-        {
-
-        }
+        public AdminModule(Tools tools) : base(tools) {}
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
         public async Task UrMomGay()
@@ -23,21 +22,20 @@ namespace ScrubBot.Modules
             await ReplyAsync($"{Context.Message.Author.Mention} No u");
         }
 
+        [Command("HelloThere")]
+        public async Task HelloThere() => await ReplyAsync("General Kenobi!");
+
         [Command("SetPrefix"), Summary("Change this server's current command character prefix")]
-        public async Task SetCharPrefix(string newPrefix)
+        public async Task SetPrefix(string newPrefix)
         {
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
-                errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
-
-                await ReplyAsync("", false, errorEmbed.Build());
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
                 return;
             }
 
             string old = Guild.Prefix;
-
             await Tools.Prefix.SetAsync(Guild.Id, newPrefix);
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '"));
@@ -49,9 +47,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                EmbedBuilder errorEmbed = new EmbedBuilder { Color = Color.Red, Title = "CANNOT PERFORM ACTION" };
-                errorEmbed.Description = $"Admin commands are only allowed in the audit channel ({auditChannel.Mention})\nAborting operation";
-                await ReplyAsync("", false, errorEmbed.Build());
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
                 return;
             }
 
