@@ -40,8 +40,6 @@ namespace ScrubBot.Modules
             {
                 if (command.Name == "Help") continue;
 
-                if (command.Module.Name == typeof(OwnerModule).Name) continue;
-
                 string embedFieldText = command.Summary;
 
                 if (command.Parameters.Count > 0)

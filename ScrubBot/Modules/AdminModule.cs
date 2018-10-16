@@ -7,11 +7,10 @@ using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
 using System.Threading.Tasks;
-using ScrubBot.Attributes;
 
 namespace ScrubBot.Modules
 {
-    [RequireRoleOrOwner(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
+    [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
         public AdminModule(Tools tools) : base(tools) {}
