@@ -51,21 +51,6 @@ namespace ScrubBot.Handlers
             return Task.CompletedTask;
         }
 
-        private string GetPrefix(SocketUserMessage message)
-        {
-            try
-            {
-                var guildChannel = message.Channel as SocketGuildChannel;
-                ulong socketGuildId = guildChannel.Guild.Id;
-                return _prefixHandler.Get(socketGuildId);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return null;
-            }
-        }
-
         private IServiceProvider ConfigureServiceProvider()
         {
             return new ServiceCollection()
@@ -90,7 +75,7 @@ namespace ScrubBot.Handlers
             if (message is null || message.Author.IsBot)
                 return;
 
-            string stringPrefix = GetPrefix(message) ?? Settings.Instance["Prefix:DefaultString"];
+            string stringPrefix = _prefixHandler.Get((message.Channel as SocketGuildChannel).Guild.Id);
             int argPos = 0;
 
             bool hasStringPrefix = message.HasStringPrefix(stringPrefix, ref argPos);
