@@ -1,6 +1,6 @@
 ﻿using ScrubBot.Database;
 using ScrubBot.Domain;
-
+using ScrubBot.Properties;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ namespace ScrubBot.Handlers
         public string Get(ulong guildId)
         {
             bool hasValue = _prefixes.TryGetValue(guildId, out string value);
-            return value;
+            return hasValue ? value : Settings.Instance["Prefix:Default"];
         }
 
         public async Task<bool> SetAsync(ulong guildId, string prefix)
