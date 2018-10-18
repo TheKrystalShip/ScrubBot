@@ -6,6 +6,13 @@ namespace ScrubBot.Properties
 {
     public class Settings
     {
+        static Settings()
+        {
+            string settingsFile = Path.Combine("Properties", "settings.json");
+            if (!File.Exists(settingsFile ))
+                File.Create(settingsFile );
+        }
+
         private static IConfiguration _config;
 
         public static IConfiguration Instance => _config ??
