@@ -30,25 +30,30 @@ namespace ScrubBot.Managers
             return Task.CompletedTask;
         }
 
-        private async Task Ready()
+        private Task Ready()
         {
             try
             {
-                foreach (SocketGuild guild in _client.Guilds)
+                _ = Task.Run(async () =>
                 {
-                    foreach (SocketGuildUser user in guild.Users)
+                    foreach (SocketGuild guild in _client.Guilds)
                     {
-                        if (user.IsBot)
-                            continue;
+                        foreach (SocketGuildUser user in guild.Users)
+                        {
+                            if (user.IsBot)
+                                continue;
 
-                        await _userManager.AddUserAsync(user).ConfigureAwait(false);
+                            await _userManager.AddUserAsync(user).ConfigureAwait(false);
+                        }
                     }
-                }
+                });
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

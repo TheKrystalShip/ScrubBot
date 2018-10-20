@@ -1,24 +1,20 @@
 ﻿using Discord.WebSocket;
 
-using ScrubBot.Database;
-
 using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
     public class ChannelManager
     {
-        private readonly SQLiteContext _dbContext;
-        private readonly DiscordSocketClient _client;
+        private readonly Tools _tools;
 
-        public ChannelManager(SQLiteContext dbContext, DiscordSocketClient client)
+        public ChannelManager(Tools tools)
         {
-            _dbContext = dbContext;
-            _client = client;
+            _tools = tools;
 
-            _client.ChannelCreated += ChannelCreatedAsync;
-            _client.ChannelDestroyed += ChannelDestroyedAsync;
-            _client.ChannelUpdated += ChannelUpdatedAsync;
+            _tools.Client.ChannelCreated += ChannelCreatedAsync;
+            _tools.Client.ChannelDestroyed += ChannelDestroyedAsync;
+            _tools.Client.ChannelUpdated += ChannelUpdatedAsync;
         }
 
         public async Task ChannelCreatedAsync(SocketChannel channel)

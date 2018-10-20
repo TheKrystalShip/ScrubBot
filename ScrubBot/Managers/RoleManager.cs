@@ -1,24 +1,20 @@
 ﻿using Discord.WebSocket;
 
-using ScrubBot.Database;
-
 using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
     public class RoleManager
     {
-        private readonly SQLiteContext _dbContext;
-        private readonly DiscordSocketClient _client;
+        private readonly Tools _tools;
 
-        public RoleManager(SQLiteContext dbContext, DiscordSocketClient client)
+        public RoleManager(Tools tools)
         {
-            _dbContext = dbContext;
-            _client = client;
+            _tools = tools;
 
-            _client.RoleCreated += RoleCreatedAsync;
-            _client.RoleDeleted += RoleDeletedAsync;
-            _client.RoleUpdated += RoleUpdatedAsync;
+            _tools.Client.RoleCreated += RoleCreatedAsync;
+            _tools.Client.RoleDeleted += RoleDeletedAsync;
+            _tools.Client.RoleUpdated += RoleUpdatedAsync;
         }
 
         public async Task RoleCreatedAsync(SocketRole role)
