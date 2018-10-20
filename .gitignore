@@ -269,3 +269,4 @@ ScrubBot/Properties
 ScrubBot/builds
 *.db
 \.vscode/
+secret.json
