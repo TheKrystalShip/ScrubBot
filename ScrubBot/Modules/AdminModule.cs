@@ -1,5 +1,4 @@
-﻿using System;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -18,7 +17,7 @@ namespace ScrubBot.Modules
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
         public async Task UrMomGay()
         {
-            await ReplyAsync($"{Context.Message.Author.Mention} No u");
+            await ReplyAsync($"{Context.User.Mention} No u");
         }
 
         [Command("HelloThere")]
