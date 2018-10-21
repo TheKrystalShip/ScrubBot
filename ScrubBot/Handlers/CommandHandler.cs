@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using ScrubBot.Database;
@@ -56,7 +55,7 @@ namespace ScrubBot.Handlers
             return new ServiceCollection()
                 .AddDbContext<SQLiteContext>(options =>
                 {
-                    options.UseSqlite(Settings.Instance.GetConnectionString("SQLite"));
+                    options.UseSqlite(Configuration.GetConnectionString("SQLite"));
                 })
                 .AddSingleton(_client)
                 .AddSingleton(_commandService)
