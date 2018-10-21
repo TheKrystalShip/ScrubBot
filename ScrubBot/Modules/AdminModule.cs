@@ -12,7 +12,10 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
-        public AdminModule(Tools tools) : base(tools) {}
+        public AdminModule()
+        {
+
+        }
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
         public async Task UrMomGay()

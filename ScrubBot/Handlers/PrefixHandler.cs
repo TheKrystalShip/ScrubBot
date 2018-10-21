@@ -22,7 +22,7 @@ namespace ScrubBot.Handlers
 
             foreach (var guild in Guilds)
             {
-                _prefixes.TryAdd(guild.Id, guild.Prefix);
+                _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Prefix:Default"));
             }
         }
 

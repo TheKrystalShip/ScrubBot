@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +10,10 @@ namespace ScrubBot.Modules
 {
     public class SettingsModule : Module
     {
-        public SettingsModule(Tools tools) : base(tools) {}
+        public SettingsModule()
+        {
+
+        }
 
         [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
         public async Task Info()
