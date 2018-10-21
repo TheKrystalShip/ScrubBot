@@ -2,13 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
-using ScrubBot.Database;
-using ScrubBot.Extensions;
-using ScrubBot.Properties;
-
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -19,9 +12,7 @@ namespace ScrubBot.Handlers
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly IServiceProvider _serviceProvider;
-
-        private PrefixHandler _prefixHandler;
+        private readonly PrefixHandler _prefixHandler;
 
         public CommandHandler(ref DiscordSocketClient client)
         {
@@ -36,9 +27,9 @@ namespace ScrubBot.Handlers
 
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
 
-            _serviceProvider = ConfigureServiceProvider();
-            _serviceProvider.Init();
-            _prefixHandler = _serviceProvider.GetRequiredService<PrefixHandler>();
+            Container.Add(_commandService);
+            Container.Init();
+            _prefixHandler = Container.Get<PrefixHandler>();
 
             _commandService.Log += CommandServiceLog;
             _client.MessageReceived += HandleCommand;
@@ -48,23 +39,6 @@ namespace ScrubBot.Handlers
         {
             Console.WriteLine(arg.ToString());
             return Task.CompletedTask;
-        }
-
-        private IServiceProvider ConfigureServiceProvider()
-        {
-            return new ServiceCollection()
-                .AddDbContext<SQLiteContext>(options =>
-                {
-                    options.UseSqlite(Configuration.GetConnectionString("SQLite"));
-                })
-                .AddSingleton(_client)
-                .AddSingleton(_commandService)
-                .AddHandlers()
-                .AddManagers()
-                .AddServices()
-                .AddLogging()
-                .AddTools()
-                .BuildServiceProvider();
         }
 
         private async Task HandleCommand(SocketMessage msg)
@@ -84,7 +58,7 @@ namespace ScrubBot.Handlers
                 return;
 
             SocketCommandContext context = new SocketCommandContext(_client, message);
-            IResult result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
+            IResult result = await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
 
             if (!result.IsSuccess)
             {

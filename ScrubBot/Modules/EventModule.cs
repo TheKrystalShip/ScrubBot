@@ -16,7 +16,7 @@ namespace ScrubBot.Modules
 {
     public class EventModule : Module
     {
-        public EventModule(Tools tools) : base(tools)
+        public EventModule()
         {
 
         }

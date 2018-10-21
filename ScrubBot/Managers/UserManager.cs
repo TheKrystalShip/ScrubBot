@@ -18,11 +18,11 @@ namespace ScrubBot.Managers
         {
             _tools = tools;
 
-            _tools.Client.UserBanned += UserBannedAsync;
-            _tools.Client.UserJoined += UserJoinedAsync;
-            _tools.Client.UserLeft += UserLeftAsync;
-            _tools.Client.UserUnbanned += UserUnbannedAsync;
-            _tools.Client.UserUpdated += UserUpdatedAsync;
+            _tools.Client.UserBanned += OnUserBannedAsync;
+            _tools.Client.UserJoined += OnUserJoinedAsync;
+            _tools.Client.UserLeft += OnUserLeftAsync;
+            _tools.Client.UserUnbanned += OnUserUnbannedAsync;
+            _tools.Client.UserUpdated += OnUserUpdatedAsync;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)
@@ -60,33 +60,33 @@ namespace ScrubBot.Managers
                    };
         }
 
-        public async Task UserBannedAsync(SocketUser user, SocketGuild guild)
+        public async Task OnUserBannedAsync(SocketUser user, SocketGuild guild)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task UserJoinedAsync(SocketGuildUser user)
+        public async Task OnUserJoinedAsync(SocketGuildUser user)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task UserLeftAsync(SocketGuildUser user)
+        public async Task OnUserLeftAsync(SocketGuildUser user)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task UserUnbannedAsync(SocketUser user, SocketGuild guild)
+        public async Task OnUserUnbannedAsync(SocketUser user, SocketGuild guild)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task UserUpdatedAsync(SocketUser before, SocketUser after)
+        public async Task OnUserUpdatedAsync(SocketUser before, SocketUser after)
         {
-
+            System.Console.WriteLine("User updated event called");
             await Task.CompletedTask;
         }
     }

@@ -16,9 +16,9 @@ namespace ScrubBot
         public Guild Guild { get; protected set; }
         public User User { get; protected set; }
 
-        public Module(Tools tools)
+        public Module()
         {
-            Tools = tools;
+            Tools = Container.Get<Tools>();
             Database = Tools.Database;
         }
 
