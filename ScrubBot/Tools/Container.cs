@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ScrubBot.Database;
 using ScrubBot.Handlers;
 using ScrubBot.Managers;
-using ScrubBot.Properties;
 using ScrubBot.Services;
 
 using System;
@@ -38,7 +37,6 @@ namespace ScrubBot
         {
             IServiceProvider serviceProvider = _services.BuildServiceProvider();
 
-            serviceProvider.GetRequiredService<SQLiteContext>().MigrateDatabase();
             serviceProvider.GetRequiredService<ChannelManager>();
             serviceProvider.GetRequiredService<GuildManager>();
             serviceProvider.GetRequiredService<RoleManager>();
@@ -51,9 +49,19 @@ namespace ScrubBot
             _services.AddSingleton<T>();
         }
 
+        public static void Add(Type type)
+        {
+            _services.AddSingleton(type);
+        }
+
         public static T Get<T>()
         {
             return (T) _serviceProvider.GetRequiredService(typeof(T));
+        }
+
+        public static object Get(Type type)
+        {
+            return _serviceProvider.GetRequiredService(type);
         }
 
         public static IServiceProvider GetServiceProvider()

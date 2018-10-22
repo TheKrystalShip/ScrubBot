@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ScrubBot.Database.Migrations
 {
-    public partial class AddEvents : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,9 +54,10 @@ namespace ScrubBot.Database.Migrations
                     AuthorId = table.Column<string>(nullable: true),
                     GuildId = table.Column<string>(nullable: true),
                     CreationDate = table.Column<DateTime>(nullable: false),
-                    OccuranceDate = table.Column<DateTime>(nullable: false),
+                    OccurenceDate = table.Column<DateTime>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    MaxSubscribers = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

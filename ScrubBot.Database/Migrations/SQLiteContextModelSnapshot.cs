@@ -8,7 +8,7 @@ using ScrubBot.Database;
 namespace ScrubBot.Database.Migrations
 {
     [DbContext(typeof(SQLiteContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    partial class SQLiteContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -16,7 +16,7 @@ namespace ScrubBot.Database.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
 
-            modelBuilder.Entity("ScrubBot.Database.Models.Event", b =>
+            modelBuilder.Entity("ScrubBot.Domain.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -30,6 +30,8 @@ namespace ScrubBot.Database.Migrations
 
                     b.Property<string>("GuildId")
                         .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
+
+                    b.Property<int>("MaxSubscribers");
 
                     b.Property<DateTime>("OccurenceDate");
 
@@ -49,7 +51,7 @@ namespace ScrubBot.Database.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("ScrubBot.Database.Models.Guild", b =>
+            modelBuilder.Entity("ScrubBot.Domain.Guild", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +75,7 @@ namespace ScrubBot.Database.Migrations
                     b.ToTable("Guilds");
                 });
 
-            modelBuilder.Entity("ScrubBot.Database.Models.User", b =>
+            modelBuilder.Entity("ScrubBot.Domain.User", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,28 +106,28 @@ namespace ScrubBot.Database.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ScrubBot.Database.Models.Event", b =>
+            modelBuilder.Entity("ScrubBot.Domain.Event", b =>
                 {
-                    b.HasOne("ScrubBot.Database.Models.User", "Author")
+                    b.HasOne("ScrubBot.Domain.User", "Author")
                         .WithMany("AuthoringEvents")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("ScrubBot.Database.Models.Guild", "Guild")
+                    b.HasOne("ScrubBot.Domain.Guild", "Guild")
                         .WithMany("Events")
                         .HasForeignKey("GuildId");
 
-                    b.HasOne("ScrubBot.Database.Models.User")
+                    b.HasOne("ScrubBot.Domain.User")
                         .WithMany("SubscribedEvents")
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("ScrubBot.Database.Models.User", b =>
+            modelBuilder.Entity("ScrubBot.Domain.User", b =>
                 {
-                    b.HasOne("ScrubBot.Database.Models.Event")
+                    b.HasOne("ScrubBot.Domain.Event")
                         .WithMany("Subscribers")
                         .HasForeignKey("EventId");
 
-                    b.HasOne("ScrubBot.Database.Models.Guild", "Guild")
+                    b.HasOne("ScrubBot.Domain.Guild", "Guild")
                         .WithMany("Users")
                         .HasForeignKey("GuildId")
                         .OnDelete(DeleteBehavior.Cascade);

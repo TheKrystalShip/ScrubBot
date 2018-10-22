@@ -3,7 +3,6 @@ using Discord.WebSocket;
 
 using ScrubBot.Handlers;
 using ScrubBot.Managers;
-using ScrubBot.Properties;
 
 using System;
 using System.Threading.Tasks;
@@ -26,12 +25,31 @@ namespace ScrubBot
                 }
             );
 
+            _commandHandler = new CommandHandler(ref _client);
+
             _client.Log += OnClientLog;
             _client.Ready += OnClientReady;
 
-            Container.Add(_client);
+            ChannelManager channelManager = Container.Get<ChannelManager>();
+            _client.ChannelCreated += channelManager.OnChannelCreatedAsync;
+            _client.ChannelDestroyed += channelManager.OnChannelDestroyedAsync;
+            _client.ChannelUpdated += channelManager.OnChannelUpdatedAsync;
 
-            _commandHandler = new CommandHandler(ref _client);
+            GuildManager guildManager = Container.Get<GuildManager>();
+            _client.GuildAvailable += guildManager.OnGuildAvailableAsync;
+            _client.GuildMembersDownloaded += guildManager.OnGuildMembersDownloadedAsync;
+            _client.GuildMemberUpdated += guildManager.OnGuildMemberUpdatedAsync;
+            _client.GuildUnavailable += guildManager.OnGuildUnavailableAsync;
+            _client.GuildUpdated += guildManager.OnGuildUpdatedAsync;
+            _client.JoinedGuild += guildManager.OnJoinedGuildAsync;
+            _client.LeftGuild += guildManager.OnLeftGuildAsync;
+
+            RoleManager roleManager = Container.Get<RoleManager>();
+            _client.RoleCreated += roleManager.OnRoleCreatedAsync;
+            _client.RoleDeleted += roleManager.OnRoleDeletedAsync;
+            _client.RoleUpdated += roleManager.OnRoleUpdatedAsync;
+
+            Container.Add(_client);
         }
 
         public async Task InitAsync()
@@ -53,6 +71,8 @@ namespace ScrubBot
 
         private Task OnClientReady()
         {
+            Container.Init();
+
             try
             {
                 UserManager userManager = Container.Get<UserManager>();
