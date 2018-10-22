@@ -11,25 +11,21 @@ namespace ScrubBot.Managers
         public RoleManager(Tools tools)
         {
             _tools = tools;
-
-            _tools.Client.RoleCreated += RoleCreatedAsync;
-            _tools.Client.RoleDeleted += RoleDeletedAsync;
-            _tools.Client.RoleUpdated += RoleUpdatedAsync;
         }
 
-        public async Task RoleCreatedAsync(SocketRole role)
+        public async Task OnRoleCreatedAsync(SocketRole role)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task RoleDeletedAsync(SocketRole role)
+        public async Task OnRoleDeletedAsync(SocketRole role)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task RoleUpdatedAsync(SocketRole before, SocketRole after)
+        public async Task OnRoleUpdatedAsync(SocketRole before, SocketRole after)
         {
 
             await Task.CompletedTask;

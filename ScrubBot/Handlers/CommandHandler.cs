@@ -26,12 +26,12 @@ namespace ScrubBot.Handlers
             });
 
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
+            _commandService.Log += CommandServiceLog;
 
             Container.Add(_commandService);
-            Container.Init();
+
             _prefixHandler = Container.Get<PrefixHandler>();
 
-            _commandService.Log += CommandServiceLog;
             _client.MessageReceived += HandleCommand;
         }
 

@@ -11,25 +11,21 @@ namespace ScrubBot.Managers
         public ChannelManager(Tools tools)
         {
             _tools = tools;
-
-            _tools.Client.ChannelCreated += ChannelCreatedAsync;
-            _tools.Client.ChannelDestroyed += ChannelDestroyedAsync;
-            _tools.Client.ChannelUpdated += ChannelUpdatedAsync;
         }
 
-        public async Task ChannelCreatedAsync(SocketChannel channel)
+        public async Task OnChannelCreatedAsync(SocketChannel channel)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task ChannelDestroyedAsync(SocketChannel channel)
+        public async Task OnChannelDestroyedAsync(SocketChannel channel)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task ChannelUpdatedAsync(SocketChannel before, SocketChannel after)
+        public async Task OnChannelUpdatedAsync(SocketChannel before, SocketChannel after)
         {
 
             await Task.CompletedTask;

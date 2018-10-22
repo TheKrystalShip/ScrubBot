@@ -17,12 +17,6 @@ namespace ScrubBot.Managers
         public UserManager(Tools tools)
         {
             _tools = tools;
-
-            _tools.Client.UserBanned += OnUserBannedAsync;
-            _tools.Client.UserJoined += OnUserJoinedAsync;
-            _tools.Client.UserLeft += OnUserLeftAsync;
-            _tools.Client.UserUnbanned += OnUserUnbannedAsync;
-            _tools.Client.UserUpdated += OnUserUpdatedAsync;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)
@@ -86,7 +80,7 @@ namespace ScrubBot.Managers
 
         public async Task OnUserUpdatedAsync(SocketUser before, SocketUser after)
         {
-            System.Console.WriteLine("User updated event called");
+
             await Task.CompletedTask;
         }
     }

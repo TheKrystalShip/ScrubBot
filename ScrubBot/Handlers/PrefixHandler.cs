@@ -1,6 +1,5 @@
 ﻿using ScrubBot.Database;
 using ScrubBot.Domain;
-using ScrubBot.Properties;
 
 using System.Collections.Concurrent;
 using System.Linq;

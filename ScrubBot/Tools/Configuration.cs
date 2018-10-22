@@ -2,7 +2,7 @@
 
 using System.IO;
 
-namespace ScrubBot.Properties
+namespace ScrubBot
 {
     public class Configuration
     {

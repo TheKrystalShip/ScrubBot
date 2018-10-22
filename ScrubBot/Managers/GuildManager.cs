@@ -1,32 +1,55 @@
 ﻿using Discord.WebSocket;
 
-using ScrubBot.Database;
-
 using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
     public class GuildManager
     {
-        private readonly SQLiteContext _dbContext;
-        private readonly DiscordSocketClient _client;
+        private readonly Tools _tools;
 
         public GuildManager(Tools tools)
         {
-            _dbContext = tools.Database;
-            _client = tools.Client;
-
-            _client.GuildMemberUpdated += GuildMemberUpdatedAsync;
-            _client.GuildUpdated += GuildUpdatedAsync;
+            _tools = tools;
         }
 
-        public async Task GuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)
+        public async Task OnGuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)
         {
 
             await Task.CompletedTask;
         }
 
-        public async Task GuildUpdatedAsync(SocketGuild before, SocketGuild after)
+        public async Task OnGuildUpdatedAsync(SocketGuild before, SocketGuild after)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task OnGuildAvailableAsync(SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task OnGuildMembersDownloadedAsync(SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task OnGuildUnavailableAsync(SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task OnJoinedGuildAsync(SocketGuild guild)
+        {
+
+            await Task.CompletedTask;
+        }
+
+        public async Task OnLeftGuildAsync(SocketGuild guild)
         {
 
             await Task.CompletedTask;
