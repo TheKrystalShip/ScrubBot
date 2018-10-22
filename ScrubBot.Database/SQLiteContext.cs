@@ -15,8 +15,6 @@ namespace ScrubBot.Database
 
         }
 
-        public void MigrateDatabase() => Database.Migrate();
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

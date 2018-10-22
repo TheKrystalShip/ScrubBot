@@ -37,7 +37,6 @@ namespace ScrubBot
         {
             IServiceProvider serviceProvider = _services.BuildServiceProvider();
 
-            serviceProvider.GetRequiredService<SQLiteContext>().MigrateDatabase();
             serviceProvider.GetRequiredService<ChannelManager>();
             serviceProvider.GetRequiredService<GuildManager>();
             serviceProvider.GetRequiredService<RoleManager>();
