@@ -51,7 +51,7 @@ namespace ScrubBot
 
         public static void Add<T>(T type) where T : class
         {
-            Add(type);
+            _services.AddSingleton<T>(type);
         }
 
         public static void Add(Type type)
