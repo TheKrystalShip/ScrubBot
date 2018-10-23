@@ -11,6 +11,7 @@ namespace ScrubBot
         public static async Task Main(string[] args)
         {
             await (_scrubBot = new Bot())
+                .HookEvents()
                 .InitAsync()
                 .DelayIndefinetly();
         }

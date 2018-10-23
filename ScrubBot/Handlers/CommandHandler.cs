@@ -14,7 +14,7 @@ namespace ScrubBot.Handlers
         private readonly CommandService _commandService;
         private readonly PrefixHandler _prefixHandler;
 
-        public CommandHandler(ref DiscordSocketClient client)
+        public CommandHandler(DiscordSocketClient client)
         {
             _client = client;
 
@@ -31,8 +31,6 @@ namespace ScrubBot.Handlers
             Container.Add(_commandService);
 
             _prefixHandler = Container.Get<PrefixHandler>();
-
-            _client.MessageReceived += HandleCommand;
         }
 
         private Task CommandServiceLog(LogMessage arg)
@@ -41,7 +39,7 @@ namespace ScrubBot.Handlers
             return Task.CompletedTask;
         }
 
-        private async Task HandleCommand(SocketMessage msg)
+        public async Task OnMessageRecievedAsync(SocketMessage msg)
         {
             SocketUserMessage message = msg as SocketUserMessage;
 

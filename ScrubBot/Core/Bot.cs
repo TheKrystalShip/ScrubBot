@@ -12,7 +12,6 @@ namespace ScrubBot
     public class Bot
     {
         private readonly DiscordSocketClient _client;
-        private readonly CommandHandler _commandHandler;
 
         public Bot()
         {
@@ -24,8 +23,21 @@ namespace ScrubBot
                     AlwaysDownloadUsers = true
                 }
             );
+        }
 
-            _commandHandler = new CommandHandler(ref _client);
+        public async Task InitAsync()
+        {
+            await _client.LoginAsync(TokenType.Bot, Configuration.Get("Bot:Token"));
+            await _client.StartAsync();
+            await _client.SetGameAsync("Type >Help for help");
+
+            Container.Add(_client);
+        }
+
+        public Bot HookEvents()
+        {
+            CommandHandler commandHandler = new CommandHandler(_client);
+            _client.MessageReceived += commandHandler.OnMessageRecievedAsync;
 
             _client.Log += OnClientLog;
             _client.Ready += OnClientReady;
@@ -49,14 +61,7 @@ namespace ScrubBot
             _client.RoleDeleted += roleManager.OnRoleDeletedAsync;
             _client.RoleUpdated += roleManager.OnRoleUpdatedAsync;
 
-            Container.Add(_client);
-        }
-
-        public async Task InitAsync()
-        {
-            await _client.LoginAsync(TokenType.Bot, Configuration.Get("Bot:Token"));
-            await _client.StartAsync();
-            await _client.SetGameAsync("Type >Help for help");
+            return this;
         }
 
         private Task OnClientLog(LogMessage message)
