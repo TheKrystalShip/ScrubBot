@@ -44,9 +44,14 @@ namespace ScrubBot
             serviceProvider.GetRequiredService<ServiceHandler>();
         }
 
+        public static void Add<T>() where T : class
+        {
+            Add(typeof(T));
+        }
+
         public static void Add<T>(T type) where T : class
         {
-            _services.AddSingleton<T>();
+            Add(type);
         }
 
         public static void Add(Type type)
@@ -56,12 +61,20 @@ namespace ScrubBot
 
         public static T Get<T>()
         {
-            return (T) _serviceProvider.GetRequiredService(typeof(T));
+            return (T) Get(typeof(T));
         }
 
         public static object Get(Type type)
         {
-            return _serviceProvider.GetRequiredService(type);
+            object value = _serviceProvider.GetService(type);
+
+            if (value is null)
+            {
+                Add(type);
+                return _serviceProvider.GetRequiredService(type);
+            }
+
+            return value;
         }
 
         public static IServiceProvider GetServiceProvider()
