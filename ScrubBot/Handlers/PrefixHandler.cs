@@ -39,7 +39,7 @@ namespace ScrubBot.Handlers
 
             await _context.SaveChangesAsync();
             _prefixes.AddOrUpdate(guildId, prefix, (key, oldValue) => prefix);
-            return await Task.FromResult(true);
+            return true;
         }
     }
 }
