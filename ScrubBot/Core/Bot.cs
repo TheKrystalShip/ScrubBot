@@ -46,6 +46,8 @@ namespace ScrubBot
             Container.Add(_client);
             Container.Add(_commandService);
             _prefixHandler = Container.Get<PrefixHandler>();
+
+            HookEvents();
         }
 
         public async Task InitAsync()
@@ -53,9 +55,11 @@ namespace ScrubBot
             await _client.LoginAsync(TokenType.Bot, Configuration.Get("Bot:Token"));
             await _client.StartAsync();
             await _client.SetGameAsync("Type >Help for help");
+
+            await Task.Delay(-1);
         }
 
-        public Bot HookEvents()
+        private void HookEvents()
         {
             ChannelManager channelManager = Container.Get<ChannelManager>();
             _client.ChannelCreated += channelManager.OnChannelCreatedAsync;
@@ -75,8 +79,6 @@ namespace ScrubBot
             _client.RoleCreated += roleManager.OnRoleCreatedAsync;
             _client.RoleDeleted += roleManager.OnRoleDeletedAsync;
             _client.RoleUpdated += roleManager.OnRoleUpdatedAsync;
-
-            return this;
         }
 
         private Task OnClientLog(LogMessage message)
