@@ -43,10 +43,12 @@ namespace ScrubBot
             _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
             _commandService.Log += OnClientLog;
 
+            Container.Add(_commandService);
+
             HookEvents();
 
             Container.Add(_client);
-            Container.Add(_commandService);
+
             _prefixHandler = Container.Get<PrefixHandler>();
         }
 
