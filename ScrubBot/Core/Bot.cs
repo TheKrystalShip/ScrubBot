@@ -1,10 +1,12 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 using ScrubBot.Handlers;
 using ScrubBot.Managers;
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ScrubBot
@@ -12,6 +14,8 @@ namespace ScrubBot
     public class Bot
     {
         private readonly DiscordSocketClient _client;
+        private readonly CommandService _commandService;
+        private readonly PrefixHandler _prefixHandler;
 
         public Bot()
         {
@@ -23,6 +27,27 @@ namespace ScrubBot
                     AlwaysDownloadUsers = true
                 }
             );
+
+            _client.Log += OnClientLog;
+            _client.Ready += OnClientReady;
+            _client.MessageReceived += OnMessageRecievedAsync;
+
+            _commandService = new CommandService(new CommandServiceConfig()
+                {
+                    DefaultRunMode = RunMode.Async,
+                    CaseSensitiveCommands = false,
+                    LogLevel = LogSeverity.Debug
+                }
+            );
+
+            _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
+            _commandService.Log += OnClientLog;
+
+            HookEvents();
+
+            Container.Add(_client);
+            Container.Add(_commandService);
+            _prefixHandler = Container.Get<PrefixHandler>();
         }
 
         public async Task InitAsync()
@@ -31,17 +56,11 @@ namespace ScrubBot
             await _client.StartAsync();
             await _client.SetGameAsync("Type >Help for help");
 
-            Container.Add(_client);
+            await Task.Delay(-1);
         }
 
-        public Bot HookEvents()
+        private void HookEvents()
         {
-            CommandHandler commandHandler = new CommandHandler(_client);
-            _client.MessageReceived += commandHandler.OnMessageRecievedAsync;
-
-            _client.Log += OnClientLog;
-            _client.Ready += OnClientReady;
-
             ChannelManager channelManager = Container.Get<ChannelManager>();
             _client.ChannelCreated += channelManager.OnChannelCreatedAsync;
             _client.ChannelDestroyed += channelManager.OnChannelDestroyedAsync;
@@ -60,8 +79,6 @@ namespace ScrubBot
             _client.RoleCreated += roleManager.OnRoleCreatedAsync;
             _client.RoleDeleted += roleManager.OnRoleDeletedAsync;
             _client.RoleUpdated += roleManager.OnRoleUpdatedAsync;
-
-            return this;
         }
 
         private Task OnClientLog(LogMessage message)
@@ -76,8 +93,6 @@ namespace ScrubBot
 
         private Task OnClientReady()
         {
-            Container.Init();
-
             try
             {
                 UserManager userManager = Container.Get<UserManager>();
@@ -100,8 +115,37 @@ namespace ScrubBot
             {
                 Console.WriteLine(e);
             }
+            finally
+            {
+                Container.Init();
+            }
 
             return Task.CompletedTask;
+        }
+
+        public async Task OnMessageRecievedAsync(SocketMessage msg)
+        {
+            SocketUserMessage message = msg as SocketUserMessage;
+
+            if (message is null || message.Author.IsBot)
+                return;
+
+            string prefix = _prefixHandler.Get((message.Channel as SocketGuildChannel).Guild.Id);
+            int argPos = 0;
+
+            bool hasPrefix = message.HasStringPrefix(prefix, ref argPos);
+            bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
+
+            if (!hasPrefix && !isMentioned)
+                return;
+
+            SocketCommandContext context = new SocketCommandContext(_client, message);
+            IResult result = await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
+
+            if (!result.IsSuccess)
+            {
+                Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
+            }
         }
     }
 }

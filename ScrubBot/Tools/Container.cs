@@ -10,7 +10,7 @@ using System;
 
 namespace ScrubBot
 {
-    public class Container
+    public static class Container
     {
         private static ServiceCollection _services;
         private static IServiceProvider _serviceProvider => _services.BuildServiceProvider();
