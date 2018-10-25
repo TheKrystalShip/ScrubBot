@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using ScrubBot.Core;
 using ScrubBot.Database;
 using ScrubBot.Handlers;
-using ScrubBot.Managers;
 using ScrubBot.Services;
 using ScrubBot.Tools;
 

@@ -2,8 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Managers;
 using ScrubBot.Core.Handlers;
+using ScrubBot.Managers;
 using ScrubBot.Tools;
 
 using System;

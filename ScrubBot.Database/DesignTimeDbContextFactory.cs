@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 using ScrubBot.Tools;
-
-using System.IO;
 
 namespace ScrubBot.Database.Core
 {

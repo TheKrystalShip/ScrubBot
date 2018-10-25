@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+
 using ScrubBot.Core.Handlers;
 using ScrubBot.Database;
 using ScrubBot.Domain;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Core
 {
-    public abstract class Module : ModuleBase<SocketCommandContext>
+    public abstract class Module : ModuleBase<Context>
     {
         public SQLiteContext Database { get; private set; }
         public CommandService CommandService { get; private set; }
