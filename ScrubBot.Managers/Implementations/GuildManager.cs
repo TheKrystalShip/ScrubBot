@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class GuildManager
+    public class GuildManager : IGuildManager
     {
         public GuildManager()
         {

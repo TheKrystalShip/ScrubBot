@@ -15,7 +15,7 @@ namespace ScrubBot.Modules
     {
         public CommandService CommandService { get; private set; }
         public SQLiteContext Database { get; private set; }
-        public PrefixManager Prefix { get; private set; }
+        public IPrefixManager Prefix { get; private set; }
         public Guild Guild { get; protected set; }
         public User User { get; protected set; }
 
@@ -30,6 +30,8 @@ namespace ScrubBot.Modules
         {
             base.BeforeExecute(command);
 
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             Guild = Database.Guilds.Find(Context.Guild?.Id);
             User = Database.Users.Find(Context.User?.Id);
 
@@ -42,8 +44,6 @@ namespace ScrubBot.Modules
             {
                 Console.WriteLine(new LogMessage(LogSeverity.Warning, GetType().Name, "User is null in current scope"));
             }
-
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
         protected override void AfterExecute(CommandInfo command)
@@ -59,7 +59,17 @@ namespace ScrubBot.Modules
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // Handle exceptions in here
+            Exception exception = e.ExceptionObject as Exception;
+
+            if (exception is null)
+                return;
+
+            if (exception.InnerException != null)
+            {
+                Console.WriteLine(exception.InnerException);
+            }
+
+            Console.WriteLine(exception);
         }
 
         protected virtual async Task<IUserMessage> ReplyAsync(EmbedBuilder embedBuilder)

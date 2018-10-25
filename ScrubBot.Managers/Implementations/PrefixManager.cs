@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class PrefixManager
+    public class PrefixManager : IPrefixManager
     {
         private readonly SQLiteContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;

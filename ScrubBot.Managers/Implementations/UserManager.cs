@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class UserManager
+    public class UserManager : IUserManager
     {
         private readonly SQLiteContext _dbContext;
 
