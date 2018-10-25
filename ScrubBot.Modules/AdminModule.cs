@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Core;
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
 

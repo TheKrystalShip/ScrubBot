@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Core.Handlers;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
 
@@ -16,7 +15,7 @@ namespace ScrubBot.Core
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly PrefixHandler _prefixHandler;
+        private readonly PrefixManager _prefixHandler;
 
         public Bot()
         {
@@ -29,10 +28,6 @@ namespace ScrubBot.Core
                 }
             );
 
-            _client.Log += OnClientLog;
-            _client.Ready += OnClientReady;
-            _client.MessageReceived += OnMessageRecievedAsync;
-
             _commandService = new CommandService(new CommandServiceConfig()
                 {
                     DefaultRunMode = RunMode.Async,
@@ -41,17 +36,23 @@ namespace ScrubBot.Core
                 }
             );
 
-            _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).Wait();
-            _commandService.Log += OnClientLog;
-
-            Container.Add(_commandService);
+            _commandService.AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module))).Wait();
+            _commandService.Log += OnCommandServiceLog;
 
             RegisterServices();
             HookEvents();
 
+            Container.Add(_commandService);
             Container.Add(_client);
 
-            _prefixHandler = Container.Get<PrefixHandler>();
+            _prefixHandler = Container.Get<PrefixManager>();
+        }
+
+        private Task OnCommandServiceLog(LogMessage message)
+        {
+            Console.WriteLine(message);
+
+            return Task.CompletedTask;
         }
 
         public async Task InitAsync(string token)
@@ -65,7 +66,7 @@ namespace ScrubBot.Core
 
         private void RegisterServices()
         {
-            Container.Add<PrefixHandler>();
+            Container.Add<PrefixManager>();
             Container.Add<ChannelManager>();
             Container.Add<GuildManager>();
             Container.Add<RoleManager>();
@@ -74,6 +75,10 @@ namespace ScrubBot.Core
 
         private void HookEvents()
         {
+            _client.Log += OnClientLog;
+            _client.Ready += OnClientReady;
+            _client.MessageReceived += OnMessageRecievedAsync;
+
             ChannelManager channelManager = Container.Get<ChannelManager>();
             _client.ChannelCreated += channelManager.OnChannelCreatedAsync;
             _client.ChannelDestroyed += channelManager.OnChannelDestroyedAsync;

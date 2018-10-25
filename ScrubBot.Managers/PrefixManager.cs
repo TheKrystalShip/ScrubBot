@@ -6,14 +6,14 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ScrubBot.Core.Handlers
+namespace ScrubBot.Managers
 {
-    public class PrefixHandler
+    public class PrefixManager
     {
         private readonly SQLiteContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
-        public PrefixHandler(SQLiteContext dbContext)
+        public PrefixManager(SQLiteContext dbContext)
         {
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();

@@ -4,7 +4,6 @@ using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore.Internal;
 
-using ScrubBot.Core;
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
 

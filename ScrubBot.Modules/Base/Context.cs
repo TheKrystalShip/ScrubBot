@@ -1,7 +1,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace ScrubBot.Core
+namespace ScrubBot.Modules
 {
     public class Context : SocketCommandContext
     {

@@ -1,29 +1,29 @@
 ﻿using Discord;
 using Discord.Commands;
 
-using ScrubBot.Core.Handlers;
 using ScrubBot.Database;
 using ScrubBot.Domain;
+using ScrubBot.Managers;
 using ScrubBot.Tools;
 
 using System;
 using System.Threading.Tasks;
 
-namespace ScrubBot.Core
+namespace ScrubBot.Modules
 {
-    public abstract class Module : ModuleBase<Context>
+    public abstract class Module : ModuleBase<SocketCommandContext>
     {
-        public SQLiteContext Database { get; private set; }
         public CommandService CommandService { get; private set; }
-        public PrefixHandler Prefix { get; private set; }
+        public SQLiteContext Database { get; private set; }
+        public PrefixManager Prefix { get; private set; }
         public Guild Guild { get; protected set; }
         public User User { get; protected set; }
 
         public Module()
         {
-            Database = Container.Get<SQLiteContext>();
             CommandService = Container.Get<CommandService>();
-            Prefix = Container.Get<PrefixHandler>();
+            Database = Container.Get<SQLiteContext>();
+            Prefix = Container.Get<PrefixManager>();
         }
 
         protected override void BeforeExecute(CommandInfo command)
