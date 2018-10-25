@@ -76,7 +76,7 @@ namespace ScrubBot.Core
         private void HookEvents()
         {
             _client.Log += OnClientLog;
-            _client.Ready += OnClientReady;
+            _client.Ready += OnClientReadyAsync;
             _client.MessageReceived += OnMessageRecievedAsync;
 
             ChannelManager channelManager = Container.Get<ChannelManager>();
@@ -109,32 +109,10 @@ namespace ScrubBot.Core
             return Task.CompletedTask;
         }
 
-        private Task OnClientReady()
+        private async Task OnClientReadyAsync()
         {
-            try
-            {
-                UserManager userManager = Container.Get<UserManager>();
-
-                Task.Run(async () =>
-                {
-                    foreach (SocketGuild guild in _client.Guilds)
-                    {
-                        foreach (SocketGuildUser user in guild.Users)
-                        {
-                            if (user.IsBot)
-                                continue;
-
-                            await userManager.AddUserAsync(user).ConfigureAwait(false);
-                        }
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            return Task.CompletedTask;
+            UserManager userManager = Container.Get<UserManager>();
+            await userManager.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }
 
         public async Task OnMessageRecievedAsync(SocketMessage msg)
