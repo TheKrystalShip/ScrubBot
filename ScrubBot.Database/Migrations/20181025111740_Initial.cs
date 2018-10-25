@@ -32,6 +32,7 @@ namespace ScrubBot.Database.Migrations
                     Nickname = table.Column<string>(maxLength: 50, nullable: true),
                     Discriminator = table.Column<string>(maxLength: 20, nullable: true),
                     AvatarUrl = table.Column<string>(nullable: true),
+                    Birthday = table.Column<DateTime>(nullable: false),
                     GuildId = table.Column<string>(nullable: true),
                     EventId = table.Column<Guid>(nullable: true)
                 },

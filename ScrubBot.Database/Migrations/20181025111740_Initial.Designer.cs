@@ -9,7 +9,7 @@ using ScrubBot.Database;
 namespace ScrubBot.Database.Migrations
 {
     [DbContext(typeof(SQLiteContext))]
-    [Migration("20181022205146_Initial")]
+    [Migration("20181025111740_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,8 @@ namespace ScrubBot.Database.Migrations
                         .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 64)));
 
                     b.Property<string>("AvatarUrl");
+
+                    b.Property<DateTime>("Birthday");
 
                     b.Property<string>("Discriminator")
                         .HasMaxLength(20);

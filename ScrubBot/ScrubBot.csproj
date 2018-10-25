@@ -20,13 +20,14 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ScrubBot.Database\ScrubBot.Database.csproj" />
     <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Core\ScrubBot.Core.csproj" />
+    <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
+    <ProjectReference Include="..\ScrubBot.Tools\ScrubBot.Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,7 +38,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ScrubBot.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
