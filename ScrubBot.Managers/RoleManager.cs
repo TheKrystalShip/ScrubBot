@@ -6,11 +6,9 @@ namespace ScrubBot.Managers
 {
     public class RoleManager
     {
-        private readonly Tools _tools;
-
-        public RoleManager(Tools tools)
+        public RoleManager()
         {
-            _tools = tools;
+
         }
 
         public async Task OnRoleCreatedAsync(SocketRole role)

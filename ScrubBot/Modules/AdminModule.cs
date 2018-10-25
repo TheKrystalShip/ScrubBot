@@ -4,6 +4,7 @@ using Discord.WebSocket;
 
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
+using ScrubBot.Core;
 
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace ScrubBot.Modules
             }
 
             string old = Guild.Prefix;
-            await Tools.Prefix.SetAsync(Guild.Id, newPrefix);
+            await Prefix.SetAsync(Guild.Id, newPrefix);
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Changed Command Char Prefix from ' {old} ' to ' {newPrefix} '"));
         }

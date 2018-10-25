@@ -2,14 +2,15 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Handlers;
 using ScrubBot.Managers;
+using ScrubBot.Core.Handlers;
+using ScrubBot.Tools;
 
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace ScrubBot
+namespace ScrubBot.Core
 {
     public class Bot
     {
@@ -45,6 +46,7 @@ namespace ScrubBot
 
             Container.Add(_commandService);
 
+            RegisterServices();
             HookEvents();
 
             Container.Add(_client);
@@ -52,13 +54,22 @@ namespace ScrubBot
             _prefixHandler = Container.Get<PrefixHandler>();
         }
 
-        public async Task InitAsync()
+        public async Task InitAsync(string token)
         {
-            await _client.LoginAsync(TokenType.Bot, Configuration.Get("Bot:Token"));
+            await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
             await _client.SetGameAsync("Type >Help for help");
 
             await Task.Delay(-1);
+        }
+
+        private void RegisterServices()
+        {
+            Container.Add<PrefixHandler>();
+            Container.Add<ChannelManager>();
+            Container.Add<GuildManager>();
+            Container.Add<RoleManager>();
+            Container.Add<UserManager>();
         }
 
         private void HookEvents()
@@ -116,10 +127,6 @@ namespace ScrubBot
             catch (Exception e)
             {
                 Console.WriteLine(e);
-            }
-            finally
-            {
-                Container.Init();
             }
 
             return Task.CompletedTask;

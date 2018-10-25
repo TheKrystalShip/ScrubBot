@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ScrubBot.Domain
@@ -18,6 +19,8 @@ namespace ScrubBot.Domain
         public string Discriminator { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public DateTime Birthday { get; set; }
 
         public virtual Guild Guild { get; set; }
 

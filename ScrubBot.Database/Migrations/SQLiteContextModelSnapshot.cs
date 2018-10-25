@@ -83,6 +83,8 @@ namespace ScrubBot.Database.Migrations
 
                     b.Property<string>("AvatarUrl");
 
+                    b.Property<DateTime>("Birthday");
+
                     b.Property<string>("Discriminator")
                         .HasMaxLength(20);
 

@@ -6,11 +6,9 @@ namespace ScrubBot.Managers
 {
     public class GuildManager
     {
-        private readonly Tools _tools;
-
-        public GuildManager(Tools tools)
+        public GuildManager()
         {
-            _tools = tools;
+
         }
 
         public async Task OnGuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)

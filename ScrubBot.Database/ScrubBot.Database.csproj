@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Tools\ScrubBot.Tools.csproj" />
   </ItemGroup>
 
 </Project>

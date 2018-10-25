@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
+using ScrubBot.Core;
 
 using System;
 using System.Collections.Generic;

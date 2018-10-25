@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
+using ScrubBot.Tools;
+
 using System.IO;
 
 namespace ScrubBot.Database.Core
@@ -10,16 +12,9 @@ namespace ScrubBot.Database.Core
     {
         public SQLiteContext CreateDbContext(string[] args)
         {
-            IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"))
-                .AddJsonFile("settings.json", optional: false)
-                .Build();
-
             DbContextOptionsBuilder<SQLiteContext> builder = new DbContextOptionsBuilder<SQLiteContext>();
 
-            string connectionString = configuration.GetConnectionString("SQLite");
-
-            builder.UseSqlite(connectionString);
+            builder.UseSqlite(Configuration.GetConnectionString("SQLite"));
 
             return new SQLiteContext(builder.Options);
         }

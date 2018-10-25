@@ -2,6 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
+using ScrubBot.Core;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +33,7 @@ namespace ScrubBot.Modules
         [Command("Help")]
         public async Task Help()
         {
-            List<CommandInfo> commands = Tools.CommandService.Commands.ToList();
+            List<CommandInfo> commands = CommandService.Commands.ToList();
             EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
 
             foreach (CommandInfo command in commands)

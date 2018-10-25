@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
+using ScrubBot.Database;
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
@@ -12,39 +13,39 @@ namespace ScrubBot.Managers
 {
     public class UserManager
     {
-        private readonly Tools _tools;
+        private readonly SQLiteContext _dbContext;
 
-        public UserManager(Tools tools)
+        public UserManager(SQLiteContext dbContext)
         {
-            _tools = tools;
+            _dbContext = dbContext;
         }
 
         public async Task AddUserAsync(SocketGuildUser socketGuildUser)
         {
-            if (_tools.Database.Users.Any(x => x.Id == socketGuildUser.Id))
+            if (_dbContext.Users.Any(x => x.Id == socketGuildUser.Id))
                 return;
 
             User user = socketGuildUser.ToUser();
             user.Guild = ToGuild(socketGuildUser.Guild);
 
-            await _tools.Database.Users.AddAsync(user);
-            await _tools.Database.SaveChangesAsync();
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)
         {
-            User userToRemove = await _tools.Database.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
+            User userToRemove = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
 
             if (userToRemove is null)
                 return;
 
-            _tools.Database.Users.Remove(userToRemove);
-            await _tools.Database.SaveChangesAsync();
+            _dbContext.Users.Remove(userToRemove);
+            await _dbContext.SaveChangesAsync();
         }
 
         private Guild ToGuild(SocketGuild socketGuild)
         {
-            return _tools.Database.Guilds.FirstOrDefault(x => x.Id == socketGuild.Id) ??
+            return _dbContext.Guilds.FirstOrDefault(x => x.Id == socketGuild.Id) ??
                    new Guild
                    {
                        Name = socketGuild.Name,

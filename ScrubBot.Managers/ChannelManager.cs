@@ -6,11 +6,9 @@ namespace ScrubBot.Managers
 {
     public class ChannelManager
     {
-        private readonly Tools _tools;
-
-        public ChannelManager(Tools tools)
+        public ChannelManager()
         {
-            _tools = tools;
+
         }
 
         public async Task OnChannelCreatedAsync(SocketChannel channel)
