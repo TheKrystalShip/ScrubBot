@@ -15,7 +15,7 @@ namespace ScrubBot.Core
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly PrefixManager _prefixHandler;
+        private readonly PrefixManager _prefixManager;
 
         public Bot()
         {
@@ -45,7 +45,17 @@ namespace ScrubBot.Core
             Container.Add(_commandService);
             Container.Add(_client);
 
-            _prefixHandler = Container.Get<PrefixManager>();
+            _prefixManager = Container.Get<PrefixManager>();
+        }
+
+        private Task OnClientLog(LogMessage message)
+        {
+            if (!message.Message.Contains("OpCode"))
+            {
+                Console.WriteLine(message);
+            }
+
+            return Task.CompletedTask;
         }
 
         private Task OnCommandServiceLog(LogMessage message)
@@ -99,16 +109,6 @@ namespace ScrubBot.Core
             _client.RoleUpdated += roleManager.OnRoleUpdatedAsync;
         }
 
-        private Task OnClientLog(LogMessage message)
-        {
-            if (!message.Message.Contains("OpCode"))
-            {
-                Console.WriteLine(message);
-            }
-
-            return Task.CompletedTask;
-        }
-
         private async Task OnClientReadyAsync()
         {
             UserManager userManager = Container.Get<UserManager>();
@@ -119,25 +119,34 @@ namespace ScrubBot.Core
         {
             SocketUserMessage message = msg as SocketUserMessage;
 
-            if (message is null || message.Author.IsBot)
-                return;
+            if (IsMessageValid(message, out int argPos))
+            {
+                SocketCommandContext context = new SocketCommandContext(_client, message);
+                IResult result = await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
 
-            string prefix = _prefixHandler.Get((message.Channel as SocketGuildChannel).Guild.Id);
-            int argPos = 0;
+                if (!result.IsSuccess)
+                {
+                    Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
+                }
+            }
+        }
+
+        private bool IsMessageValid(SocketUserMessage message, out int argPos)
+        {
+            argPos = 0;
+
+            if (message is null || message.Author.IsBot)
+                return false;
+
+            string prefix = _prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id);
 
             bool hasPrefix = message.HasStringPrefix(prefix, ref argPos);
             bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
 
             if (!hasPrefix && !isMentioned)
-                return;
+                return false;
 
-            SocketCommandContext context = new SocketCommandContext(_client, message);
-            IResult result = await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
-
-            if (!result.IsSuccess)
-            {
-                Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
-            }
+            return true;
         }
     }
 }
