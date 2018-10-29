@@ -18,9 +18,9 @@ namespace ScrubBot.Managers
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
 
-            var Guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
+            var guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
 
-            foreach (var guild in Guilds)
+            foreach (var guild in guilds)
             {
                 _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Prefix:Default"));
             }

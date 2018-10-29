@@ -20,6 +20,7 @@ namespace ScrubBot.Modules
         {
             EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };
             embedBuilder.AddField("Server:", (Guild.Name ?? "null") + "\n");
+            embedBuilder.ThumbnailUrl = Guild.IconUrl;
 
             SocketTextChannel auditChannel = Context.Guild.GetChannel(Guild.AuditChannelId) as SocketTextChannel;
             embedBuilder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
