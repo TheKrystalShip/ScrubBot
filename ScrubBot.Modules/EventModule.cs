@@ -53,8 +53,9 @@ namespace ScrubBot.Modules
             {
                 Title = title,
                 Description = description,
+                Guild = base.Guild, 
                 OccurenceDate = occurenceDateTime,
-                Author = (Context.User as SocketGuildUser)?.ToUser(),
+                Author = base.User,
                 MaxSubscribers = maxSubscribers
             };
 
