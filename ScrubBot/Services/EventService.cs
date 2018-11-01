@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ScrubBot.Domain;
 using Microsoft.EntityFrameworkCore;
+using ScrubBot.Extensions;
 using ScrubBot.Tools;
 
 namespace ScrubBot.Services
@@ -25,7 +27,7 @@ namespace ScrubBot.Services
         public EventService(SQLiteContext dbContext)
         {
             _dbContext = dbContext;
-            DiscordSocketClient _client = Container.Get<DiscordSocketClient>();
+            _client = Container.Get<DiscordSocketClient>();
         }
 
         public override void Init(int startDelay = 0, int interval = 1000)
@@ -37,7 +39,7 @@ namespace ScrubBot.Services
         public override void Loop(object state)
         {
             List<Event> events = _dbContext.Events
-                .Where(x => x.OccurenceDate <= DateTimeOffset.UtcNow)
+                .Where(x => x.OccurenceDate <= DateTime.UtcNow)
                 .Include(x => x.Author)
                 .Include(x => x.Subscribers)
                 .Take(10)
@@ -45,12 +47,27 @@ namespace ScrubBot.Services
 
             if (events.Count is 0) return;
 
+            List<Task> tasks = new List<Task>();
+
             foreach (var _event in events)
             {
                 foreach (var user in _event.Subscribers)
-                    _client.GetUser(user.Id)?.SendMessageAsync("You can fuck right off").Wait();
-                _client.GetUser(_event.Author.Id)?.SendMessageAsync("You can fuck right off").Wait();
+                    tasks.Add(Task.Run(async () => await _client.GetUser(user.Id)?.
+                        SendMessageAsync(string.Empty,
+                                         false,
+                                         new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
+                                                                 $"Dear {user.Nickname},\t" +
+                                                                 $"This is a reminder that event {_event.Title} is about to start!").Build())));
+                tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id)?.
+                    SendMessageAsync(string.Empty,
+                                     false,
+                                     new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
+                                                                      $"This is a reminder that your event {_event.Title} is about to start!").Build())));
             }
+
+            Task.WhenAll(tasks).Wait();
+            _dbContext.Events.RemoveRange(events);
+            _dbContext.SaveChanges();
 
             Tick?.Invoke(this);
         }
@@ -58,7 +75,7 @@ namespace ScrubBot.Services
         public override void Dispose()
         {
             Timer.Dispose();
-            Stop.Invoke(this);
+            Stop?.Invoke(this);
         }
     }
 }
