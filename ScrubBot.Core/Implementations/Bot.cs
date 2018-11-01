@@ -3,7 +3,6 @@ using Discord.WebSocket;
 
 using ScrubBot.Managers;
 using ScrubBot.Tools;
-
 using System.Threading.Tasks;
 
 namespace ScrubBot.Core

@@ -23,11 +23,11 @@ namespace ScrubBot
 
             Container.Add(dbContext);
             Container.Add<ServiceHandler>();
-            Container.Add<EventService>();
-
-            // Container.Get<ServiceHandler>();
-
+            
             await (_scrubBot = new Bot()).InitAsync(Configuration.Get("Bot:Token"));
+            
+            var eventService = Container.Get<EventService>();
+            eventService.Init();
         }
     }
 }
