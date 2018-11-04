@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Core;
 using ScrubBot.Database;
@@ -23,11 +24,9 @@ namespace ScrubBot
 
             Container.Add(dbContext);
             Container.Add<ServiceHandler>();
-            
+            Container.Get<EventService>().Init(10000);
+
             await (_scrubBot = new Bot()).InitAsync(Configuration.Get("Bot:Token"));
-            
-            var eventService = Container.Get<EventService>();
-            eventService.Init();
         }
     }
 }

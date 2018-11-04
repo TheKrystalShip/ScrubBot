@@ -1,16 +1,19 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using ScrubBot.Extensions;
 
 namespace ScrubBot.Modules
 {
-    public class SettingsModule : Module
+    public class UserModule : Module
     {
-        public SettingsModule()
+        public UserModule()
         {
 
         }
@@ -49,5 +52,23 @@ namespace ScrubBot.Modules
 
             await ReplyAsync(embedBuilder);
         }
+
+        [Command("SetBirthday")]
+        public async Task SetBirthday(DateTime birthday)
+        {
+            User.Birthday = birthday;
+            await ReplyAsync(string.Empty,
+                false,
+                new EmbedBuilder().CreateSuccess($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}"));
+        }
+
+        [Command("ShowBirthdays")]
+        public async Task ShowBirthdays(int month)
+        {
+            await ReplyAsync(null);
+        }
+
+        [Command("gibmoneypleagehuehuehuehuehuehuehuehue")]
+        public async Task gibmoneypleagehuehuehuehuehuehuehuehue() => await ReplyAsync("gibmoneypleagehuehuehuehuehuehuehuehue");
     }
 }

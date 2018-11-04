@@ -34,38 +34,47 @@ namespace ScrubBot.Services
             Start?.Invoke(this);
         }
 
-        public override void Loop(object state)
+        public override void Loop(object state) // TODO: Replace Try-Catch with proper exception catching
         {
-            List<Event> events = _dbContext.Events
-                .Where(x => x.OccurenceDate <= DateTime.UtcNow)
-                .Include(x => x.Author)
-                .Include(x => x.Subscribers)
-                .Take(10)
-                .ToList();
-
-            if (events.Count is 0) return;
-
-            List<Task> tasks = new List<Task>();
-
-            foreach (var _event in events)
+            try
             {
-                foreach (var user in _event.Subscribers)
-                    tasks.Add(Task.Run(async () => await _client.GetUser(user.Id)?.
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                List<Event> events = _dbContext.Events
+                    .Where(x => x.OccurenceDate <= DateTime.UtcNow)
+                    .Include(x => x.Author)
+                    .Include(x => x.Subscribers)
+                    .Take(10)
+                    .ToList();
+
+                if (events.Count is 0) return;
+
+                List<Task> tasks = new List<Task>();
+
+                foreach (var _event in events)
+                {
+                    foreach (var user in _event.Subscribers)
+                        tasks.Add(Task.Run(async () => await _client.GetUser(user.Id).
+                            SendMessageAsync(string.Empty,
+                                             false,
+                                             new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
+                                                                     $"Dear {user.Nickname},\t" +
+                                                                     $"This is a reminder that event {_event.Title} is about to start!").Build())));
+                    tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id).
                         SendMessageAsync(string.Empty,
                                          false,
                                          new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
-                                                                 $"Dear {user.Nickname},\t" +
-                                                                 $"This is a reminder that event {_event.Title} is about to start!").Build())));
-                tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id)?.
-                    SendMessageAsync(string.Empty,
-                                     false,
-                                     new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
-                                                                      $"This is a reminder that your event {_event.Title} is about to start!").Build())));
-            }
+                                                                          $"This is a reminder that your event {_event.Title} is about to start!").Build())));
+                }
 
-            Task.WhenAll(tasks).Wait();
-            _dbContext.Events.RemoveRange(events);
-            _dbContext.SaveChanges();
+                Task.WhenAll(tasks).Wait();
+                _dbContext.Events.RemoveRange(events);
+                _dbContext.SaveChanges();
+            }
 
             Tick?.Invoke(this);
         }

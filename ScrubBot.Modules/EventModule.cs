@@ -54,7 +54,7 @@ namespace ScrubBot.Modules
                 Title = title,
                 Description = description,
                 Guild = base.Guild, 
-                OccurenceDate = occurenceDateTime,
+                OccurenceDate = occurenceDateTime.ToUniversalTime(),
                 Author = base.User,
                 MaxSubscribers = maxSubscribers
             };
@@ -75,7 +75,7 @@ namespace ScrubBot.Modules
                 return;
             }
 
-            if (_event.Author.Id != Context.User.Id)
+            if (_event.Author.Id != Context.User.Id || !Context.Guild.GetUser(Context.User.Id).GuildPermissions.Administrator)
             {
                 await ReplyAsync(new EmbedBuilder().CreateError("You are not allowed to modify someone else's event"));
                 return;
