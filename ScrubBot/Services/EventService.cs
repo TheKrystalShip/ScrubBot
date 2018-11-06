@@ -38,12 +38,6 @@ namespace ScrubBot.Services
         {
             try
             {
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
                 List<Event> events = _dbContext.Events
                     .Where(x => x.OccurenceDate <= DateTime.UtcNow)
                     .Include(x => x.Author)
@@ -74,6 +68,10 @@ namespace ScrubBot.Services
                 Task.WhenAll(tasks).Wait();
                 _dbContext.Events.RemoveRange(events);
                 _dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
 
             Tick?.Invoke(this);
