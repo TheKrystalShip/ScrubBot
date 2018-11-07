@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using ScrubBot.Database;
+using ScrubBot.Domain;
+using ScrubBot.Extensions;
 using ScrubBot.Tools;
 
 namespace ScrubBot.Services
@@ -33,7 +38,26 @@ namespace ScrubBot.Services
         {
             try
             {
+                List<User> birthdayBois = _dbContext.Users
+                    .Where(x => x.Birthday <= DateTime.UtcNow)
+                    .Take(10)
+                    .ToList();
 
+                if (birthdayBois.Count is 0) return;
+
+                List<Task> tasks = new List<Task>();
+
+                foreach (var birthdayBoi in birthdayBois)
+                {
+                    if (birthdayBoi.Birthday == DateTime.MinValue.Date) continue;
+
+                    tasks.Add(Task.Run(async () => await _client.GetUser(birthdayBoi.Id).SendMessageAsync(string.Empty,
+                            false,
+                            new EmbedBuilder().CreateMessage("Hey kanjer, dit is je verjaardag!",
+                                                             $"Van harte gefeliciflapstaart met je verjaardag {birthdayBoi.Username}! Hiep hiep hoera en een fijne dag!"))));
+                }
+
+                Task.WhenAll(tasks).Wait();
             }
             catch (Exception e)
             {
@@ -43,7 +67,8 @@ namespace ScrubBot.Services
 
         public override void Dispose()
         {
-
+            Timer.Dispose();
+            Stop?.Invoke(this);
         }
     }
 }

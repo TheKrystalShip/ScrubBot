@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
 namespace ScrubBot.Modules
@@ -65,10 +67,34 @@ namespace ScrubBot.Modules
         [Command("ShowBirthdays")]
         public async Task ShowBirthdays(int month)
         {
-            await ReplyAsync(null);
-        }
+            if (month < 1 || month > 12)
+            {
+                await ReplyAsync($"Cannot parse {month} as a month. Please type this command, followed by a number between 1 and 12!");
+                return;
+            }
 
-        [Command("gibmoneypleagehuehuehuehuehuehuehuehue")]
-        public async Task gibmoneypleagehuehuehuehuehuehuehuehue() => await ReplyAsync("gibmoneypleagehuehuehuehuehuehuehuehue");
+            List<User> birthdayBois = Database.Users.Where(x => x.Guilds.Contains(y => y.Id == Context.Guild.Id) && x.Birthday.Month == month)
+                .ToList();
+
+            var today = DateTime.UtcNow;
+            var birthdayMonth = DateTime.Parse($"{today.Day}-{month}-{today.Year}").ToString("MMMMM");
+
+            if (birthdayBois.Count is 0)
+            {
+                await ReplyAsync(string.Empty,
+                                 false,
+                                 new EmbedBuilder().CreateError($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!"));
+                return;
+            }
+
+            //foreach (var birthdayBoi in birthdayBois)
+            //{
+            //    birthdayList += $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})";
+            //}
+
+            string birthdayList = birthdayBois.Aggregate(string.Empty, (current, birthdayBoi) => current + $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})");
+
+            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateMessage($"Birthdays in {birthdayMonth}", birthdayList));
+        }
     }
 }
