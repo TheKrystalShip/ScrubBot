@@ -11,6 +11,7 @@ namespace ScrubBot.Core
     {
         private readonly DiscordSocketClient _client;
         private readonly IManager _manager;
+        private CommandOperator _commandOperator;
 
         public Bot()
         {
@@ -24,6 +25,7 @@ namespace ScrubBot.Core
             );
 
             _manager = Container.Get<Manager>();
+            //_commandOperator = Container.Get<CommandOperator>();
 
             RegisterServices();
             HookEvents();
@@ -79,6 +81,6 @@ namespace ScrubBot.Core
             await _manager.Users.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage message) => await Container.Get<CommandOperator>().ExecuteAsync(message).ConfigureAwait(false);
+        private async Task OnMessageReceivedAsync(SocketMessage message) => await (_commandOperator ?? (_commandOperator = Container.Get<CommandOperator>())).ExecuteAsync(message).ConfigureAwait(false);
     }
 }
