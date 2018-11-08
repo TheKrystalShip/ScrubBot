@@ -54,7 +54,7 @@ namespace ScrubBot.Core
         {
             _client.Log += Logger.Log;
             _client.Ready += OnClientReadyAsync;
-            _client.MessageReceived += OnMessageRecievedAsync;
+            _client.MessageReceived += OnMessageReceivedAsync;
             
             _client.ChannelCreated += _manager.Channels.OnChannelCreatedAsync;
             _client.ChannelDestroyed += _manager.Channels.OnChannelDestroyedAsync;
@@ -75,10 +75,11 @@ namespace ScrubBot.Core
 
         private async Task OnClientReadyAsync()
         {
+            await _manager.Guilds.AddGuildsAsync(_client.Guilds).ConfigureAwait(false);
             await _manager.Users.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }
 
-        private async Task OnMessageRecievedAsync(SocketMessage message)
+        private async Task OnMessageReceivedAsync(SocketMessage message)
         {
             ICommandOperator commandOperator = Container.Get<CommandOperator>();
             await commandOperator.ExecuteAsync(message).ConfigureAwait(false);

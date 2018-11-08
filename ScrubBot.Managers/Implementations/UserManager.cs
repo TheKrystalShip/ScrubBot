@@ -35,18 +35,18 @@ namespace ScrubBot.Managers
 
         public async Task AddUsersAsync(IReadOnlyCollection<SocketGuild> guilds)
         {
-            List<Task> tasks = new List<Task>();
+            //foreach (SocketGuild guild in guilds)
+            //{
+            //    foreach (SocketGuildUser user in guild.Users)
+            //    {
+            //        if (user.IsBot)
+            //            continue;
 
-            foreach (SocketGuild guild in guilds)
-            {
-                foreach (SocketGuildUser user in guild.Users)
-                {
-                    if (user.IsBot)
-                        continue;
+            //        tasks.Add(AddUserAsync(user));
+            //    }
+            //}
 
-                    tasks.Add(AddUserAsync(user));
-                }
-            }
+            List<Task> tasks = (from guild in guilds from user in guild.Users where !user.IsBot select AddUserAsync(user)).ToList();
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
