@@ -41,9 +41,9 @@ namespace ScrubBot.Modules
 
         // @ScrubBot CreateEvent "Title goes here" "Description goes here" 24/10/2018 20
         [Command("CreateEvent")]
-        public async Task CreateEvent(string title, string description, DateTime occurenceDateTime, int maxSubscribers)
+        public async Task CreateEvent(string eventTitle, string description, DateTime occurenceDateTime, int maxSubscribers)
         {
-            if (Database.Events.Any(x => x.Title == title && x.Guild.Id == Context.Guild.Id))
+            if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Context.Guild.Id))
             {
                 await ReplyAsync(new EmbedBuilder().CreateError("An event with this name already exists!"));
                 return;
@@ -51,7 +51,7 @@ namespace ScrubBot.Modules
 
             Event newEvent = new Event
             {
-                Title = title,
+                Title = eventTitle,
                 Description = description,
                 Guild = base.Guild, 
                 OccurenceDate = occurenceDateTime.ToUniversalTime(),
@@ -61,7 +61,24 @@ namespace ScrubBot.Modules
 
             await Database.Events.AddAsync(newEvent);
 
-            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Event {title} has been successfully added for {occurenceDateTime} with a max of {maxSubscribers} subscribers!"));
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Event {eventTitle} has been successfully added for {occurenceDateTime} with a max of {maxSubscribers} subscribers!"));
+        }
+
+        [Command("")]
+        public async Task JoinEvent(string eventTitle)
+        {
+            bool hasEvent = Database.Events.Any(x => x.Title == eventTitle);
+            bool isSameServer = Database.Events.Any(x => x.Guild.Id == Context.Guild.Id);
+
+            if (!hasEvent || !isSameServer)
+            {
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Could not find an event with title {eventTitle} for this server!"));
+                return;
+            }
+            
+            Event _event = Database.Events.First(x => x.Title == eventTitle && x.Guild.Id == Context.Guild.Id);
+            _event.Subscribers.Add(User);
+            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateSuccess($"**{Context.User.Username}** has successfully joined event **{eventTitle}** ({_event.Subscribers.Count}/{_event.MaxSubscribers})"));
         }
 
         [Command("DeleteEvent")]

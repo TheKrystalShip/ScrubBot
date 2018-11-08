@@ -22,13 +22,13 @@ namespace ScrubBot
 
             Container.Add(dbContext);
             Container.Add<ServiceHandler>();
-            Container.Get<EventService>().Init(10000);
-
-            var today = DateTime.UtcNow;
-            Container.Get<BirthdayService>().Init((new DateTime(today.Year, today.Month, today.Day).AddDays(1) - 
-                                                   new DateTime(today.Year, today.Month, today.Day)).Add(TimeSpan.FromHours(7)).Milliseconds, 86400000‬); // Occurs every 24 hours, from the moment it hits 7AM the next day, after doing an initial call
 
             await (_scrubBot = new Bot()).InitAsync(Configuration.Get("Bot:Token"));
+
+            Container.Get<EventService>().Init(10000);
+            Container.Get<BirthdayService>().Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, 86400000);
+
+            await Task.Delay(-1);
         }
     }
 }

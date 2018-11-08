@@ -22,10 +22,10 @@ namespace ScrubBot.Services
         private readonly SQLiteContext _dbContext;
         private readonly DiscordSocketClient _client;
 
-        public EventService(SQLiteContext dbContext)
+        public EventService(SQLiteContext dbContext, DiscordSocketClient client)
         {
             _dbContext = dbContext;
-            _client = Container.Get<DiscordSocketClient>();
+            _client = client;
         }
 
         public override void Init(int startDelay = 0, int interval = 1000)
@@ -55,14 +55,14 @@ namespace ScrubBot.Services
                         tasks.Add(Task.Run(async () => await _client.GetUser(user.Id).
                             SendMessageAsync(string.Empty,
                                              false,
-                                             new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
+                                             new EmbedBuilder().CreateMessage("Event reminder",
                                                                      $"Dear {user.Username},\t" +
-                                                                     $"This is a reminder that event {_event.Title} is about to start!").Build())));
-                    tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id).
+                                                                     $"**{_event.Author.Username}{(_event.Author.Username.Last() == 's' ? "'" : "'s")}** event **{_event.Title}** is about to start!").Build())));
+                     tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id).
                         SendMessageAsync(string.Empty,
                                          false,
-                                         new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
-                                                                          $"This is a reminder that your event {_event.Title} is about to start!").Build())));
+                                         new EmbedBuilder().CreateMessage("Event reminder",
+                                                                          $"Your event **{_event.Title}** is about to start!").Build())));
                 }
 
                 Task.WhenAll(tasks).Wait();

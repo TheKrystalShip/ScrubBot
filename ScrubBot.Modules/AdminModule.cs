@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Linq;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -12,9 +13,11 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
-        public AdminModule()
-        {
+        DiscordSocketClient _client;
 
+        public AdminModule(DiscordSocketClient client)
+        {
+            _client = client;
         }
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
@@ -55,6 +58,28 @@ namespace ScrubBot.Modules
             Guild.AuditChannelId = newChannel.Id;
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Set this server's audit channel to {newChannel.Mention}"));
+        }
+
+        [Command("test")]
+        public async Task TestAsync()
+        {
+            Event _event = Database.Events.FirstOrDefault();
+
+            var author = _client.GetUser(_event.Author.Id);
+
+            if (author is null)
+            {
+                await ReplyAsync("Event author is null for some f-ing reason");
+            }
+            else
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateSuccess($"Title\t{_event.Title}\n" +
+                                                                                       $"Author\t{_event.Author.Username}\n" +
+                                                                                       $"Description\t{_event.Description}\n"+
+                                                                                       $"Guild\t{_event.Guild.Name}\n" +
+                                                                                       $"CreationDate\t{_event.CreationDate}\n" +
+                                                                                       $"OccurenceDate\t{_event.OccurenceDate}\n" +
+                                                                                       $"Subscribers\t{_event.Subscribers.Count}\n" +
+                                                                                       $"MaxSubscribers\t{_event.MaxSubscribers}"));
         }
     }
 }

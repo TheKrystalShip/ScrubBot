@@ -15,12 +15,12 @@ namespace ScrubBot.Core
         public Bot()
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig
-                {
-                    LogLevel = LogSeverity.Debug,
-                    DefaultRetryMode = RetryMode.AlwaysRetry,
-                    ConnectionTimeout = 5000,
-                    AlwaysDownloadUsers = true
-                }
+            {
+                LogLevel = LogSeverity.Debug,
+                DefaultRetryMode = RetryMode.AlwaysRetry,
+                ConnectionTimeout = 5000,
+                AlwaysDownloadUsers = true
+            }
             );
 
             _manager = Container.Get<Manager>();
@@ -37,7 +37,7 @@ namespace ScrubBot.Core
             await _client.StartAsync();
             await _client.SetGameAsync("Type >Help for help");
 
-            await Task.Delay(-1);
+            //await Task.Delay(-1);
         }
 
         private void RegisterServices()
@@ -55,7 +55,7 @@ namespace ScrubBot.Core
             _client.Log += Logger.Log;
             _client.Ready += OnClientReadyAsync;
             _client.MessageReceived += OnMessageReceivedAsync;
-            
+
             _client.ChannelCreated += _manager.Channels.OnChannelCreatedAsync;
             _client.ChannelDestroyed += _manager.Channels.OnChannelDestroyedAsync;
             _client.ChannelUpdated += _manager.Channels.OnChannelUpdatedAsync;
@@ -79,10 +79,6 @@ namespace ScrubBot.Core
             await _manager.Users.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage message)
-        {
-            ICommandOperator commandOperator = Container.Get<CommandOperator>();
-            await commandOperator.ExecuteAsync(message).ConfigureAwait(false);
-        }
+        private async Task OnMessageReceivedAsync(SocketMessage message) => await Container.Get<CommandOperator>().ExecuteAsync(message).ConfigureAwait(false);
     }
 }
