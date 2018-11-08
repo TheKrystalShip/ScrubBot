@@ -54,47 +54,5 @@ namespace ScrubBot.Modules
 
             await ReplyAsync(embedBuilder);
         }
-
-        [Command("SetBirthday")]
-        public async Task SetBirthday(DateTime birthday)
-        {
-            User.Birthday = birthday;
-            await ReplyAsync(string.Empty,
-                false,
-                new EmbedBuilder().CreateSuccess($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}"));
-        }
-
-        [Command("ShowBirthdays")]
-        public async Task ShowBirthdays(int month)
-        {
-            if (month < 1 || month > 12)
-            {
-                await ReplyAsync($"Cannot parse {month} as a month. Please type this command, followed by a number between 1 and 12!");
-                return;
-            }
-
-            List<User> birthdayBois = Database.Users.Where(x => x.Guilds.Contains(y => y.Id == Context.Guild.Id) && x.Birthday.Month == month)
-                .ToList();
-
-            var today = DateTime.UtcNow;
-            var birthdayMonth = DateTime.Parse($"{today.Day}-{month}-{today.Year}").ToString("MMMMM");
-
-            if (birthdayBois.Count is 0)
-            {
-                await ReplyAsync(string.Empty,
-                                 false,
-                                 new EmbedBuilder().CreateError($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!"));
-                return;
-            }
-
-            //foreach (var birthdayBoi in birthdayBois)
-            //{
-            //    birthdayList += $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})";
-            //}
-
-            string birthdayList = birthdayBois.Aggregate(string.Empty, (current, birthdayBoi) => current + $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})");
-
-            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateMessage($"Birthdays in {birthdayMonth}", birthdayList));
-        }
     }
 }

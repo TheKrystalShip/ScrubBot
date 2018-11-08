@@ -31,6 +31,7 @@ namespace ScrubBot.Services
         public override void Init(int startDelay = 0, int interval = 1000)
         {
             Timer = new Timer(Loop, null, startDelay, interval);
+            Loop(null);
             Start?.Invoke(this);
         }
 
@@ -38,8 +39,9 @@ namespace ScrubBot.Services
         {
             try
             {
+                var today = DateTime.UtcNow;
                 List<User> birthdayBois = _dbContext.Users
-                    .Where(x => x.Birthday <= DateTime.UtcNow)
+                    .Where(x => x.Birthday.Month == today.Month & x.Birthday.Day == today.Day)
                     .Take(10)
                     .ToList();
 
@@ -63,6 +65,8 @@ namespace ScrubBot.Services
             {
                 Console.WriteLine(e);
             }
+
+            Tick?.Invoke(this);
         }
 
         public override void Dispose()

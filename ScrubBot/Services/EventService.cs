@@ -56,7 +56,7 @@ namespace ScrubBot.Services
                             SendMessageAsync(string.Empty,
                                              false,
                                              new EmbedBuilder().CreateMessage($"(Event) {_event.Title}",
-                                                                     $"Dear {user.Nickname},\t" +
+                                                                     $"Dear {user.Username},\t" +
                                                                      $"This is a reminder that event {_event.Title} is about to start!").Build())));
                     tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id).
                         SendMessageAsync(string.Empty,
