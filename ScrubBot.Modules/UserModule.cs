@@ -20,7 +20,7 @@ namespace ScrubBot.Modules
 
         }
 
-        [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
+        [Command("Info"), Summary("Display info about the bot.")]
         public async Task Info()
         {
             EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };

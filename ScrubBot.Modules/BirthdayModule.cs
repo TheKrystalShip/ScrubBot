@@ -14,7 +14,7 @@ namespace ScrubBot.Modules
     {
         //public BirthdayModule() { }
 
-        [Command("SetBirthday")]
+        [Command("SetBirthday"), Summary("Let me know of your birthday! : D")]
         public async Task SetBirthday(DateTime birthday)
         {
             User.Birthday = birthday;
@@ -23,7 +23,7 @@ namespace ScrubBot.Modules
                 new EmbedBuilder().CreateSuccess($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}"));
         }
 
-        [Command("ShowBirthdays")]
+        [Command("ShowBirthdays"), Summary("Show all birthdays in a specific month")]
         public async Task ShowBirthdays(int month)
         {
             if (month < 1 || month > 12)

@@ -25,7 +25,6 @@ namespace ScrubBot.Core
             );
 
             _manager = Container.Get<Manager>();
-            //_commandOperator = Container.Get<CommandOperator>();
 
             RegisterServices();
             HookEvents();
@@ -77,6 +76,7 @@ namespace ScrubBot.Core
 
         private async Task OnClientReadyAsync()
         {
+            _commandOperator = Container.Get<CommandOperator>();
             await _manager.Guilds.AddGuildsAsync(_client.Guilds).ConfigureAwait(false);
             await _manager.Users.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }

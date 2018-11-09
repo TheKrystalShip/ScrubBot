@@ -21,7 +21,7 @@ namespace ScrubBot.Modules
 
         }
 
-        [Command("ShowEvents")]
+        [Command("ShowEvents"), Summary("Show the first 10 upcoming events")]
         public async Task ShowEvents(int amount = 10)
         {
             List<Event> events = Database.Events
@@ -40,12 +40,12 @@ namespace ScrubBot.Modules
         }
 
         // @ScrubBot CreateEvent "Title goes here" "Description goes here" 24/10/2018 20
-        [Command("CreateEvent")]
-        public async Task CreateEvent(string eventTitle, string description, DateTime occurenceDateTime, int maxSubscribers)
+        [Command("CreateEvent"), Summary("Create a new event")]
+        public async Task CreateEvent(string eventTitle, string description, DateTime occurenceDateTimeUTC, int maxSubscribers)
         {
             if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Context.Guild.Id))
             {
-                await ReplyAsync(new EmbedBuilder().CreateError("An event with this name already exists!"));
+                await ReplyAsync(new EmbedBuilder().CreateError($"An event with the name **{eventTitle}** already exists!"));
                 return;
             }
 
@@ -54,41 +54,61 @@ namespace ScrubBot.Modules
                 Title = eventTitle,
                 Description = description,
                 Guild = base.Guild, 
-                OccurenceDate = occurenceDateTime.ToUniversalTime(),
+                OccurenceDate = occurenceDateTimeUTC.ToUniversalTime(),
                 Author = base.User,
                 MaxSubscribers = maxSubscribers
             };
 
             await Database.Events.AddAsync(newEvent);
 
-            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Event {eventTitle} has been successfully added for {occurenceDateTime} with a max of {maxSubscribers} subscribers!"));
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Event **{eventTitle}** has been successfully created for **{occurenceDateTimeUTC}** with a max of **{maxSubscribers}** subscribers!"));
         }
 
-        [Command("")]
+        [Command("JoinEvent"), Summary("Join a specific event")]
         public async Task JoinEvent(string eventTitle)
         {
             bool hasEvent = Database.Events.Any(x => x.Title == eventTitle);
             bool isSameServer = Database.Events.Any(x => x.Guild.Id == Context.Guild.Id);
+            string username = Context.User.Username;
 
             if (!hasEvent || !isSameServer)
             {
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Could not find an event with title {eventTitle} for this server!"));
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Could not find an event with eventTitle **{eventTitle}** for this server!"));
                 return;
             }
             
             Event _event = Database.Events.First(x => x.Title == eventTitle && x.Guild.Id == Context.Guild.Id);
+
+            if (_event.Author.Id == Context.User.Id)
+            {
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"**{username}** cannot subscribe to their own event!").Build());
+                return;
+            }
+
+            if (_event.Subscribers.Any(x => x.Id == Context.User.Id))
+            {
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"**{username}** is already subscribed to **{eventTitle}**!").Build());
+                return;
+            }
+
+            if (_event.Subscribers.Count == _event.MaxSubscribers)
+            {
+                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Event **{eventTitle}** is already full!"));
+                return;
+            }
+
             _event.Subscribers.Add(User);
-            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateSuccess($"**{Context.User.Username}** has successfully joined event **{eventTitle}** ({_event.Subscribers.Count}/{_event.MaxSubscribers})"));
+            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateSuccess($"**{username}** has successfully joined event **{eventTitle}** ({_event.Subscribers.Count}/{_event.MaxSubscribers})"));
         }
 
-        [Command("DeleteEvent")]
-        public async Task DeleteEvent(string title)
+        [Command("DeleteEvent"), Summary("Delete one of your events")]
+        public async Task DeleteEvent(string eventTitle)
         {
-            Event _event = Database.Events.FirstOrDefault(x => x.Guild.Id == Context.Guild.Id && x.Title == title);
+            Event _event = Database.Events.FirstOrDefault(x => x.Guild.Id == Context.Guild.Id && x.Title == eventTitle);
 
             if (_event is null)
             {
-                await ReplyAsync(new EmbedBuilder().CreateError($"Unable to find event {title}!"));
+                await ReplyAsync(new EmbedBuilder().CreateError($"Unable to find event **{eventTitle}**!"));
                 return;
             }
 
@@ -100,7 +120,7 @@ namespace ScrubBot.Modules
 
             Database.Events.Remove(_event);
 
-            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Successfully removed event {_event.Title}!"));
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Successfully deleted event **{_event.Title}**!"));
         }
     }
 }

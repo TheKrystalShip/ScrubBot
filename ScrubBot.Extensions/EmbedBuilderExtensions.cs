@@ -41,7 +41,7 @@ namespace ScrubBot.Extensions
             foreach (var _event in events)
             {
                 embedBuilder.AddField(_event.Title,
-                    $"Occurence date: {_event.OccurenceDate:dd-MM-yyyy hh:mm}\nDescription: {_event.Description}\n");
+                    $"Occurence date: {_event.OccurenceDate:dd-MM-yyyy HH:MM}\nDescription: {_event.Description}\nSubscribers: {_event.Subscribers.Count}/{_event.MaxSubscribers}");
             }
 
             return embedBuilder;
