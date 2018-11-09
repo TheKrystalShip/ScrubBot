@@ -81,6 +81,6 @@ namespace ScrubBot.Core
             await _manager.Users.AddUsersAsync(_client.Guilds).ConfigureAwait(false);
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage message) => await (_commandOperator ?? (_commandOperator = Container.Get<CommandOperator>())).ExecuteAsync(message).ConfigureAwait(false);
+        private async Task OnMessageReceivedAsync(SocketMessage message) => await _commandOperator.ExecuteAsync(message).ConfigureAwait(false);
     }
 }

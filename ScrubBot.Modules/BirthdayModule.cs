@@ -12,15 +12,11 @@ namespace ScrubBot.Modules
 {
     public class BirthdayModule : Module
     {
-        //public BirthdayModule() { }
-
         [Command("SetBirthday"), Summary("Let me know of your birthday! : D")]
         public async Task SetBirthday(DateTime birthday)
         {
             User.Birthday = birthday;
-            await ReplyAsync(string.Empty,
-                false,
-                new EmbedBuilder().CreateSuccess($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}"));
+            await ReplyAsync(new EmbedBuilder().CreateSuccess($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}"));
         }
 
         [Command("ShowBirthdays"), Summary("Show all birthdays in a specific month")]
@@ -40,15 +36,13 @@ namespace ScrubBot.Modules
 
             if (birthdayBois.Count is 0)
             {
-                await ReplyAsync(string.Empty,
-                                 false,
-                                 new EmbedBuilder().CreateError($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!"));
+                await ReplyAsync(new EmbedBuilder().CreateError($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!"));
                 return;
             }
 
             string birthdayList = birthdayBois.Aggregate(string.Empty, (current, birthdayBoi) => current + $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})\n");
 
-            await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateMessage($"Birthdays in {birthdayMonth}", birthdayList));
+            await ReplyAsync(new EmbedBuilder().CreateMessage($"Birthdays in {birthdayMonth}", birthdayList));
         }
     }
 }

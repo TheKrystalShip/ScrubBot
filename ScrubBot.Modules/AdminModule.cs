@@ -13,13 +13,6 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
-        DiscordSocketClient _client;
-
-        public AdminModule(DiscordSocketClient client)
-        {
-            _client = client;
-        }
-
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
         public async Task UrMomGay()
         {
@@ -35,7 +28,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
+                await ReplyAsync(new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})"));
                 return;
             }
 
@@ -51,7 +44,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
+                await ReplyAsync(new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})"));
                 return;
             }
 
@@ -65,21 +58,21 @@ namespace ScrubBot.Modules
         {
             Event _event = Database.Events.FirstOrDefault();
 
-            var author = _client.GetUser(_event.Author.Id);
+            var author = Context.Client.GetUser(_event.Author.Id);
 
             if (author is null)
             {
                 await ReplyAsync("Event author is null for some f-ing reason");
             }
             else
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateSuccess($"Title\t{_event.Title}\n" +
-                                                                                       $"Author\t{_event.Author.Username}\n" +
-                                                                                       $"Description\t{_event.Description}\n"+
-                                                                                       $"Guild\t{_event.Guild.Name}\n" +
-                                                                                       $"CreationDate\t{_event.CreationDate}\n" +
-                                                                                       $"OccurenceDate\t{_event.OccurenceDate}\n" +
-                                                                                       $"Subscribers\t{_event.Subscribers.Count}\n" +
-                                                                                       $"MaxSubscribers\t{_event.MaxSubscribers}"));
+                await ReplyAsync(new EmbedBuilder().CreateSuccess($"Title\t{_event.Title}\n" +
+                                                                  $"Author\t{_event.Author.Username}\n" +
+                                                                  $"Description\t{_event.Description}\n"+
+                                                                  $"Guild\t{_event.Guild.Name}\n" +
+                                                                  $"CreationDate\t{_event.CreationDate}\n" +
+                                                                  $"OccurenceDate\t{_event.OccurenceDate}\n" +
+                                                                  $"Subscribers\t{_event.Subscribers.Count}\n" +
+                                                                  $"MaxSubscribers\t{_event.MaxSubscribers}"));
         }
     }
 }
