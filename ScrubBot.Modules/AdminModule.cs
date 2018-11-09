@@ -52,27 +52,5 @@ namespace ScrubBot.Modules
 
             await ReplyAsync(new EmbedBuilder().CreateSuccess($"Set this server's audit channel to {newChannel.Mention}"));
         }
-
-        [Command("test")]
-        public async Task TestAsync()
-        {
-            Event _event = Database.Events.FirstOrDefault();
-
-            var author = Context.Client.GetUser(_event.Author.Id);
-
-            if (author is null)
-            {
-                await ReplyAsync("Event author is null for some f-ing reason");
-            }
-            else
-                await ReplyAsync(new EmbedBuilder().CreateSuccess($"Title\t{_event.Title}\n" +
-                                                                  $"Author\t{_event.Author.Username}\n" +
-                                                                  $"Description\t{_event.Description}\n"+
-                                                                  $"Guild\t{_event.Guild.Name}\n" +
-                                                                  $"CreationDate\t{_event.CreationDate}\n" +
-                                                                  $"OccurenceDate\t{_event.OccurenceDate}\n" +
-                                                                  $"Subscribers\t{_event.Subscribers.Count}\n" +
-                                                                  $"MaxSubscribers\t{_event.MaxSubscribers}"));
-        }
     }
 }
