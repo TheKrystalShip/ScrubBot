@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class ChannelManager
+    public class ChannelManager : IChannelManager
     {
         public ChannelManager()
         {

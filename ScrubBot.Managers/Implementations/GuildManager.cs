@@ -1,14 +1,35 @@
-﻿using Discord.WebSocket;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Discord.WebSocket;
 
 using System.Threading.Tasks;
+using ScrubBot.Database;
+using ScrubBot.Domain;
+using ScrubBot.Extensions;
 
 namespace ScrubBot.Managers
 {
-    public class GuildManager
+    public class GuildManager : IGuildManager
     {
-        public GuildManager()
-        {
+        private readonly SQLiteContext _dbContext;
 
+        public GuildManager(SQLiteContext dbContext) => _dbContext = dbContext;
+
+        public async Task AddGuildAsync(SocketGuild socketGuild)
+        {
+            if (_dbContext.Guilds.Any(x => x.Id == socketGuild.Id))
+                return;
+
+            Guild guild = socketGuild.ToGuild();
+
+            await _dbContext.Guilds.AddAsync(guild);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddGuildsAsync(IReadOnlyCollection<SocketGuild> guilds)
+        {
+            List<Task> tasks = guilds.Select(AddGuildAsync).ToList();
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         public async Task OnGuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)

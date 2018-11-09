@@ -9,8 +9,8 @@ using ScrubBot.Database;
 namespace ScrubBot.Database.Migrations
 {
     [DbContext(typeof(SQLiteContext))]
-    [Migration("20181025111740_Initial")]
-    partial class Initial
+    [Migration("20181029110157_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

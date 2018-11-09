@@ -1,33 +1,36 @@
 ﻿using Discord;
 using Discord.Commands;
-using ScrubBot.Core.Handlers;
+
 using ScrubBot.Database;
 using ScrubBot.Domain;
+using ScrubBot.Managers;
 using ScrubBot.Tools;
 
 using System;
 using System.Threading.Tasks;
 
-namespace ScrubBot.Core
+namespace ScrubBot.Modules
 {
     public abstract class Module : ModuleBase<SocketCommandContext>
     {
-        public SQLiteContext Database { get; private set; }
         public CommandService CommandService { get; private set; }
-        public PrefixHandler Prefix { get; private set; }
+        public SQLiteContext Database { get; private set; }
+        public IPrefixManager Prefix { get; private set; }
         public Guild Guild { get; protected set; }
         public User User { get; protected set; }
 
         public Module()
         {
-            Database = Container.Get<SQLiteContext>();
             CommandService = Container.Get<CommandService>();
-            Prefix = Container.Get<PrefixHandler>();
+            Database = Container.Get<SQLiteContext>();
+            Prefix = Container.Get<PrefixManager>();
         }
 
         protected override void BeforeExecute(CommandInfo command)
         {
             base.BeforeExecute(command);
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Guild = Database.Guilds.Find(Context.Guild?.Id);
             User = Database.Users.Find(Context.User?.Id);
@@ -41,8 +44,6 @@ namespace ScrubBot.Core
             {
                 Console.WriteLine(new LogMessage(LogSeverity.Warning, GetType().Name, "User is null in current scope"));
             }
-
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
         protected override void AfterExecute(CommandInfo command)
@@ -58,7 +59,17 @@ namespace ScrubBot.Core
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // Handle exceptions in here
+            Exception exception = e.ExceptionObject as Exception;
+
+            if (exception is null)
+                return;
+
+            if (exception.InnerException != null)
+            {
+                Console.WriteLine(exception.InnerException);
+            }
+
+            Console.WriteLine(exception);
         }
 
         protected virtual async Task<IUserMessage> ReplyAsync(EmbedBuilder embedBuilder)

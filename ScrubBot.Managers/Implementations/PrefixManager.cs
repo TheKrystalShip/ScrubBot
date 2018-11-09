@@ -6,21 +6,21 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ScrubBot.Core.Handlers
+namespace ScrubBot.Managers
 {
-    public class PrefixHandler
+    public class PrefixManager : IPrefixManager
     {
         private readonly SQLiteContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
-        public PrefixHandler(SQLiteContext dbContext)
+        public PrefixManager(SQLiteContext dbContext)
         {
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
 
-            var Guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
+            var guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
 
-            foreach (var guild in Guilds)
+            foreach (var guild in guilds)
             {
                 _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Prefix:Default"));
             }

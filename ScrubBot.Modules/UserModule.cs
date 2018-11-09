@@ -1,27 +1,31 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using ScrubBot.Core;
-
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ScrubBot.Domain;
+using ScrubBot.Extensions;
 
 namespace ScrubBot.Modules
 {
-    public class SettingsModule : Module
+    public class UserModule : Module
     {
-        public SettingsModule()
+        public UserModule()
         {
 
         }
 
-        [Command("Info"), Alias("BotInfo"), Summary("Display info about the bot.")]
+        [Command("Info"), Summary("Display info about the bot.")]
         public async Task Info()
         {
             EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };
             embedBuilder.AddField("Server:", (Guild.Name ?? "null") + "\n");
+            embedBuilder.ThumbnailUrl = Guild.IconUrl;
 
             SocketTextChannel auditChannel = Context.Guild.GetChannel(Guild.AuditChannelId) as SocketTextChannel;
             embedBuilder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");

@@ -6,12 +6,13 @@ using ScrubBot.Database;
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class UserManager
+    public class UserManager : IUserManager
     {
         private readonly SQLiteContext _dbContext;
 
@@ -30,6 +31,24 @@ namespace ScrubBot.Managers
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddUsersAsync(IReadOnlyCollection<SocketGuild> guilds)
+        {
+            //foreach (SocketGuild guild in guilds)
+            //{
+            //    foreach (SocketGuildUser user in guild.Users)
+            //    {
+            //        if (user.IsBot)
+            //            continue;
+
+            //        tasks.Add(AddUserAsync(user));
+            //    }
+            //}
+
+            List<Task> tasks = (from guild in guilds from user in guild.Users where !user.IsBot select AddUserAsync(user)).ToList();
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)

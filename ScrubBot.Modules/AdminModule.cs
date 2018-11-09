@@ -1,10 +1,10 @@
-﻿using Discord;
+﻿using System.Linq;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using ScrubBot.Domain;
 using ScrubBot.Extensions;
-using ScrubBot.Core;
 
 using System.Threading.Tasks;
 
@@ -13,11 +13,6 @@ namespace ScrubBot.Modules
     [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)), RequireOwner(Group = nameof(AdminModule))]
     public class AdminModule : Module
     {
-        public AdminModule()
-        {
-
-        }
-
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
         public async Task UrMomGay()
         {
@@ -33,7 +28,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
+                await ReplyAsync(new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})"));
                 return;
             }
 
@@ -49,7 +44,7 @@ namespace ScrubBot.Modules
             SocketTextChannel auditChannel;
             if ((auditChannel = Context.Guild.GetTextChannel(Guild.AuditChannelId)) != null && Context.Channel.Id != Guild.AuditChannelId)
             {
-                await ReplyAsync(string.Empty, false, new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})").Build());
+                await ReplyAsync(new EmbedBuilder().CreateError($"Admin commands are only allowed in the audit channel ({auditChannel.Mention})"));
                 return;
             }
 

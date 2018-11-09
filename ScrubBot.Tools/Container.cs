@@ -29,6 +29,11 @@ namespace ScrubBot.Tools
             _services.AddSingleton(type);
         }
 
+        public static void Add<T, I>() where T : class where I : class, T
+        {
+            _services.AddSingleton<T, I>();
+        }
+
         public static T Get<T>()
         {
             return (T) Get(typeof(T));

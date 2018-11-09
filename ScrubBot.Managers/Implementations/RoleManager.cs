@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
-    public class RoleManager
+    public class RoleManager : IRoleManager
     {
         public RoleManager()
         {

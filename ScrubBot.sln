@@ -7,15 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot", "ScrubBot\ScrubB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Database", "ScrubBot.Database\ScrubBot.Database.csproj", "{AA07A988-0AEF-43C0-9F11-5AC9859826A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Domain", "ScrubBot.Domain\ScrubBot.Domain.csproj", "{B50987E1-292B-470E-92B0-2EA0D3C6916A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Domain", "ScrubBot.Domain\ScrubBot.Domain.csproj", "{B50987E1-292B-470E-92B0-2EA0D3C6916A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Core", "ScrubBot.Core\ScrubBot.Core.csproj", "{1BAF8085-0F81-43F7-8CBF-16DD45E4518C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Core", "ScrubBot.Core\ScrubBot.Core.csproj", "{1BAF8085-0F81-43F7-8CBF-16DD45E4518C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Managers", "ScrubBot.Managers\ScrubBot.Managers.csproj", "{51760219-3BBA-417C-BDF4-19B5047916EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Managers", "ScrubBot.Managers\ScrubBot.Managers.csproj", "{51760219-3BBA-417C-BDF4-19B5047916EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Extensions", "ScrubBot.Extensions\ScrubBot.Extensions.csproj", "{14C952DE-311C-4AB6-907D-5A652FBCFBA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Extensions", "ScrubBot.Extensions\ScrubBot.Extensions.csproj", "{14C952DE-311C-4AB6-907D-5A652FBCFBA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Tools", "ScrubBot.Tools\ScrubBot.Tools.csproj", "{127D0A0F-5853-436C-85B7-AFF42CE50050}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Tools", "ScrubBot.Tools\ScrubBot.Tools.csproj", "{127D0A0F-5853-436C-85B7-AFF42CE50050}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Modules", "ScrubBot.Modules\ScrubBot.Modules.csproj", "{B441D3BE-D78D-47CB-91AE-BD4391434387}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{127D0A0F-5853-436C-85B7-AFF42CE50050}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{127D0A0F-5853-436C-85B7-AFF42CE50050}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{127D0A0F-5853-436C-85B7-AFF42CE50050}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B441D3BE-D78D-47CB-91AE-BD4391434387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B441D3BE-D78D-47CB-91AE-BD4391434387}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B441D3BE-D78D-47CB-91AE-BD4391434387}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B441D3BE-D78D-47CB-91AE-BD4391434387}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

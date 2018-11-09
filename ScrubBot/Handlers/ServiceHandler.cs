@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Discord.WebSocket;
+
+using ScrubBot.Services;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Discord.WebSocket;
-using ScrubBot.Services;
 
 namespace ScrubBot.Handlers
 {
