@@ -9,7 +9,7 @@ namespace ScrubBot.Handlers
 {
     class ServiceHandler
     {
-        private static List<Service> ServiceList { get; set; } = new List<Service>();
+        private static List<IService> ServiceList { get; set; } = new List<IService>();
         private const int InitializeDelay = 5000;
         private const int Interval = 1000;
 
@@ -25,7 +25,7 @@ namespace ScrubBot.Handlers
         {
             //LogHandler.WriteLine(LogTarget.Console, "Starting all loops...");
 
-            foreach (Service service in ServiceList)
+            foreach (IService service in ServiceList)
                 service.Init(InitializeDelay, Interval);
         }
 
@@ -33,18 +33,18 @@ namespace ScrubBot.Handlers
         {
             //LogHandler.WriteLine(LogTarget.Console, "Stopping all loops...");
 
-            foreach (Service service in ServiceList)
+            foreach (IService service in ServiceList)
                 service.Dispose();
         }
 
-        private void HandleEvents<T>(T service) where T : Service
+        private void HandleEvents<T>(T service) where T : IService
         {
             //service.Start += OnServiceStart;
             //service.Tick += OnServiceTick;
             //service.Stop += OnServiceStop;
         }
 
-        private void RegisterService<T>(T service) where T : Service
+        private void RegisterService<T>(T service) where T : IService
         {
             HandleEvents(service);
             ServiceList.Add(service);
