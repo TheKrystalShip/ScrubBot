@@ -1,7 +1,9 @@
-﻿using ScrubBot.Domain;
+﻿using ScrubBot.Database;
+using ScrubBot.Domain;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,15 +11,17 @@ namespace ScrubBot.Services
 {
     public class BirthdayService : IService
     {
+        private readonly SQLiteContext _dbContext;
+
         public Timer Timer { get; set; }
         public event Action Start;
         public event Action Stop;
         public event Action Tick;
         public event Func<User, Task> Trigger;
 
-        public BirthdayService()
+        public BirthdayService(SQLiteContext dbContext)
         {
-
+            _dbContext = dbContext;
         }
 
         public void Init(int startDelay = 0, int interval = 1000)
@@ -28,38 +32,22 @@ namespace ScrubBot.Services
 
         public void Loop(object state)
         {
-            try
+            List<User> birthdayBois = _dbContext.Users
+                .Where(x => x.IsBirthdayToday())
+                .Take(10)
+                .ToList();
+
+            if (birthdayBois.Count is 0)
             {
-                //var today = DateTime.UtcNow;
-                //List<User> birthdayBois = _dbContext.Users
-                //    .Where(x => x.Birthday.Month == today.Month & x.Birthday.Day == today.Day)
-                //    .Take(10)
-                //    .ToList();
-
-                //if (birthdayBois.Count is 0) return;
-
-                //List<Task> tasks = new List<Task>();
-
-                //foreach (var birthdayBoi in birthdayBois)
-                //{
-                //    if (birthdayBoi.Birthday == DateTime.MinValue.Date) continue;
-
-                //    tasks.Add(Task.Run(async () => await _client.GetUser(birthdayBoi.Id).SendMessageAsync(string.Empty,
-                //            false,
-                //            new EmbedBuilder().CreateMessage("Hey kanjer, dit is je verjaardag!",
-                //                                             $"Van harte gefeliciflapstaart met je verjaardag {birthdayBoi.Username}! Hiep hiep hoera en een fijne dag!"))));
-                //}
-
-                //Task.WhenAll(tasks).Wait();
+                return;
             }
-            catch (Exception e)
+
+            foreach (User birthdayBoi in birthdayBois)
             {
-                Console.WriteLine(e);
+                Trigger?.Invoke(birthdayBoi);
             }
-            finally
-            {
-                Tick?.Invoke();
-            }
+
+            Tick?.Invoke();
         }
 
         public void Dispose()

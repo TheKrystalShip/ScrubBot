@@ -1,6 +1,11 @@
-﻿using ScrubBot.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+
+using ScrubBot.Database;
+using ScrubBot.Domain;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,15 +13,17 @@ namespace ScrubBot.Services
 {
     public class EventService : IService
     {
+        private readonly SQLiteContext _dbContext;
+
         public Timer Timer { get; set; }
         public event Action Start;
         public event Action Stop;
         public event Action Tick;
         public event Func<Event, Task> Trigger;
 
-        public EventService()
+        public EventService(SQLiteContext dbContext)
         {
-
+            _dbContext = dbContext;
         }
 
         public void Init(int startDelay = 0, int interval = 1000)
@@ -27,47 +34,24 @@ namespace ScrubBot.Services
 
         public void Loop(object state)
         {
-            try
+            List<Event> events = _dbContext.Events
+                .Where(x => x.IsDue())
+                .Include(x => x.Author)
+                .Include(x => x.Subscribers)
+                .Take(10)
+                .ToList();
+
+            if (events.Count is 0)
             {
-                //List<Event> events = _dbContext.Events
-                //    .Where(x => x.OccurenceDate <= DateTime.UtcNow)
-                //    .Include(x => x.Author)
-                //    .Include(x => x.Subscribers)
-                //    .Take(10)
-                //    .ToList();
-
-                //if (events.Count is 0) return;
-
-                //List<Task> tasks = new List<Task>();
-
-                //foreach (var _event in events)
-                //{
-                //    foreach (var user in _event.Subscribers)
-                //        tasks.Add(Task.Run(async () => await _client.GetUser(user.Id).
-                //            SendMessageAsync(string.Empty,
-                //                             false,
-                //                             new EmbedBuilder().CreateMessage("Event reminder",
-                //                                                     $"Dear {user.Username},\t" +
-                //                                                     $"**{_event.Author.Username}{(_event.Author.Username.Last() == 's' ? "'" : "'s")}** event **{_event.Title}** is about to start!").Build())));
-                //    tasks.Add(Task.Run(async () => await _client.GetUser(_event.Author.Id).
-                //       SendMessageAsync(string.Empty,
-                //                        false,
-                //                        new EmbedBuilder().CreateMessage("Event reminder",
-                //                                                         $"Your event **{_event.Title}** is about to start!").Build())));
-                //}
-
-                //Task.WhenAll(tasks).Wait();
-                //_dbContext.Events.RemoveRange(events);
-                //_dbContext.SaveChanges();
+                return;
             }
-            catch (Exception e)
+
+            foreach (Event @event in events)
             {
-                Console.WriteLine(e);
+                Trigger?.Invoke(@event);
             }
-            finally
-            {
-                Tick?.Invoke();
-            }
+
+            Tick?.Invoke();
         }
 
         public void Dispose()

@@ -27,5 +27,10 @@ namespace ScrubBot.Domain
         public virtual List<Event> AuthoringEvents { get; set; } = new List<Event>();
 
         public virtual List<Event> SubscribedEvents { get; set; } = new List<Event>();
+        
+        public bool IsBirthdayToday()
+        {
+            return Birthday.Date == DateTime.Today.Date;
+        }
     }
 }

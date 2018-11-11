@@ -24,5 +24,10 @@ namespace ScrubBot.Domain
         public string Description { get; set; }
 
         public int MaxSubscribers { get; set; }
+
+        public bool IsDue()
+        {
+            return OccurenceDate <= DateTime.UtcNow;
+        }
     }
 }
