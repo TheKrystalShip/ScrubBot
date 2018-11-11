@@ -35,12 +35,14 @@ namespace ScrubBot
             Container.Add<EventService>();
             Container.Add<BirthdayService>();
 
+            ServiceHandler serviceHandler = Container.Get<ServiceHandler>();
+
             EventService eventService = Container.Get<EventService>();
-            //eventService.Trigger += OnEventServiceTriggerAsync;
+            eventService.Trigger += serviceHandler.OnEventServiceTriggerAsync;
             eventService.Init(10000);
 
             BirthdayService birthdayService = Container.Get<BirthdayService>();
-            //birthdayService.Trigger += OnBirthdayServiceTriggerAsync;
+            birthdayService.Trigger += serviceHandler.OnBirthdayServiceTriggerAsync;
             birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, 86400000);
 
             return this;
