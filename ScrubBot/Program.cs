@@ -9,8 +9,8 @@ namespace ScrubBot
             await BotBuilder
                 .UseStartup<Startup>()
                 .ConfigureDatabase()
-                .ConfigureServices()
                 .ConfigureBot()
+                .ConfigureServices()
                 .InitAsync();
         }
     }
