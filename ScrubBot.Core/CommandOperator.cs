@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace ScrubBot.Core
 {
-    internal class CommandOperator : ICommandOperator
+    internal class CommandOperator
     {
-        private readonly DiscordSocketClient _client;
+        private readonly Bot _client;
         private readonly CommandService _commandService;
         private readonly IPrefixManager _prefixManager;
 
-        public CommandOperator(DiscordSocketClient client)
+        public CommandOperator(Bot client)
         {
             _client = client;
             _prefixManager = Container.Get<PrefixManager>();

@@ -1,5 +1,5 @@
 ﻿using Discord.WebSocket;
-
+using ScrubBot.Core;
 using ScrubBot.Database;
 using ScrubBot.Domain;
 
@@ -9,10 +9,10 @@ namespace ScrubBot.Handlers
 {
     public class ServiceHandler
     {
-        private readonly DiscordSocketClient _client;
+        private readonly Bot _client;
         private readonly SQLiteContext _dbContext;
 
-        public ServiceHandler(DiscordSocketClient client, SQLiteContext dbContext)
+        public ServiceHandler(Bot client, SQLiteContext dbContext)
         {
             _client = client;
             _dbContext = dbContext;

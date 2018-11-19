@@ -3,6 +3,7 @@
 using ScrubBot.Core;
 using ScrubBot.Database;
 using ScrubBot.Handlers;
+using ScrubBot.Managers;
 using ScrubBot.Services;
 using ScrubBot.Tools;
 
@@ -29,6 +30,17 @@ namespace ScrubBot
             return this;
         }
 
+        public Startup ConfigureManagers()
+        {
+            Container.Add<IPrefixManager, PrefixManager>();
+            Container.Add<IChannelManager, ChannelManager>();
+            Container.Add<IGuildManager, GuildManager>();
+            Container.Add<IRoleManager, RoleManager>();
+            Container.Add<IUserManager, UserManager>();
+
+            return this;
+        }
+
         public Startup ConfigureServices()
         {
             Container.Add<ServiceHandler>();
@@ -48,10 +60,10 @@ namespace ScrubBot
             return this;
         }
 
-        public Startup ConfigureBot()
+        public Startup ConfigureClient()
         {
-            IBot _bot = new Bot();
-            _bot.InitAsync(Configuration.Get("Bot:Token"));
+            Bot _bot = new Bot();
+            _bot.InitAsync(Configuration.Get("Bot:Token")).Wait();
 
             return this;
         }
