@@ -1,60 +1,40 @@
-﻿using Discord.WebSocket;
+﻿using System.Linq;
+using Discord.WebSocket;
+using ScrubBot.Core;
+using ScrubBot.Database;
+using ScrubBot.Domain;
 
-using ScrubBot.Services;
-
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Discord;
+using ScrubBot.Extensions;
 
 namespace ScrubBot.Handlers
 {
-    class ServiceHandler
+    public class ServiceHandler
     {
-        private static List<Service> ServiceList { get; set; } = new List<Service>();
-        private const int InitializeDelay = 5000;
-        private const int Interval = 1000;
+        private readonly Bot _client;
+        private readonly SQLiteContext _dbContext;
 
-        public ServiceHandler(DiscordSocketClient client) => Initialize(client);
-
-        //private void OnStartService(Service service) => LogHandler.WriteLine(LogTarget.Console, service.ToString(), "Started");
-
-        //private void OnServiceTick(Service service) => LogHandler.WriteLine(LogTarget.Console, service.ToString(), "Ticked");
-
-        //private void OnServiceStop(Service service) => LogHandler.WriteLine(LogTarget.Console, service.ToString(), "Stopped");
-
-        public static void StartAllLoops()
+        public ServiceHandler(Bot client, SQLiteContext dbContext)
         {
-            //LogHandler.WriteLine(LogTarget.Console, "Starting all loops...");
-
-            foreach (Service service in ServiceList)
-                service.Init(InitializeDelay, Interval);
+            _client = client;
+            _dbContext = dbContext;
         }
 
-        public static void StopAllLoops()
+        public async Task OnBirthdayServiceTriggerAsync(User user)
         {
-            //LogHandler.WriteLine(LogTarget.Console, "Stopping all loops...");
-
-            foreach (Service service in ServiceList)
-                service.Dispose();
+            await _client.GetUser(user.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Hey kanjer, dit is je verjaardag!",
+                                                                                                                  $"Van harte gefeliciflapstaart met je verjaardag **{user.Username}**! Hiep hiep hoera en een fijne dag!"));
+            await Task.CompletedTask;
         }
 
-        private void HandleEvents<T>(T service) where T : Service
+        public async Task OnEventServiceTriggerAsync(Event @event)
         {
-            //service.Start += OnServiceStart;
-            //service.Tick += OnServiceTick;
-            //service.Stop += OnServiceStop;
-        }
+            foreach (var subscriber in @event.Subscribers)
+                await _client.GetUser(subscriber.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Event reminder", $"Dear {subscriber.Username},\t" +
+                                                                                                                                              $"**{@event.Author.Username}{(@event.Author.Username.Last() == 's' ? "'" : "'s")}** event **{@event.Title}** is about to start!"));
 
-        private void RegisterService<T>(T service) where T : Service
-        {
-            HandleEvents(service);
-            ServiceList.Add(service);
-        }
-
-        private async void Initialize(DiscordSocketClient client)
-        {
-            // RegisterService(new YourService());
-
-            //StartAllLoops();
+            await _client.GetUser(@event.Author.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Event reminder", $"Your event **{@event.Title}** is about to start!"));
 
             await Task.CompletedTask;
         }
