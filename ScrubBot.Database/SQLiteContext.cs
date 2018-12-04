@@ -15,6 +15,7 @@ namespace ScrubBot.Database
 
         }
 
+        // TODO: Move into individual files, see https://github.com/BramEsendam/Color-Chan
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -7,6 +7,7 @@ using ScrubBot.Domain;
 using System.Threading.Tasks;
 using Discord;
 using ScrubBot.Extensions;
+using System.Collections.Generic;
 
 namespace ScrubBot.Handlers
 {
@@ -23,20 +24,31 @@ namespace ScrubBot.Handlers
 
         public async Task OnBirthdayServiceTriggerAsync(User user)
         {
-            await _client.GetUser(user.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Hey kanjer, dit is je verjaardag!",
-                                                                                                                  $"Van harte gefeliciflapstaart met je verjaardag **{user.Username}**! Hiep hiep hoera en een fijne dag!"));
-            await Task.CompletedTask;
+            await _client
+                .GetUser(user.Id)
+                .SendMessageAsync(new EmbedBuilder()
+                    .CreateMessage("Hey kanjer, dit is je verjaardag!", $"Van harte gefeliciflapstaart met je verjaardag **{user.Username}**! Hiep hiep hoera en een fijne dag!"));
         }
 
         public async Task OnEventServiceTriggerAsync(Event @event)
         {
+            List<Task<IUserMessage>> tasks = new List<Task<IUserMessage>>();
+
             foreach (var subscriber in @event.Subscribers)
-                await _client.GetUser(subscriber.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Event reminder", $"Dear {subscriber.Username},\t" +
-                                                                                                                                              $"**{@event.Author.Username}{(@event.Author.Username.Last() == 's' ? "'" : "'s")}** event **{@event.Title}** is about to start!"));
+            {
+                tasks.Add(_client
+                    .GetUser(subscriber.Id)
+                    .SendMessageAsync(new EmbedBuilder()
+                        .CreateMessage("Event reminder", $"Dear {subscriber.Username},\t" + $"**{@event.Author.Username}{(@event.Author.Username.Last() == 's' ? "'" : "'s")}** event **{@event.Title}** is about to start!"))
+                );
+            }
 
-            await _client.GetUser(@event.Author.Id).SendMessageAsync(string.Empty, false, new EmbedBuilder().CreateMessage("Event reminder", $"Your event **{@event.Title}** is about to start!"));
+            await _client
+                .GetUser(@event.Author.Id)
+                .SendMessageAsync(new EmbedBuilder()
+                    .CreateMessage("Event reminder", $"Your event **{@event.Title}** is about to start!"));
 
-            await Task.CompletedTask;
+            await Task.WhenAll(tasks);
         }
     }
 }

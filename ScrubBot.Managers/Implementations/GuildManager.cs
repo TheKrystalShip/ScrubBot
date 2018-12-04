@@ -13,7 +13,10 @@ namespace ScrubBot.Managers
     {
         private readonly SQLiteContext _dbContext;
 
-        public GuildManager(SQLiteContext dbContext) => _dbContext = dbContext;
+        public GuildManager(SQLiteContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public async Task AddGuildAsync(SocketGuild socketGuild)
         {
@@ -29,7 +32,7 @@ namespace ScrubBot.Managers
         public async Task AddGuildsAsync(IReadOnlyCollection<SocketGuild> guilds)
         {
             List<Task> tasks = guilds.Select(AddGuildAsync).ToList();
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
         }
 
         public async Task OnGuildMemberUpdatedAsync(SocketGuildUser before, SocketGuildUser after)

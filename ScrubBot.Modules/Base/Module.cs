@@ -1,6 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
-
+using Discord.Rest;
 using ScrubBot.Database;
 using ScrubBot.Domain;
 using ScrubBot.Managers;
@@ -30,7 +30,7 @@ namespace ScrubBot.Modules
         {
             base.BeforeExecute(command);
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             Guild = Database.Guilds.Find(Context.Guild?.Id);
             User = Database.Users.Find(Context.User?.Id);
@@ -54,10 +54,10 @@ namespace ScrubBot.Modules
             Database.Users.Update(User);
             Database.SaveChanges();
 
-            AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception exception = e.ExceptionObject as Exception;
 
@@ -72,9 +72,14 @@ namespace ScrubBot.Modules
             Console.WriteLine(exception);
         }
 
-        protected virtual async Task<IUserMessage> ReplyAsync(EmbedBuilder embedBuilder)
+        protected Task<RestUserMessage> ReplyAsync(EmbedBuilder embedBuilder)
         {
-            return await Context.Channel.SendMessageAsync(string.Empty, false, embedBuilder.Build(), null).ConfigureAwait(false);
+            return Context.Channel.SendMessageAsync(text: string.Empty, isTTS: false, embed: embedBuilder.Build(), options: null);
+        }
+
+        protected virtual Task<RestUserMessage> ReplyAsync(Embed embed)
+        {
+            return Context.Channel.SendMessageAsync(text: string.Empty, isTTS: false, embed: embed, options: null);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace ScrubBot.Managers
 
             List<Task> tasks = (from guild in guilds from user in guild.Users where !user.IsBot select AddUserAsync(user)).ToList();
 
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)

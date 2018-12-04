@@ -59,10 +59,10 @@ namespace ScrubBot.Core
         private async Task OnClientReadyAsync()
         {
             _commandOperator = Container.Get<CommandOperator>();
-            await _manager.Guilds.AddGuildsAsync(Guilds).ConfigureAwait(false);
-            await _manager.Users.AddUsersAsync(Guilds).ConfigureAwait(false);
+            await _manager.Guilds.AddGuildsAsync(Guilds);
+            await _manager.Users.AddUsersAsync(Guilds);
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage message) => await _commandOperator.ExecuteAsync(message).ConfigureAwait(false);
+        private async Task OnMessageReceivedAsync(SocketMessage message) => await _commandOperator.ExecuteAsync(message);
     }
 }
