@@ -32,6 +32,7 @@ namespace ScrubBot.Core
 
             _commandService.AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module))).Wait();
             _commandService.Log += Logger.Log;
+            _commandService.CommandExecuted += OnCommandExecutedAsync;
 
             Container.Add(_commandService);
         }
@@ -50,6 +51,15 @@ namespace ScrubBot.Core
                     Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
                 }
             }
+        }
+
+        private async Task OnCommandExecutedAsync(CommandInfo command, ICommandContext context, IResult result)
+        {
+            // Logic after command execution
+
+
+
+            await Task.CompletedTask;
         }
 
         private bool IsMessageValid(SocketUserMessage message, out int argPos)
