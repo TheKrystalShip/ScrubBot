@@ -1,17 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 
-using System;
+using ScrubBot.IoC;
 
 namespace ScrubBot.Tools
 {
     public static class Container
     {
-        private static ServiceCollection _services;
-        private static IServiceProvider _serviceProvider => _services.BuildServiceProvider();
+        private static ServiceResolver _serviceResolver;
 
         static Container()
         {
-            _services = new ServiceCollection();
+            _serviceResolver = new ServiceResolver();
         }
 
         public static void Add<T>() where T : class
@@ -21,17 +20,12 @@ namespace ScrubBot.Tools
 
         public static void Add<T>(T type) where T : class
         {
-            _services.AddSingleton<T>(type);
-        }
-
-        public static void Add(Type type)
-        {
-            _services.AddSingleton(type);
+            _serviceResolver.Register<T>(type);
         }
 
         public static void Add<T, I>() where T : class where I : class, T
         {
-            _services.AddSingleton<T, I>();
+            _serviceResolver.Register<T, I>();
         }
 
         public static T Get<T>()
@@ -39,22 +33,14 @@ namespace ScrubBot.Tools
             return (T) Get(typeof(T));
         }
 
-        public static object Get(Type type)
+        private static object Get(Type type)
         {
-            object value = _serviceProvider.GetService(type);
-
-            if (value is null)
-            {
-                Add(type);
-                return _serviceProvider.GetRequiredService(type);
-            }
-
-            return value;
+            return _serviceResolver.GetService(type);
         }
 
         public static IServiceProvider GetServiceProvider()
         {
-            return _serviceProvider;
+            return _serviceResolver;
         }
     }
 }

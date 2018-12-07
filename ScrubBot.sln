@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Tools", "ScrubBot.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Modules", "ScrubBot.Modules\ScrubBot.Modules.csproj", "{B441D3BE-D78D-47CB-91AE-BD4391434387}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Services", "ScrubBot.Services\ScrubBot.Services.csproj", "{72470E91-E09D-45DA-97AF-5274D3DA250D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Services", "ScrubBot.Services\ScrubBot.Services.csproj", "{72470E91-E09D-45DA-97AF-5274D3DA250D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.IoC", "ScrubBot.IoC\ScrubBot.IoC.csproj", "{3ACCD8C0-04C9-477D-84D7-57E488B4269A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{72470E91-E09D-45DA-97AF-5274D3DA250D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72470E91-E09D-45DA-97AF-5274D3DA250D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72470E91-E09D-45DA-97AF-5274D3DA250D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ACCD8C0-04C9-477D-84D7-57E488B4269A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ACCD8C0-04C9-477D-84D7-57E488B4269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ACCD8C0-04C9-477D-84D7-57E488B4269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ACCD8C0-04C9-477D-84D7-57E488B4269A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Core;
 using ScrubBot.Database;
@@ -6,9 +9,6 @@ using ScrubBot.Handlers;
 using ScrubBot.Managers;
 using ScrubBot.Services;
 using ScrubBot.Tools;
-
-using System;
-using System.Threading.Tasks;
 
 namespace ScrubBot
 {
@@ -43,10 +43,6 @@ namespace ScrubBot
 
         public Startup ConfigureServices()
         {
-            Container.Add<ServiceHandler>();
-            Container.Add<EventService>();
-            Container.Add<BirthdayService>();
-
             ServiceHandler serviceHandler = Container.Get<ServiceHandler>();
 
             EventService eventService = Container.Get<EventService>();
