@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Core;
-using ScrubBot.Database;
+using ScrubBot.Database.SQLite;
 using ScrubBot.Handlers;
 using ScrubBot.Managers;
 using ScrubBot.Services;

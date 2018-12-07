@@ -1,8 +1,8 @@
-﻿using Discord;
+﻿using System.Collections.Generic;
 
-using ScrubBot.Domain;
+using Discord;
 
-using System.Collections.Generic;
+using ScrubBot.Database.Domain;
 
 namespace ScrubBot.Extensions
 {

@@ -1,15 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using ScrubBot.Domain;
-using ScrubBot.Extensions;
+using ScrubBot.Database.Domain;
 
 namespace ScrubBot.Modules
 {

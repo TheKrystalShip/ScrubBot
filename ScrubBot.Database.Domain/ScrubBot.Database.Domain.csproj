@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>ScrubBot.Database.Domain</RootNamespace>
+    <AssemblyName>ScrubBot.Database.Domain</AssemblyName>
   </PropertyGroup>
 
 </Project>

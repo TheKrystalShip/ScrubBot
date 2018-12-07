@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Database\ScrubBot.Database.csproj" />
-    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot", "ScrubBot\ScrubBot.csproj", "{4D38A019-2913-491B-8305-20536F549DC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Database", "ScrubBot.Database\ScrubBot.Database.csproj", "{AA07A988-0AEF-43C0-9F11-5AC9859826A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Database.SQLite", "ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj", "{AA07A988-0AEF-43C0-9F11-5AC9859826A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Domain", "ScrubBot.Domain\ScrubBot.Domain.csproj", "{B50987E1-292B-470E-92B0-2EA0D3C6916A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Database.Domain", "ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj", "{B50987E1-292B-470E-92B0-2EA0D3C6916A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Core", "ScrubBot.Core\ScrubBot.Core.csproj", "{1BAF8085-0F81-43F7-8CBF-16DD45E4518C}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Modules", "ScrubBo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Services", "ScrubBot.Services\ScrubBot.Services.csproj", "{72470E91-E09D-45DA-97AF-5274D3DA250D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.IoC", "ScrubBot.IoC\ScrubBot.IoC.csproj", "{3ACCD8C0-04C9-477D-84D7-57E488B4269A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.IoC", "ScrubBot.IoC\ScrubBot.IoC.csproj", "{3ACCD8C0-04C9-477D-84D7-57E488B4269A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

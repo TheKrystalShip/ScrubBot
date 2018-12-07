@@ -1,10 +1,10 @@
-﻿using ScrubBot.Database;
-using ScrubBot.Domain;
-using ScrubBot.Tools;
-
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+
+using ScrubBot.Database.Domain;
+using ScrubBot.Database.SQLite;
+using ScrubBot.Tools;
 
 namespace ScrubBot.Managers
 {

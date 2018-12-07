@@ -1,13 +1,14 @@
-﻿using Discord;
+﻿using System;
+using System.Threading.Tasks;
+
+using Discord;
 using Discord.Commands;
 using Discord.Rest;
-using ScrubBot.Database;
-using ScrubBot.Domain;
+
+using ScrubBot.Database.Domain;
+using ScrubBot.Database.SQLite;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
-
-using System;
-using System.Threading.Tasks;
 
 namespace ScrubBot.Modules
 {

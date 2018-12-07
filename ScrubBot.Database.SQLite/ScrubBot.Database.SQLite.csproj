@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>ScrubBot.Database.SQLite</AssemblyName>
+    <RootNamespace>ScrubBot.Database.SQLite</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
     <ProjectReference Include="..\ScrubBot.Tools\ScrubBot.Tools.csproj" />
   </ItemGroup>
 

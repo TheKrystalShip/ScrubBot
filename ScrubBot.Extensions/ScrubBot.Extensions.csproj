@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
   </ItemGroup>
 
 </Project>

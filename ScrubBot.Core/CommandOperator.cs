@@ -1,13 +1,13 @@
-﻿using Discord;
+﻿using System;
+using System.Reflection;
+using System.Threading.Tasks;
+
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using ScrubBot.Managers;
 using ScrubBot.Tools;
-
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace ScrubBot.Core
 {

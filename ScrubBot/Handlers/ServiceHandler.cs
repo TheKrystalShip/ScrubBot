@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using Discord.WebSocket;
-using ScrubBot.Core;
-using ScrubBot.Database;
-using ScrubBot.Domain;
-
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+
 using Discord;
+
+using ScrubBot.Core;
+using ScrubBot.Database.Domain;
+using ScrubBot.Database.SQLite;
 using ScrubBot.Extensions;
-using System.Collections.Generic;
 
 namespace ScrubBot.Handlers
 {
