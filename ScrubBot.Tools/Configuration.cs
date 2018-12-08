@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.IO;
 
-using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace ScrubBot.Tools
 {
     public class Configuration
     {
-        private readonly static string _settingsFile = Path.Combine("Properties", "settings.json");
-        private readonly static string _secretsFile = Path.Combine("Properties", "secrets.json");
+        private static readonly string _settingsFile = Path.Combine("Properties", "settings.json");
+        private static readonly string _secretsFile = Path.Combine("Properties", "secrets.json");
         private static readonly IConfiguration _config;
 
         static Configuration()

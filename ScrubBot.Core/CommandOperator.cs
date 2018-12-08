@@ -10,6 +10,8 @@ using ScrubBot.Extensions;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
 
+using TheKrystalShip.DependencyInjection;
+
 namespace ScrubBot.Core
 {
     internal class CommandOperator

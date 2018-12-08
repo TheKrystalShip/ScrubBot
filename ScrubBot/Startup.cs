@@ -10,6 +10,8 @@ using ScrubBot.Managers;
 using ScrubBot.Services;
 using ScrubBot.Tools;
 
+using TheKrystalShip.DependencyInjection;
+
 namespace ScrubBot
 {
     public class Startup

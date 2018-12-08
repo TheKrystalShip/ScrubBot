@@ -8,7 +8,8 @@ using Discord.Rest;
 using ScrubBot.Database.Domain;
 using ScrubBot.Database.SQLite;
 using ScrubBot.Managers;
-using ScrubBot.Tools;
+
+using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Modules
 {

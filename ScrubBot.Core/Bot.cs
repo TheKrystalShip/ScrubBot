@@ -6,6 +6,8 @@ using Discord.WebSocket;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
 
+using TheKrystalShip.DependencyInjection;
+
 namespace ScrubBot.Core
 {
     public class Bot : DiscordSocketClient

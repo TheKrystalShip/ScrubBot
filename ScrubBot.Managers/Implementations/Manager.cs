@@ -1,4 +1,4 @@
-﻿using ScrubBot.Tools;
+﻿using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Managers
 {
