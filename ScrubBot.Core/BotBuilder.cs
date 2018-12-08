@@ -1,4 +1,4 @@
-﻿namespace ScrubBot
+﻿namespace ScrubBot.Core
 {
     public static class BotBuilder
     {

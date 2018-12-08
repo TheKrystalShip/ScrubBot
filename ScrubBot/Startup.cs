@@ -32,9 +32,9 @@ namespace ScrubBot
 
         public Startup ConfigureManagers()
         {
-            Container.Add<IPrefixManager, PrefixManager>();
             Container.Add<IChannelManager, ChannelManager>();
             Container.Add<IGuildManager, GuildManager>();
+            Container.Add<IPrefixManager, PrefixManager>();
             Container.Add<IRoleManager, RoleManager>();
             Container.Add<IUserManager, UserManager>();
 

@@ -6,6 +6,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+using ScrubBot.Extensions;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
 
@@ -41,43 +42,28 @@ namespace ScrubBot.Core
         {
             SocketUserMessage message = socketMessage as SocketUserMessage;
 
-            if (IsMessageValid(message, out int argPos))
+            if (message is null)
+            {
+                return;
+            }
+
+            string prefix = _prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id);
+
+            if (message.IsValid(prefix, _client.CurrentUser, out int argPos))
             {
                 SocketCommandContext context = new SocketCommandContext(_client, message);
-                IResult result = await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
-
-                if (!result.IsSuccess)
-                {
-                    Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
-                }
+                await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
             }
         }
 
         private async Task OnCommandExecutedAsync(CommandInfo command, ICommandContext context, IResult result)
         {
-            // Logic after command execution
-
-
+            if (!result.IsSuccess)
+            {
+                Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
+            }
 
             await Task.CompletedTask;
-        }
-
-        private bool IsMessageValid(SocketUserMessage message, out int argPos)
-        {
-            argPos = 0;
-
-            if (message is null || message.Author.IsBot)
-                return false;
-
-            string prefix = _prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id);
-
-            bool hasPrefix = message.HasStringPrefix(prefix, ref argPos);
-            bool isMentioned = message.HasMentionPrefix(_client.CurrentUser, ref argPos);
-
-            if (!hasPrefix && !isMentioned)
-                return false;
-
-            return true;
         }
     }
 }

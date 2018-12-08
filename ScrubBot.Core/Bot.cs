@@ -1,9 +1,10 @@
-﻿using Discord;
+﻿using System.Threading.Tasks;
+
+using Discord;
 using Discord.WebSocket;
 
 using ScrubBot.Managers;
 using ScrubBot.Tools;
-using System.Threading.Tasks;
 
 namespace ScrubBot.Core
 {
@@ -14,7 +15,7 @@ namespace ScrubBot.Core
 
         public Bot() : this(new DiscordSocketConfig() { LogLevel = LogSeverity.Debug, DefaultRetryMode = RetryMode.AlwaysRetry })
         {
-
+            
         }
 
         public Bot(DiscordSocketConfig config) : base(config)
@@ -63,6 +64,9 @@ namespace ScrubBot.Core
             await _manager.Users.AddUsersAsync(Guilds);
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage message) => await _commandOperator.ExecuteAsync(message);
+        private async Task OnMessageReceivedAsync(SocketMessage message)
+        {
+            await _commandOperator.ExecuteAsync(message);
+        }
     }
 }

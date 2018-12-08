@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 
+using ScrubBot.Core;
+
 namespace ScrubBot
 {
     public class Program

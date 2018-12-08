@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>ScrubBot.Database.SQLite</AssemblyName>
     <RootNamespace>ScrubBot.Database.SQLite</RootNamespace>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

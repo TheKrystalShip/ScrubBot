@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>ScrubBot.Database.Domain</RootNamespace>
     <AssemblyName>ScrubBot.Database.Domain</AssemblyName>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
 </Project>
