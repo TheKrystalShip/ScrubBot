@@ -38,9 +38,9 @@ namespace ScrubBot.Extensions
                 .WithColor(Color.Purple)
                 .WithTitle(title);
 
-            foreach (var _event in events)
+            foreach (Event @event in events)
             {
-                embedBuilder.AddField(_event.Title, $"Occurence date: {_event.OccurenceDate:dd-MM-yyyy HH:MM}\nDescription: {_event.Description}\nSubscribers: {_event.Subscribers.Count}/{_event.MaxSubscribers}");
+                embedBuilder.AddField(@event.Title, $"Occurence date: {@event.OccurenceDate:dd-MM-yyyy HH:MM}\nDescription: {@event.Description}\nSubscribers: {@event.Subscribers.Count}/{@event.MaxSubscribers}");
             }
 
             return embedBuilder;

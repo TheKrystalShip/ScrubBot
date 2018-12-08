@@ -1,11 +1,11 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+using ScrubBot.Core.Commands;
 using ScrubBot.Extensions;
 using ScrubBot.Managers;
 using ScrubBot.Tools;
@@ -33,7 +33,7 @@ namespace ScrubBot.Core
 
             _commandService.AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module))).Wait();
             _commandService.Log += Logger.Log;
-            _commandService.CommandExecuted += OnCommandExecutedAsync;
+            _commandService.CommandExecuted += Dispatcher.Dispatch;
 
             Container.Add(_commandService);
         }
@@ -54,16 +54,6 @@ namespace ScrubBot.Core
                 SocketCommandContext context = new SocketCommandContext(_client, message);
                 await _commandService.ExecuteAsync(context, argPos, Container.GetServiceProvider());
             }
-        }
-
-        private async Task OnCommandExecutedAsync(CommandInfo command, ICommandContext context, IResult result)
-        {
-            if (!result.IsSuccess)
-            {
-                Console.WriteLine(new LogMessage(LogSeverity.Error, "Command", result.ErrorReason));
-            }
-
-            await Task.CompletedTask;
         }
     }
 }
