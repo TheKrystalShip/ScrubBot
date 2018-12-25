@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
@@ -8,8 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Core;
 using ScrubBot.Core.Commands;
+using ScrubBot.Database;
 using ScrubBot.Database.SQLite;
+using ScrubBot.Handlers;
 using ScrubBot.Managers;
+using ScrubBot.Services;
 using ScrubBot.Tools;
 
 using TheKrystalShip.DependencyInjection;
@@ -30,12 +34,12 @@ namespace ScrubBot
 
             SQLiteContext dbContext = new SQLiteContext(builder.Options);
             dbContext.Migrate();
-            Container.Add(dbContext);
+            Container.Add<IDbContext>(dbContext);
 
             return this;
         }
 
-        public Startup ConfigureServices()
+        public Startup ConfigureContainer()
         {
             Container.Add<IChannelManager, ChannelManager>();
             Container.Add<IGuildManager, GuildManager>();
@@ -43,15 +47,24 @@ namespace ScrubBot
             Container.Add<IRoleManager, RoleManager>();
             Container.Add<IUserManager, UserManager>();
 
-            //ServiceHandler serviceHandler = Container.Get<ServiceHandler>();
+            Container.Add<ServiceHandler>();
+            Container.Add<EventService>();
+            Container.Add<BirthdayService>();
 
-            //EventService eventService = Container.Get<EventService>();
-            //eventService.Trigger += serviceHandler.OnEventServiceTriggerAsync;
-            //eventService.Init(10000);
+            return this;
+        }
 
-            //BirthdayService birthdayService = Container.Get<BirthdayService>();
-            //birthdayService.Trigger += serviceHandler.OnBirthdayServiceTriggerAsync;
-            //birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, 86400000);
+        public Startup ConfigureServices()
+        {
+            ServiceHandler serviceHandler = Container.Get<ServiceHandler>();
+
+            EventService eventService = Container.Get<EventService>();
+            eventService.Trigger += serviceHandler.OnEventServiceTriggerAsync;
+            eventService.Init(DateTime.Now.AddMinutes(1).Millisecond);
+
+            BirthdayService birthdayService = Container.Get<BirthdayService>();
+            birthdayService.Trigger += serviceHandler.OnBirthdayServiceTriggerAsync;
+            birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, 86400000);
 
             return this;
         }

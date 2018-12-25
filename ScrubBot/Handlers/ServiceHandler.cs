@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Discord;
 
 using ScrubBot.Core;
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 using ScrubBot.Extensions;
 
 namespace ScrubBot.Handlers
@@ -14,9 +14,9 @@ namespace ScrubBot.Handlers
     public class ServiceHandler
     {
         private readonly Bot _client;
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public ServiceHandler(Bot client, SQLiteContext dbContext)
+        public ServiceHandler(Bot client, IDbContext dbContext)
         {
             _client = client;
             _dbContext = dbContext;

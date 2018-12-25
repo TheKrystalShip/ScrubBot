@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 
 namespace ScrubBot.Services
 {
     public class EventService : IService
     {
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
         public Timer Timer { get; set; }
         public event Action Start;
@@ -21,7 +21,7 @@ namespace ScrubBot.Services
         public event Action Tick;
         public event Func<Event, Task> Trigger;
 
-        public EventService(SQLiteContext dbContext)
+        public EventService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

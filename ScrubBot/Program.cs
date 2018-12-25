@@ -10,6 +10,7 @@ namespace ScrubBot
         {
             await BotBuilder
                 .UseStartup<Startup>()
+                .ConfigureContainer()
                 .ConfigureDatabase()
                 .ConfigureClient()
                 .ConfigureServices()

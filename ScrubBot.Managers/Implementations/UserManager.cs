@@ -6,17 +6,17 @@ using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore;
 
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 using ScrubBot.Extensions;
 
 namespace ScrubBot.Managers
 {
     public class UserManager : IUserManager
     {
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public UserManager(SQLiteContext dbContext)
+        public UserManager(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Database.Domain;
 using ScrubBot.Database.SQLite.Configurations;
 
 namespace ScrubBot.Database.SQLite
 {
-    public class SQLiteContext : DbContext
+    public class SQLiteContext : DbContext, IDbContext
     {
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<User> Users { get; set; }
@@ -28,6 +30,16 @@ namespace ScrubBot.Database.SQLite
             modelBuilder.ApplyConfiguration(new EventConfiguration());
             modelBuilder.ApplyConfiguration(new GuildConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+        }
+
+        void IDbContext.SaveChanges()
+        {
+            SaveChanges();
+        }
+
+        public Task SaveChangesAsync()
+        {
+            return SaveChangesAsync();
         }
     }
 }

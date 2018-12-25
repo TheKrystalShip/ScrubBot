@@ -5,27 +5,27 @@ using Discord;
 using Discord.Commands;
 using Discord.Rest;
 
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 using ScrubBot.Managers;
 
 using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Modules
 {
-    public abstract class Module : ModuleBase<SocketCommandContext>
+    public class Module : ModuleBase<SocketCommandContext>
     {
         public CommandService CommandService { get; private set; }
-        public SQLiteContext Database { get; private set; }
+        public IDbContext Database { get; private set; }
         public IPrefixManager Prefix { get; private set; }
         public Guild Guild { get; protected set; }
         public User User { get; protected set; }
 
         public Module()
         {
-            CommandService = Container.Get<CommandService>();
-            Database = Container.Get<SQLiteContext>();
-            Prefix = Container.Get<PrefixManager>();
+            //CommandService = Container.Get<CommandService>();
+            Database = Container.Get<IDbContext>();
+            Prefix = Container.Get<IPrefixManager>();
         }
 
         protected override void BeforeExecute(CommandInfo command)

@@ -14,13 +14,12 @@ namespace ScrubBot.Core.Commands
     public class CommandOperator : CommandService
     {
         private readonly DiscordSocketClient _client;
-        private readonly CommandService _commandService;
         private readonly IPrefixManager _prefixManager;
 
         public CommandOperator(DiscordSocketClient client, CommandServiceConfig config) : base(config)
         {
             _client = client;
-            _prefixManager = Container.Get<PrefixManager>();
+            _prefixManager = Container.Get<IPrefixManager>();
 
             AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module))).Wait();
         }

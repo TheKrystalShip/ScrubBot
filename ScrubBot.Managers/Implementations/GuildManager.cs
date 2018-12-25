@@ -4,17 +4,17 @@ using System.Threading.Tasks;
 
 using Discord.WebSocket;
 
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 using ScrubBot.Extensions;
 
 namespace ScrubBot.Managers
 {
     public class GuildManager : IGuildManager
     {
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public GuildManager(SQLiteContext dbContext)
+        public GuildManager(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Modules", "ScrubBo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Services", "ScrubBot.Services\ScrubBot.Services.csproj", "{72470E91-E09D-45DA-97AF-5274D3DA250D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Core.Commands", "ScrubBot.Core.Commands\ScrubBot.Core.Commands.csproj", "{03984BF7-5900-44AB-BF84-407A8CF330B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrubBot.Core.Commands", "ScrubBot.Core.Commands\ScrubBot.Core.Commands.csproj", "{03984BF7-5900-44AB-BF84-407A8CF330B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrubBot.Database", "ScrubBot.Database\ScrubBot.Database.csproj", "{00BA7A20-E79F-4DF4-BC79-F4A47DA4395B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{03984BF7-5900-44AB-BF84-407A8CF330B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03984BF7-5900-44AB-BF84-407A8CF330B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03984BF7-5900-44AB-BF84-407A8CF330B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BA7A20-E79F-4DF4-BC79-F4A47DA4395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BA7A20-E79F-4DF4-BC79-F4A47DA4395B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BA7A20-E79F-4DF4-BC79-F4A47DA4395B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BA7A20-E79F-4DF4-BC79-F4A47DA4395B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

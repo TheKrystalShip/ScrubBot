@@ -2,18 +2,18 @@
 using System.Linq;
 using System.Threading.Tasks;
 
+using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Database.SQLite;
 using ScrubBot.Tools;
 
 namespace ScrubBot.Managers
 {
     public class PrefixManager : IPrefixManager
     {
-        private readonly SQLiteContext _context;
+        private readonly IDbContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
-        public PrefixManager(SQLiteContext dbContext)
+        public PrefixManager(IDbContext dbContext)
         {
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
