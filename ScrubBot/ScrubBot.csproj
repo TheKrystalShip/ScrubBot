@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ScrubBot.Core.Commands\ScrubBot.Core.Commands.csproj" />
     <ProjectReference Include="..\ScrubBot.Core\ScrubBot.Core.csproj" />
     <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
     <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
@@ -39,9 +40,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ScrubBot.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

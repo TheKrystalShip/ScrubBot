@@ -3,6 +3,6 @@
     "Default": ">"
   },
   "ConnectionStrings": {
-    "SQLite": "Data source=ScrubBot.db"
+    "SQLite": "Data source=.\\Properties\\ScrubBot.db"
   }
 }

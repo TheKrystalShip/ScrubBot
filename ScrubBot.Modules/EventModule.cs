@@ -8,7 +8,6 @@ using Discord.Commands;
 
 using Microsoft.EntityFrameworkCore.Internal;
 
-using ScrubBot.Core.Commands;
 using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
 
@@ -32,11 +31,11 @@ namespace ScrubBot.Modules
 
             if (events.Count is 0)
             {
-                return Result.Error("There are no events to be displayed!");
+                return new ErrorResult("There are no events to be displayed!");
             }
 
             await ReplyAsync(new EmbedBuilder().CreateEventEmbed("Upcoming events", events));
-            return Result.Success("Ok");
+            return new EmptyResult();
         }
 
         // @ScrubBot CreateEvent "Title goes here" "Description goes here" 24/10/2018 20
@@ -45,7 +44,7 @@ namespace ScrubBot.Modules
         {
             if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Guild.Id))
             {
-                return Result.Error($"An event with the name **{eventTitle}** already exists!");
+                return new ErrorResult($"An event with the name **{eventTitle}** already exists!");
             }
 
             Event newEvent = new Event
@@ -60,7 +59,7 @@ namespace ScrubBot.Modules
 
             await Database.Events.AddAsync(newEvent);
 
-            return Result.Success($"Event **{eventTitle}** has been successfully created for **{occurenceDateTimeUTC}** with a max of **{maxSubscribers}** subscribers!");
+            return new SuccessResult($"Event **{eventTitle}** has been successfully created for **{occurenceDateTimeUTC}** with a max of **{maxSubscribers}** subscribers!");
         }
 
         [Command("JoinEvent"), Summary("Join a specific event")]
@@ -70,28 +69,28 @@ namespace ScrubBot.Modules
 
             if (@event is null)
             {
-                return Result.Error(CommandError.ObjectNotFound, "No event with that title was found");
+                return new ErrorResult(CommandError.ObjectNotFound, "No event with that title was found");
             }
 
             if (@event.Author.Id == User.Id)
             {
-                return Result.Error($"**{User.Username}** cannot subscribe to their own event!");
+                return new ErrorResult($"**{User.Username}** cannot subscribe to their own event!");
             }
 
             if (@event.Subscribers.Any(x => x.Id == User.Id))
             {
-                return Result.Error($"**{User.Username}** is already subscribed to **{eventTitle}**!");
+                return new ErrorResult($"**{User.Username}** is already subscribed to **{eventTitle}**!");
             }
 
             if (@event.Subscribers.Count == @event.MaxSubscribers)
             {
-                return Result.Error($"Event **{eventTitle}** is already full!");
+                return new ErrorResult($"Event **{eventTitle}** is already full!");
             }
 
             @event.Subscribers.Add(User);
             Database.Events.Update(@event);
 
-            return Result.Success($"**{User.Username}** has successfully joined event **{eventTitle}** ({@event.Subscribers.Count}/{@event.MaxSubscribers})");
+            return new SuccessResult($"**{User.Username}** has successfully joined event **{eventTitle}** ({@event.Subscribers.Count}/{@event.MaxSubscribers})");
         }
 
         [Command("DeleteEvent"), Summary("Delete one of your events")]
@@ -101,17 +100,17 @@ namespace ScrubBot.Modules
 
             if (@event is null)
             {
-                return Result.Error($"Unable to find event **{eventTitle}**!");
+                return new ErrorResult($"Unable to find event **{eventTitle}**!");
             }
 
             if (@event.Author.Id != User.Id || !Context.Guild.GetUser(User.Id).GuildPermissions.Administrator)
             {
-                return Result.Error("You are not allowed to modify someone else's event");
+                return new ErrorResult("You are not allowed to modify someone else's event");
             }
 
             Database.Events.Remove(@event);
 
-            return Result.Success($"Successfully deleted event **{@event.Title}**!");
+            return new SuccessResult($"Successfully deleted event **{@event.Title}**!");
         }
     }
 }

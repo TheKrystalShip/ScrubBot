@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using ScrubBot.Database.Domain;
+using ScrubBot.Tools;
 
 namespace ScrubBot.Modules
 {
@@ -20,36 +21,44 @@ namespace ScrubBot.Modules
         [Command("Info"), Summary("Display info about the bot.")]
         public async Task Info()
         {
-            EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Bot Info" };
-            embedBuilder.AddField("Server:", (Guild.Name ?? "null") + "\n");
-            embedBuilder.ThumbnailUrl = Guild.IconUrl;
-
             SocketTextChannel auditChannel = Context.Guild.GetChannel(Guild.AuditChannelId) as SocketTextChannel;
-            embedBuilder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
-            embedBuilder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null") + "\n");
 
-            await ReplyAsync(embedBuilder);
+            Embed embed = EmbedFactory.Create(builder => {
+                builder.WithColor(Color.Purple);
+                builder.WithTitle("Bot info");
+                builder.AddField("Server:", (Guild.Name ?? "null") + "\n");
+                builder.ThumbnailUrl = Guild.IconUrl;
+                builder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
+                builder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null") + "\n");
+            });
+
+            await ReplyAsync(embed);
         }
 
         [Command("Help")]
         public async Task Help()
         {
             List<CommandInfo> commands = CommandService.Commands.ToList();
-            EmbedBuilder embedBuilder = new EmbedBuilder { Color = Color.Purple, Title = "Command list" };
 
-            foreach (CommandInfo command in commands)
-            {
-                if (command.Name == "Help") continue;
+            Embed embed = EmbedFactory.Create(builder => {
+                builder.WithColor(Color.Purple);
+                builder.WithTitle("Command list");
 
-                string embedFieldText = command.Summary ?? "No description available\n";
+                foreach (CommandInfo command in commands)
+                {
+                    if (command.Name == "Help")
+                        continue;
 
-                if (command.Parameters.Count > 0)
-                    embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
+                    string embedFieldText = command.Summary ?? "No description available\n";
 
-                embedBuilder.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
-            }
+                    if (command.Parameters.Count > 0)
+                        embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
 
-            await ReplyAsync(embedBuilder);
+                    builder.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
+                }
+            });            
+
+            await ReplyAsync(embed);
         }
     }
 }

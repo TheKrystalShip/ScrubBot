@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
+    <ProjectReference Include="..\ScrubBot.Managers\ScrubBot.Managers.csproj" />
+    <ProjectReference Include="..\ScrubBot.Modules\ScrubBot.Modules.csproj" />
   </ItemGroup>
 
 </Project>

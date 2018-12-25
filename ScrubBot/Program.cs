@@ -12,7 +12,6 @@ namespace ScrubBot
                 .UseStartup<Startup>()
                 .ConfigureDatabase()
                 .ConfigureClient()
-                .ConfigureManagers()
                 .ConfigureServices()
                 .InitAsync();
         }

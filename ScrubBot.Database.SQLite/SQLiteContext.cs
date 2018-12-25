@@ -15,6 +15,11 @@ namespace ScrubBot.Database.SQLite
         {
 
         }
+
+        public void Migrate()
+        {
+            Database.Migrate();
+        }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -52,8 +52,16 @@ namespace ScrubBot.Modules
         {
             base.AfterExecute(command);
 
-            Database.Guilds.Update(Guild);
-            Database.Users.Update(User);
+            if (Guild != null)
+            {
+                Database.Guilds.Update(Guild);
+            }
+
+            if (User != null)
+            {
+                Database.Users.Update(User);
+            }
+
             Database.SaveChanges();
 
             AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;

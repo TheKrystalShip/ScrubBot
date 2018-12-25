@@ -2,6 +2,8 @@
 
 using Discord.Commands;
 
+using ScrubBot.Modules;
+
 namespace ScrubBot.Core.Commands
 {
     public static class Dispatcher
@@ -14,17 +16,17 @@ namespace ScrubBot.Core.Commands
                 case SuccessResult successResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: successResult.Reason, isTTS: false, embed: successResult.Embed);
+                        .SendMessageAsync(text: successResult.Reason ?? "Success", isTTS: false, embed: successResult.Embed);
                     break;
                 case ErrorResult errorResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: errorResult.Reason, isTTS: false, embed: errorResult.Embed);
+                        .SendMessageAsync(text: errorResult.Reason ?? "Error", isTTS: false, embed: errorResult.Embed);
                     break;
                 case InfoResult infoResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: infoResult.Reason, isTTS: false, embed: infoResult.Embed);
+                        .SendMessageAsync(text: infoResult.Reason ?? "Info", isTTS: false, embed: infoResult.Embed);
                     break;
                 default:
                     break;

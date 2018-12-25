@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 using Discord.Commands;
 
-using ScrubBot.Core.Commands;
 using ScrubBot.Database.Domain;
 
 namespace ScrubBot.Modules
@@ -16,7 +15,7 @@ namespace ScrubBot.Modules
         public async Task<RuntimeResult> SetBirthday(DateTime birthday)
         {
             User.Birthday = birthday;
-            return Result.Success($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}");
+            return new SuccessResult($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}");
         }
 
         [Command("ShowBirthdays"), Summary("Show all birthdays in a specific month")]
@@ -24,7 +23,7 @@ namespace ScrubBot.Modules
         {
             if (month < 1 || month > 12)
             {
-                return Result.Error(CommandError.ParseFailed, $"Cannot parse {month} as a month. Please type this command, followed by a number between 1 and 12!");
+                return new ErrorResult(CommandError.ParseFailed, $"Cannot parse {month} as a month. Please type this command, followed by a number between 1 and 12!");
             }
 
             List<User> birthdayBois = Database.Users.Where(x => Context.Guild.GetUser(x.Id) != null && x.Birthday.Month == month).ToList();
@@ -35,12 +34,12 @@ namespace ScrubBot.Modules
 
             if (birthdayBois.Count is 0)
             {
-                return Result.Error($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!");
+                return new ErrorResult($"Sadly, I know no one with a birthday in {birthdayMonth}...\nEither no one in this server has his/her birthday that month, or they forgot to tell me!");
             }
 
             string birthdayList = birthdayBois.Aggregate(string.Empty, (current, birthdayBoi) => current + $"{birthdayBoi.Username} ({birthdayBoi.Birthday:dddd, dd MMMM yyyy})\n");
 
-            return Result.Info(birthdayList);
+            return new InfoResult(birthdayList);
         }
     }
 }
