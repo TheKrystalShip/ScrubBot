@@ -5,6 +5,7 @@ using Discord;
 using Discord.Commands;
 using Discord.Rest;
 
+using ScrubBot.Core;
 using ScrubBot.Database;
 using ScrubBot.Database.Domain;
 using ScrubBot.Managers;
@@ -15,7 +16,7 @@ namespace ScrubBot.Modules
 {
     public class Module : ModuleBase<SocketCommandContext>
     {
-        public CommandService CommandService { get; private set; }
+        public ICommandOperator CommandService { get; private set; }
         public IDbContext Database { get; private set; }
         public IPrefixManager Prefix { get; private set; }
         public Guild Guild { get; protected set; }
@@ -23,7 +24,7 @@ namespace ScrubBot.Modules
 
         public Module()
         {
-            //CommandService = Container.Get<CommandService>();
+            CommandService = Container.Get<ICommandOperator>();
             Database = Container.Get<IDbContext>();
             Prefix = Container.Get<IPrefixManager>();
         }

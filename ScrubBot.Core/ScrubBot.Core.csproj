@@ -11,13 +11,4 @@
     <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
-    <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
-    <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
-    <ProjectReference Include="..\ScrubBot.Managers\ScrubBot.Managers.csproj" />
-    <ProjectReference Include="..\ScrubBot.Modules\ScrubBot.Modules.csproj" />
-    <ProjectReference Include="..\ScrubBot.Tools\ScrubBot.Tools.csproj" />
-  </ItemGroup>
-
 </Project>

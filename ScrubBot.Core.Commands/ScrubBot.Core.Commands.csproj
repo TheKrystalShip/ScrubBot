@@ -7,10 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.0-beta" />
-    <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ScrubBot.Core\ScrubBot.Core.csproj" />
     <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
     <ProjectReference Include="..\ScrubBot.Managers\ScrubBot.Managers.csproj" />
     <ProjectReference Include="..\ScrubBot.Modules\ScrubBot.Modules.csproj" />

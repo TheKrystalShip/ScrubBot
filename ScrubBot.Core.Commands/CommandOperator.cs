@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Discord.Commands;
@@ -11,10 +12,12 @@ using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Core.Commands
 {
-    public class CommandOperator : CommandService
+    public class CommandOperator : CommandService, ICommandOperator
     {
         private readonly DiscordSocketClient _client;
         private readonly IPrefixManager _prefixManager;
+
+        public new IEnumerable<CommandInfo> Commands { get => base.Commands; }
 
         public CommandOperator(DiscordSocketClient client, CommandServiceConfig config) : base(config)
         {
