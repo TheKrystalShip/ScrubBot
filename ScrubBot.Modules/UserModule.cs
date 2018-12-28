@@ -21,15 +21,19 @@ namespace ScrubBot.Modules
         [Command("Info"), Summary("Display info about the bot.")]
         public async Task Info()
         {
-            SocketTextChannel auditChannel = Context.Guild.GetChannel(Guild.AuditChannelId) as SocketTextChannel;
+            SocketTextChannel auditChannel = null;
+            if (Guild.AuditChannelId != null)
+            {
+                auditChannel = Context.Guild.GetChannel((ulong)Guild.AuditChannelId) as SocketTextChannel;
+            }
 
             Embed embed = EmbedFactory.Create(builder => {
                 builder.WithColor(Color.Purple);
                 builder.WithTitle("Bot info");
-                builder.AddField("Server:", (Guild.Name ?? "null") + "\n");
                 builder.ThumbnailUrl = Guild.IconUrl;
-                builder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!") + "\n");
-                builder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null") + "\n");
+                builder.AddField("Server:", (Guild.Name ?? "null"));
+                builder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!"));
+                builder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null"));
             });
 
             await ReplyAsync(embed);

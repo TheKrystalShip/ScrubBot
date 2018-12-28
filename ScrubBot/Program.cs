@@ -13,6 +13,7 @@ namespace ScrubBot
                 .ConfigureContainer()
                 .ConfigureDatabase()
                 .ConfigureClient()
+                .ConfigureEvents()
                 .ConfigureServices()
                 .InitAsync();
         }

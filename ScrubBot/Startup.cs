@@ -34,6 +34,7 @@ namespace ScrubBot
 
             SQLiteContext dbContext = new SQLiteContext(builder.Options);
             dbContext.Migrate();
+
             Container.Add<IDbContext>(dbContext);
 
             return this;
@@ -46,6 +47,7 @@ namespace ScrubBot
             Container.Add<IPrefixManager, PrefixManager>();
             Container.Add<IRoleManager, RoleManager>();
             Container.Add<IUserManager, UserManager>();
+            Container.Add<IManager, Manager>();
 
             Container.Add<ServiceHandler>();
             Container.Add<EventService>();
@@ -60,11 +62,11 @@ namespace ScrubBot
 
             EventService eventService = Container.Get<EventService>();
             eventService.Trigger += serviceHandler.OnEventServiceTriggerAsync;
-            eventService.Init(DateTime.Now.AddMinutes(1).Millisecond);
+            eventService.Init(TimeSpan.FromMinutes(1).Milliseconds, TimeSpan.FromSeconds(30).Milliseconds);
 
             BirthdayService birthdayService = Container.Get<BirthdayService>();
             birthdayService.Trigger += serviceHandler.OnBirthdayServiceTriggerAsync;
-            birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, 86400000);
+            birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, TimeSpan.FromDays(1).Milliseconds);
 
             return this;
         }
@@ -99,7 +101,7 @@ namespace ScrubBot
         public Startup ConfigureEvents()
         {
             Bot client = Container.Get<Bot>();
-            Manager manager = Container.Get<Manager>();
+            IManager manager = Container.Get<IManager>();
 
             client.ChannelCreated += manager.Channels.OnChannelCreatedAsync;
             client.ChannelDestroyed += manager.Channels.OnChannelDestroyedAsync;

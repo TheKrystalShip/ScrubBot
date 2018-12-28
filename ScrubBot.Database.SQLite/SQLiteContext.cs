@@ -34,12 +34,12 @@ namespace ScrubBot.Database.SQLite
 
         void IDbContext.SaveChanges()
         {
-            SaveChanges();
+            base.SaveChanges();
         }
 
         public Task SaveChangesAsync()
         {
-            return SaveChangesAsync();
+            return base.SaveChangesAsync();
         }
     }
 }

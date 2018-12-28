@@ -13,7 +13,7 @@ namespace ScrubBot.Database.Domain
 
         public string IconUrl { get; set; }
         public int MemberCount { get; set; }
-        public ulong AuditChannelId { get; set; }
+        public ulong? AuditChannelId { get; set; }
         public string Prefix { get; set; }
 
         public virtual List<User> Users { get; set; } = new List<User>();
