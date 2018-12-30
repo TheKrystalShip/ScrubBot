@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 
+using Discord;
 using Discord.Commands;
 
 using ScrubBot.Modules;
@@ -8,7 +9,7 @@ namespace ScrubBot.Core.Commands
 {
     public static class Dispatcher
     {
-        public static async Task Dispatch(CommandInfo commandInfo, ICommandContext context, IResult result)
+        public static async Task Dispatch(Optional<CommandInfo> commandInfo, ICommandContext context, IResult result)
         {
             // IResult needs to be unboxed in order to access the correct properties
             switch (result)

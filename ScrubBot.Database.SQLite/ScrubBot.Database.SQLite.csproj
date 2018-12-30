@@ -17,6 +17,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
+    <PackageReference Include="TheKrystalShip.Tools.Configuration" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

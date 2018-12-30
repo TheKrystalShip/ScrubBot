@@ -23,8 +23,11 @@ namespace ScrubBot.Core.Commands
         {
             _client = client;
             _prefixManager = Container.Get<IPrefixManager>();
+        }
 
-            AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module))).Wait();
+        public async Task LoadModulesAsync()
+        {
+            await AddModulesAsync(Assembly.GetAssembly(typeof(Modules.Module)), Container.GetServiceProvider());
         }
 
         public async Task OnClientMessageReceivedAsync(SocketMessage socketMessage)

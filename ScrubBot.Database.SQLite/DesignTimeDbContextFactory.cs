@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore.Design;
 
 using ScrubBot.Database.SQLite;
-using ScrubBot.Tools;
+
+using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Database.Core
 {

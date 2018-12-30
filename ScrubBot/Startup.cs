@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 using Discord;
@@ -17,6 +18,7 @@ using ScrubBot.Services;
 using ScrubBot.Tools;
 
 using TheKrystalShip.DependencyInjection;
+using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot
 {
@@ -24,7 +26,8 @@ namespace ScrubBot
     {
         public Startup()
         {
-
+            Configuration.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"));
+            Configuration.AddFiles("secrets.json", "settings.json");
         }
 
         public Startup ConfigureDatabase()
@@ -94,6 +97,8 @@ namespace ScrubBot
 
             Container.Add(client);
             Container.Add<ICommandOperator>(commandOperator);
+
+            commandOperator.LoadModulesAsync().Wait();
 
             return this;
         }

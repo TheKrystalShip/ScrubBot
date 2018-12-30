@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 
 using ScrubBot.Database;
 using ScrubBot.Database.Domain;
-using ScrubBot.Tools;
+
+using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Managers
 {
