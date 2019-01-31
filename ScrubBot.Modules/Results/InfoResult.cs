@@ -3,7 +3,7 @@ using Discord.Commands;
 
 namespace ScrubBot.Modules
 {
-    public class InfoResult : RuntimeResult
+    public class InfoResult : RuntimeResult // TODO: Add Color.Purple as standard error embeds
     {
         public Embed Embed { get; set; }
 
@@ -23,12 +23,12 @@ namespace ScrubBot.Modules
 
         }
 
-        public InfoResult(EmbedBuilder embedBuilder) : this(null, "Info")
+        public InfoResult(EmbedBuilder embedBuilder) : this(null, string.Empty)
         {
             Embed = embedBuilder.Build();
         }
 
-        public InfoResult(Embed embed) : this(null, "Warning")
+        public InfoResult(Embed embed) : this(null, string.Empty)
         {
             Embed = embed;
         }

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-
-using ScrubBot.Database.Domain;
 using ScrubBot.Tools;
+using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Modules
 {
@@ -21,19 +21,19 @@ namespace ScrubBot.Modules
         [Command("Info"), Summary("Display info about the bot.")]
         public async Task Info()
         {
-            SocketTextChannel auditChannel = null;
-            if (Guild.AuditChannelId != null)
+            Embed embed = EmbedFactory.Create(builder =>
             {
-                auditChannel = Context.Guild.GetChannel((ulong)Guild.AuditChannelId) as SocketTextChannel;
-            }
-
-            Embed embed = EmbedFactory.Create(builder => {
                 builder.WithColor(Color.Purple);
                 builder.WithTitle("Bot info");
                 builder.ThumbnailUrl = Guild.IconUrl;
-                builder.AddField("Server:", (Guild.Name ?? "null"));
-                builder.AddField("Audit Channel:", (auditChannel != null ? auditChannel.Mention : "Invalid channel!"));
-                builder.AddField("String prefix:", (Guild.Prefix != null ? $"'{Guild.Prefix}'" : "null"));
+                builder.AddField("Server Name", Guild.Name ?? "null");
+                if (Guild.AuditChannelId != null)
+                {
+                    SocketTextChannel auditChannel = (SocketTextChannel)Context.Guild.GetChannel(Guild.AuditChannelId.Value);
+                    builder.AddField("Audit Channel", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
+
+                }
+                builder.AddField("String prefix", Guild.Prefix ?? Configuration.Get("Prefix:Default"));
             });
 
             await ReplyAsync(embed);
@@ -44,7 +44,8 @@ namespace ScrubBot.Modules
         {
             List<CommandInfo> commands = CommandService.Commands.ToList();
 
-            Embed embed = EmbedFactory.Create(builder => {
+            Embed embed = EmbedFactory.Create(builder =>
+            {
                 builder.WithColor(Color.Purple);
                 builder.WithTitle("Command list");
 
@@ -60,9 +61,52 @@ namespace ScrubBot.Modules
 
                     builder.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
                 }
-            });            
+            });
 
             await ReplyAsync(embed);
         }
+
+        [Command("Reply")]
+        public async Task<RuntimeResult> Reply(SocketGuildUser userToReplyTo, int prevMessageIndex, [Remainder]string reply)
+        {
+            if (prevMessageIndex < 1)
+                return new ErrorResult($"The number telling me which message you want to reply to, must be at least 1!");
+
+            const int messageLogLength = 20;
+            IEnumerable<IMessage> lastMessages = await Context.Channel.GetMessagesAsync(messageLogLength).FlattenAsync();
+            IEnumerable<IMessage> enumerable = lastMessages as IMessage[] ?? lastMessages.ToArray();
+
+            if (enumerable.Count() < prevMessageIndex)
+                return new ErrorResult($"There are less than {prevMessageIndex} messages in this channel, let alone from {userToReplyTo.Username}... Please reconsider the command!");
+
+            if (enumerable.First(x => x.Author == userToReplyTo) is null)
+                return new ErrorResult($"{userToReplyTo.Username} hasn't sent a message in the last {messageLogLength} messages.");
+
+            if (enumerable.Count(x => x.Author == userToReplyTo) < prevMessageIndex)
+                return new ErrorResult($"{userToReplyTo.Username} hasn't sent {prevMessageIndex} messages in the last {messageLogLength} messages.");
+
+            var messageToReplyTo = enumerable.Where(x => x.Author == userToReplyTo).ToArray()[prevMessageIndex - (userToReplyTo == Context.User ? 0 : 1)];
+
+            if (messageToReplyTo.Attachments.Count > 0)
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle("Sadly, I'm unable to handle replying to messages containing attachments... sorry 😕");
+                }));
+
+            return new InfoResult(EmbedFactory.Create(x =>
+            {
+                x.WithColor(Color.Purple);
+                x.WithDescription(userToReplyTo.Mention);
+                x.AddField("Original:", messageToReplyTo.Content);
+                x.AddField($"Reply:", reply);
+            }));
+        }
+
+        //[Command("Reply")]
+        //public async Task<RuntimeResult> Reply(SocketGuildUser userToReplyTo, Uri messageLink, [Remainder] string reply)
+        //{
+
+        //}
     }
 }

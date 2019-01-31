@@ -18,17 +18,17 @@ namespace ScrubBot.Modules
         }
 
         [Command("UrMomGay"), Summary("( ͡° ͜ʖ ͡°)")]
-        public async Task<RuntimeResult> UrMomGay()
-        {
-            return new SuccessResult($"{Context.User.Mention} No u");
-        }
+        public async Task<RuntimeResult> UrMomGay() => new SuccessResult($"{Context.User.Mention} No u");
 
         [Command("HelloThere")]
-        public async Task<RuntimeResult> HelloThere()
-        {
-            return new SuccessResult($"General {Context.User.Username} ⚔️⚔️");
-        }
-        
+        public async Task<RuntimeResult> HelloThere() => new SuccessResult($"General {Context.User.Username} ⚔️⚔️");
+
+        [Command("success")]
+        public async Task<RuntimeResult> Success() => new SuccessResult("Success result");
+
+        [Command("error")]
+        public async Task<RuntimeResult> Error() => new ErrorResult("Error result");
+
         [Command("SetPrefix"), Summary("Change this server's current command character prefix")]
         public async Task<RuntimeResult> SetPrefix(string newPrefix)
         {
