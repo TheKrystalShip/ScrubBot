@@ -77,13 +77,25 @@ namespace ScrubBot.Modules
             IEnumerable<IMessage> enumerable = lastMessages as IMessage[] ?? lastMessages.ToArray();
 
             if (enumerable.Count() < prevMessageIndex)
-                return new ErrorResult($"There are less than {prevMessageIndex} messages in this channel, let alone from {userToReplyTo.Username}... Please reconsider the command!");
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle($"There are less than {prevMessageIndex} messages in this channel, let alone from {userToReplyTo.Username}... Please reconsider the command!");
+                }));
 
             if (enumerable.First(x => x.Author == userToReplyTo) is null)
-                return new ErrorResult($"{userToReplyTo.Username} hasn't sent a message in the last {messageLogLength} messages.");
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle($"{userToReplyTo.Username} hasn't sent a message in the last {messageLogLength} messages.");
+                }));
 
             if (enumerable.Count(x => x.Author == userToReplyTo) < prevMessageIndex)
-                return new ErrorResult($"{userToReplyTo.Username} hasn't sent {prevMessageIndex} messages in the last {messageLogLength} messages.");
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle($"{userToReplyTo.Username} hasn't sent {prevMessageIndex} messages in the last {messageLogLength} messages.");
+                }));
 
             var messageToReplyTo = enumerable.Where(x => x.Author == userToReplyTo).ToArray()[prevMessageIndex - (userToReplyTo == Context.User ? 0 : 1)];
 
@@ -103,10 +115,34 @@ namespace ScrubBot.Modules
             }));
         }
 
-        //[Command("Reply")]
-        //public async Task<RuntimeResult> Reply(SocketGuildUser userToReplyTo, Uri messageLink, [Remainder] string reply)
-        //{
+        [Command("Reply")]
+        public async Task<RuntimeResult> Reply(ulong messageId, [Remainder] string reply)
+        {
+            if (!(Context.Channel is ITextChannel currentChannel))
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle("Error");
+                    x.WithDescription("Sorry, was unable to cast the current channel to ITextChannel");
+                }));
 
-        //}
+            IMessage message = await currentChannel.GetMessageAsync(messageId);
+
+            if (message is null)
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle("Error");
+                    x.WithDescription("Sorry, was unable to find the requested message");
+                }));
+
+            return new InfoResult(EmbedFactory.Create(x =>
+            {
+                x.WithColor(Color.Purple);
+                x.WithDescription(message.Author.Mention);
+                x.AddField("Original:", message.Content);
+                x.AddField($"Reply:", reply);
+            }));
+        }
     }
 }
