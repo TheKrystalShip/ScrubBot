@@ -136,6 +136,13 @@ namespace ScrubBot.Modules
                     x.WithDescription("Sorry, was unable to find the requested message");
                 }));
 
+            if (message.Attachments.Count > 0)
+                return new ErrorResult(EmbedFactory.Create(x =>
+                {
+                    x.WithColor(Color.Red);
+                    x.WithTitle("Sadly, I'm unable to handle replying to messages containing attachments... sorry 😕");
+                }));
+
             return new InfoResult(EmbedFactory.Create(x =>
             {
                 x.WithColor(Color.Purple);
