@@ -24,6 +24,8 @@ namespace ScrubBot
 {
     public class Startup
     {
+        private const bool useDevToken = true;
+
         public Startup()
         {
             Configuration.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"));
@@ -76,14 +78,16 @@ namespace ScrubBot
 
         public Startup ConfigureClient()
         {
-            Bot client = new Bot(new DiscordSocketConfig() {
+            Bot client = new Bot(new DiscordSocketConfig()
+            {
                 ConnectionTimeout = 5000,
                 DefaultRetryMode = RetryMode.AlwaysRetry,
                 HandlerTimeout = 1000,
                 LogLevel = LogSeverity.Debug
             });
 
-            CommandOperator commandOperator = new CommandOperator(client, new CommandServiceConfig() {
+            CommandOperator commandOperator = new CommandOperator(client, new CommandServiceConfig()
+            {
                 DefaultRunMode = RunMode.Async,
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug
@@ -93,8 +97,11 @@ namespace ScrubBot
             commandOperator.Log += Logger.Log;
             client.Log += Logger.Log;
             client.MessageReceived += commandOperator.OnClientMessageReceivedAsync;
-            client.InitAsync(Configuration.Get("Bot:Token")).Wait();
-
+#if DEBUG
+            client.InitAsync(Configuration.Get($"Bot:{(useDevToken ? "DevToken" : "ReleaseToken")}")).Wait();
+#else
+            client.InitAsync(Configuration.Get("Bot:ReleaseToken")).Wait();
+#endif
             Container.Add(client);
             Container.Add<ICommandOperator>(commandOperator);
 
