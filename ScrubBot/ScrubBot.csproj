@@ -37,7 +37,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Properties\secrets.json">
+    <None Update="Properties\settings.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\settings.example.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\settings.json">

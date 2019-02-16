@@ -9,14 +9,23 @@ namespace ScrubBot.Extensions
         public static bool IsValid(this SocketUserMessage message, in string prefix, in IUser user, out int argPos)
         {
             argPos = 0;
+            bool hasPrefix = false;
+            bool isMentioned = false;
 
             if (message is null || message.Author.IsBot)
             {
                 return false;
             }
 
-            bool hasPrefix = message.HasStringPrefix(prefix, ref argPos);
-            bool isMentioned = message.HasMentionPrefix(user, ref argPos);
+            if (prefix != null)
+            {
+                hasPrefix = message.HasStringPrefix(prefix, ref argPos);
+            }
+
+            if (user != null)
+            {
+                isMentioned = message.HasMentionPrefix(user, ref argPos);
+            }
 
             if (!hasPrefix && !isMentioned)
             {

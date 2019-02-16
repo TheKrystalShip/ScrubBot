@@ -23,14 +23,14 @@ namespace ScrubBot.Managers
 
             foreach (var guild in guilds)
             {
-                _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Prefix:Default"));
+                _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Bot:Prefix"));
             }
         }
 
         public string Get(ulong guildId)
         {
             bool hasValue = _prefixes.TryGetValue(guildId, out string value);
-            return hasValue ? value : Configuration.Get("Prefix:Default");
+            return hasValue ? value : Configuration.Get("Bot:Prefix");
         }
 
         public async Task<bool> SetAsync(ulong guildId, string prefix)

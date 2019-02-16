@@ -24,12 +24,14 @@ namespace ScrubBot
 {
     public class Startup
     {
-        private const bool useDevToken = true;
-
         public Startup()
         {
             Configuration.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"));
-            Configuration.AddFiles("secrets.json", "settings.json");
+            #if DEBUG
+            Configuration.AddFiles("settings.dev.json");
+            #else
+            Configuration.AddFiles("settings.json");
+            #endif
         }
 
         public Startup ConfigureDatabase()
@@ -96,12 +98,10 @@ namespace ScrubBot
             commandOperator.CommandExecuted += Dispatcher.Dispatch;
             commandOperator.Log += Logger.Log;
             client.Log += Logger.Log;
+
             client.MessageReceived += commandOperator.OnClientMessageReceivedAsync;
-#if DEBUG
-            client.InitAsync(Configuration.Get($"Bot:{(useDevToken ? "DevToken" : "ReleaseToken")}")).Wait();
-#else
-            client.InitAsync(Configuration.Get("Bot:ReleaseToken")).Wait();
-#endif
+            client.InitAsync(Configuration.Get("Bot:Token")).Wait();
+
             Container.Add(client);
             Container.Add<ICommandOperator>(commandOperator);
 

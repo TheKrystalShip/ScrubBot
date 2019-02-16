@@ -1,6 +1,7 @@
 {
-  "Prefix": {
-    "Default": ">"
+  "Bot": {
+    "Token": "BOT_TOKEN",
+    "Prefix": ">"
   },
   "ConnectionStrings": {
     "SQLite": "Data source=.\\Properties\\ScrubBot.db"
