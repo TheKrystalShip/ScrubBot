@@ -10,12 +10,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
     <PackageReference Include="TheKrystalShip.Tools.Configuration" Version="1.0.1" />
+    <PackageReference Include="TheKrystalShip.Tools.Diagnostics" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
     <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
     <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
+    <ProjectReference Include="..\ScrubBot.Middlewares\ScrubBot.Middlewares.csproj" />
   </ItemGroup>
 
 </Project>

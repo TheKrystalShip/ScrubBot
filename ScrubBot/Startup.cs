@@ -49,6 +49,7 @@ namespace ScrubBot
 
         public Startup ConfigureContainer()
         {
+            Container.Add<IMiddlewareManager, MiddlewareManager>();
             Container.Add<IChannelManager, ChannelManager>();
             Container.Add<IGuildManager, GuildManager>();
             Container.Add<IPrefixManager, PrefixManager>();

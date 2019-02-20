@@ -16,6 +16,7 @@ namespace ScrubBot.Modules
 {
     public class Module : ModuleBase<SocketCommandContext>
     {
+        public IMiddlewareManager MiddlewareManager { get; private set; }
         public ICommandOperator CommandService { get; private set; }
         public IDbContext Database { get; private set; }
         public IPrefixManager Prefix { get; private set; }
@@ -24,6 +25,7 @@ namespace ScrubBot.Modules
 
         public Module()
         {
+            MiddlewareManager = Container.Get<IMiddlewareManager>();
             CommandService = Container.Get<ICommandOperator>();
             Database = Container.Get<IDbContext>();
             Prefix = Container.Get<IPrefixManager>();
@@ -47,6 +49,8 @@ namespace ScrubBot.Modules
             {
                 Console.WriteLine(new LogMessage(LogSeverity.Warning, GetType().Name, "User is null in current scope"));
             }
+
+            MiddlewareManager.InitAsync(Context);
         }
 
         protected override void AfterExecute(CommandInfo command)
