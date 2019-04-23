@@ -16,7 +16,7 @@ namespace ScrubBot.Core
         {
             await LoginAsync(TokenType.Bot, token);
             await StartAsync();
-            await SetGameAsync("Type >Help for help");
+            await SetGameAsync("people struggle with >Help", null, ActivityType.Watching);
         }
     }
 }
