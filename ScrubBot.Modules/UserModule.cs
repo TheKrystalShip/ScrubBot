@@ -99,11 +99,12 @@ namespace ScrubBot.Modules
 
             var messageToReplyTo = enumerable.Where(x => x.Author == userToReplyTo).ToArray()[prevMessageIndex - (userToReplyTo == Context.User ? 0 : 1)];
 
-            if (messageToReplyTo.Attachments.Count > 0)
+            if (messageToReplyTo.Attachments.Count > 0 || messageToReplyTo.Embeds.Count > 0)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
                     x.WithColor(Color.Red);
-                    x.WithTitle("Sadly, I'm unable to handle replying to messages containing attachments... sorry 😕");
+                    x.WithTitle("Error");
+                    x.WithDescription("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
                 }));
 
             return new InfoResult(EmbedFactory.Create(x =>
@@ -136,11 +137,12 @@ namespace ScrubBot.Modules
                     x.WithDescription("Sorry, was unable to find the requested message");
                 }));
 
-            if (message.Attachments.Count > 0)
+            if (message.Attachments.Count > 0 || message.Embeds.Count > 0)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
                     x.WithColor(Color.Red);
-                    x.WithTitle("Sadly, I'm unable to handle replying to messages containing attachments... sorry 😕");
+                    x.WithColor(Color.Red);
+                    x.WithDescription("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
                 }));
 
             return new InfoResult(EmbedFactory.Create(x =>
