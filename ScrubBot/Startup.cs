@@ -89,7 +89,7 @@ namespace ScrubBot
                 LogLevel = LogSeverity.Debug
             });
 
-            CommandOperator commandOperator = new CommandOperator(client, new CommandServiceConfig()
+            CommandOperator commandOperator = new CommandOperator(client, new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async,
                 CaseSensitiveCommands = false,

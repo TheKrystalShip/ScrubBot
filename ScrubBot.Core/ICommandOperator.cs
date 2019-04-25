@@ -9,6 +9,7 @@ namespace ScrubBot.Core
     public interface ICommandOperator
     {
         IEnumerable<CommandInfo> Commands { get; }
+        IEnumerable<ModuleInfo> Modules { get; }
         Task OnClientMessageReceivedAsync(SocketMessage socketMessage);
     }
 }

@@ -16,8 +16,8 @@ namespace ScrubBot.Core.Commands
     {
         private readonly DiscordSocketClient _client;
         private readonly IPrefixManager _prefixManager;
-
-        public new IEnumerable<CommandInfo> Commands { get => base.Commands; }
+        public new IEnumerable<CommandInfo> Commands => base.Commands;
+        public new IEnumerable<ModuleInfo> Modules => base.Modules;
 
         public CommandOperator(DiscordSocketClient client, CommandServiceConfig config) : base(config)
         {

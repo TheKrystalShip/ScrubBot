@@ -11,6 +11,7 @@ using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Modules
 {
+    [Summary("Test"), Remarks("MoreTest")]
     public class UserModule : Module
     {
         public UserModule()
@@ -31,9 +32,8 @@ namespace ScrubBot.Modules
                 {
                     SocketTextChannel auditChannel = (SocketTextChannel)Context.Guild.GetChannel(Guild.AuditChannelId.Value);
                     builder.AddField("Audit Channel", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
-
                 }
-                builder.AddField("String prefix", Guild.Prefix ?? Configuration.Get("Prefix:Default"));
+                builder.AddField("String prefix", Guild.Prefix ?? Configuration.Get("Bot:Prefix"));
             });
 
             await ReplyAsync(embed);
@@ -42,24 +42,60 @@ namespace ScrubBot.Modules
         [Command("Help")]
         public async Task Help()
         {
-            List<CommandInfo> commands = CommandService.Commands.ToList();
+            IEnumerable<ModuleInfo> modules = CommandService.Modules;
 
             Embed embed = EmbedFactory.Create(builder =>
             {
                 builder.WithColor(Color.Purple);
-                builder.WithTitle("Command list");
+                builder.WithTitle("Help ");
+                builder.WithDescription("Commands are separated per module. To get all the commands in a module, use Help(moduleName)");
 
-                foreach (CommandInfo command in commands)
+                foreach (var module in modules)
                 {
-                    if (command.Name == "Help")
+                    if (module.Name == nameof(Module))
                         continue;
 
-                    string embedFieldText = command.Summary ?? "No description available\n";
+                    builder.AddField(module.Name.Replace("Module", string.Empty), !string.IsNullOrEmpty(module.Summary) ? module.Summary : "No summary available");
+                }
+            });
 
-                    if (command.Parameters.Count > 0)
-                        embedFieldText = command.Parameters.Aggregate(embedFieldText, (current, param) => current + $"\nParameters:\t{param.Type.Name} {param}\t");
+            await ReplyAsync(embed);
+        }
 
-                    builder.AddField($"{command.Name} ({command.Module.Name.Replace("Module", "")})", embedFieldText);
+        [Command("Help")]
+        public async Task Help(string module)
+        {
+            CommandInfo[] commands = CommandService.Commands.Where(x => string.Equals(x.Module.Name.Replace("Module", string.Empty), module, StringComparison.CurrentCultureIgnoreCase)).ToArray();
+
+            Embed embed = EmbedFactory.Create(builder =>
+            {
+                if (commands.Length is 0)
+                {
+                    builder.WithColor(Color.Red);
+                    builder.WithTitle("Error");
+                    builder.WithDescription($"No module compares to {module}... \nSee Help for all available modules");
+                }
+                else
+                {
+                    builder.WithColor(Color.Purple);
+                    builder.WithTitle("Command list");
+
+                    foreach (CommandInfo command in commands)
+                    {
+                        if (command.Name == "Help")
+                            continue;
+
+                        string embedFieldText = $"{(!string.IsNullOrEmpty(command.Summary) ? command.Summary : "No summary available")}\n";
+
+                        string parameters = string.Empty;
+                        if (command.Parameters.Count > 0)
+                        {
+                            parameters += command.Parameters.Aggregate(parameters, (current, param) => current + $"{param.Name} ");
+                            parameters = parameters.Insert(0, "( ");
+                            parameters += ")";
+                        }
+                        builder.AddField($"\n{command.Name} \t {parameters}", $"{embedFieldText}\n ");
+                    }
                 }
             });
 
