@@ -18,7 +18,7 @@ namespace ScrubBot.Modules
             return new SuccessResult($"Successfully set the birthday for {Context.User.Username} to {birthday:dddd, dd MMMM yyyy}");
         }
 
-        [Command("ShowBirthdays"), Summary("Show all birthdays in a specific month")]
+        [Command("ShowBirthdays"), Summary("Show all known birthdays in a specific month")]
         public async Task<RuntimeResult> ShowBirthdays(int month)
         {
             if (month < 1 || month > 12)

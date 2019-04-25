@@ -78,7 +78,7 @@ namespace ScrubBot.Modules
                 else
                 {
                     builder.WithColor(Color.Purple);
-                    builder.WithTitle("Command list");
+                    builder.WithTitle($"Command list ({module.Replace(module[0], char.ToUpper(module[0]))})");
 
                     foreach (CommandInfo command in commands)
                     {
