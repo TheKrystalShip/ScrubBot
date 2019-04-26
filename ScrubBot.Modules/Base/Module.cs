@@ -74,9 +74,7 @@ namespace ScrubBot.Modules
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception exception = e.ExceptionObject as Exception;
-
-            if (exception is null)
+            if (!(e.ExceptionObject is Exception exception))
                 return;
 
             if (exception.InnerException != null)
