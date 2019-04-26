@@ -8,8 +8,8 @@ using ScrubBot.Database.Domain;
 
 namespace ScrubBot.Modules
 {
-    [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule))]
-    [RequireOwner(Group = nameof(AdminModule))]
+    [RequireUserPermission(GuildPermission.Administrator, Group = nameof(AdminModule)),
+     RequireOwner(Group = nameof(AdminModule)), Remarks("Works for users with admin roles only")]
     public class AdminModule : Module
     {
         public AdminModule()
