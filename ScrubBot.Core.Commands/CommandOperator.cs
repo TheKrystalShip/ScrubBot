@@ -12,7 +12,7 @@ using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Core.Commands
 {
-    public class CommandOperator : CommandService, ICommandOperator
+    public class CommandOperator : CommandService
     {
         private readonly DiscordSocketClient _client;
         private readonly IPrefixManager _prefixManager;

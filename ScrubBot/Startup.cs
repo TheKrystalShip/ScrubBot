@@ -104,7 +104,7 @@ namespace ScrubBot
             client.InitAsync(Configuration.Get("Bot:Token")).Wait();
 
             Container.Add(client);
-            Container.Add<ICommandOperator>(commandOperator);
+            Container.Add<CommandService>(commandOperator);
 
             commandOperator.LoadModulesAsync().Wait();
 
