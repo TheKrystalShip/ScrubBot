@@ -11,7 +11,7 @@ using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Modules
 {
-    [Summary("Test"), Remarks("MoreTest")]
+    [Summary("Test")]
     public class UserModule : Module
     {
         public UserModule()
@@ -25,7 +25,7 @@ namespace ScrubBot.Modules
             Embed embed = EmbedFactory.Create(builder =>
             {
                 builder.WithColor(Color.Purple);
-                builder.WithTitle("Bot info");
+                //builder.WithTitle("Info");
                 builder.ThumbnailUrl = Guild.IconUrl;
                 builder.AddField("Server Name", Guild.Name ?? "null");
                 if (Guild.AuditChannelId != null)
@@ -33,7 +33,7 @@ namespace ScrubBot.Modules
                     SocketTextChannel auditChannel = (SocketTextChannel)Context.Guild.GetChannel(Guild.AuditChannelId.Value);
                     builder.AddField("Audit Channel", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
                 }
-                builder.AddField("String prefix", Guild.Prefix ?? Configuration.Get("Bot:Prefix"));
+                builder.AddField("Command prefix", Prefix.Get(Guild.Id));
             });
 
             await ReplyAsync(embed);
@@ -102,11 +102,11 @@ namespace ScrubBot.Modules
             await ReplyAsync(embed);
         }
 
-        [Command("Reply")]
+        [Command("Reply"), Summary("Send a message, with a specific message you want to reply to embedded, by counting the amount of messages of a specific user from new to old. DOES NOT WORK WITH ATTACHMENTS OR OTHER EMBEDS!")]
         public async Task<RuntimeResult> Reply(SocketGuildUser userToReplyTo, int prevMessageIndex, [Remainder]string reply)
         {
             if (prevMessageIndex < 1)
-                return new ErrorResult($"The number telling me which message you want to reply to, must be at least 1!");
+                return new ErrorResult("The number telling me which message you want to reply to, must be at least 1!");
 
             const int messageLogLength = 20;
             IEnumerable<IMessage> lastMessages = await Context.Channel.GetMessagesAsync(messageLogLength).FlattenAsync();
@@ -148,11 +148,11 @@ namespace ScrubBot.Modules
                 x.WithColor(Color.Purple);
                 x.WithDescription(userToReplyTo.Mention);
                 x.AddField("Original:", messageToReplyTo.Content);
-                x.AddField($"Reply:", reply);
+                x.AddField("Reply:", reply);
             }));
         }
 
-        [Command("Reply")]
+        [Command("Reply"), Summary("Send a message, with a specific message you want to reply to embedded, using the message's ID. DOES NOT WORK WITH ATTACHMENTS OR OTHER EMBEDS!")]
         public async Task<RuntimeResult> Reply(ulong messageId, [Remainder] string reply)
         {
             if (!(Context.Channel is ITextChannel currentChannel))
@@ -186,7 +186,7 @@ namespace ScrubBot.Modules
                 x.WithColor(Color.Purple);
                 x.WithDescription(message.Author.Mention);
                 x.AddField("Original:", message.Content);
-                x.AddField($"Reply:", reply);
+                x.AddField("Reply:", reply);
             }));
         }
     }
