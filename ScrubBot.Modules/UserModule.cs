@@ -48,14 +48,16 @@ namespace ScrubBot.Modules
             {
                 builder.WithColor(Color.Purple);
                 builder.WithTitle("Help ");
-                builder.WithDescription("Commands are separated per module. To get all the commands in a module, use Help(moduleName)");
+                builder.WithDescription($"Commands are separated per module. To get all the commands in a module, use {Prefix.Get(Guild.Id)}Help moduleName");
 
                 foreach (var module in modules)
                 {
                     if (module.Name == nameof(Module))
                         continue;
 
-                    builder.AddField(module.Name.Replace("Module", string.Empty), !string.IsNullOrEmpty(module.Summary) ? module.Summary : "No summary available");
+                    string remarks = string.IsNullOrEmpty(module.Remarks) ? string.Empty : $"({module.Remarks})";
+
+                    builder.AddField(module.Name.Replace("Module", string.Empty), $"{(!string.IsNullOrEmpty(module.Summary) ? module.Summary : "No summary available")}\n{remarks}");
                 }
             });
 
