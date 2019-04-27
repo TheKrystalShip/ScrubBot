@@ -30,6 +30,9 @@ namespace ScrubBot.Core.Commands
                         .SendMessageAsync(text: infoResult.Reason ?? "Info", isTTS: false, embed: infoResult.Embed);
                     break;
                 default:
+                    await context
+                        .Channel
+                        .SendMessageAsync(text: result.ToString());
                     break;
             }
         }

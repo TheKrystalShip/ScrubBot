@@ -7,8 +7,4 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
-  </ItemGroup>
-
 </Project>

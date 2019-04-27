@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+
+using ScrubBot.Extensions;
 using ScrubBot.Tools;
-using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Modules
 {
@@ -19,36 +20,37 @@ namespace ScrubBot.Modules
 
         }
 
-        [Command("Info"), Summary("Display info about the bot.")]
+        [Command("Info"), Summary("Display info about the server.")]
         public async Task Info()
         {
-            Embed embed = EmbedFactory.Create(builder =>
+            Embed embed = EmbedFactory.Create(x =>
             {
-                builder.WithColor(Color.Purple);
-                //builder.WithTitle("Info");
-                builder.ThumbnailUrl = Guild.IconUrl;
-                builder.AddField("Server Name", Guild.Name ?? "null");
+                x.WithColor(Color.Purple);
+                x.ThumbnailUrl = Guild.IconUrl;
+                x.AddField("Server Name", Guild.Name ?? "null");
+
                 if (Guild.AuditChannelId != null)
                 {
                     SocketTextChannel auditChannel = (SocketTextChannel)Context.Guild.GetChannel(Guild.AuditChannelId.Value);
-                    builder.AddField("Audit Channel", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
+                    x.AddField("Audit Channel", auditChannel != null ? auditChannel.Mention : "Invalid channel!");
                 }
-                builder.AddField("Command prefix", Prefix.Get(Guild.Id));
+
+                x.AddField("Command prefix", Prefix);
             });
 
             await ReplyAsync(embed);
         }
 
         [Command("Help")]
-        public async Task Help()
+        public async Task<RuntimeResult> Help()
         {
-            IEnumerable<ModuleInfo> modules = CommandService.Modules;
+            IEnumerable<ModuleInfo> modules = Store.Get<IEnumerable<ModuleInfo>>();
 
             Embed embed = EmbedFactory.Create(builder =>
             {
                 builder.WithColor(Color.Purple);
                 builder.WithTitle("Help ");
-                builder.WithDescription($"Commands are separated per module. To get all the commands in a module, use {Prefix.Get(Guild.Id)}Help moduleName");
+                builder.WithDescription($"Commands are separated per module. To get all the commands in a module, use {Prefix}Help moduleName");
 
                 foreach (var module in modules)
                 {
@@ -61,21 +63,21 @@ namespace ScrubBot.Modules
                 }
             });
 
-            await ReplyAsync(embed);
+            return new SuccessResult(embed);
         }
 
         [Command("Help")]
-        public async Task Help(string module)
+        public async Task<RuntimeResult> Help(string module)
         {
-            CommandInfo[] commands = CommandService.Commands.Where(x => string.Equals(x.Module.Name.Replace("Module", string.Empty), module, StringComparison.CurrentCultureIgnoreCase)).ToArray();
+            CommandInfo[] commands = Store.Get<IEnumerable<CommandInfo>>()
+                .Where(x => string.Equals(x.Module.Name.Replace("Module", string.Empty), module, StringComparison.CurrentCultureIgnoreCase))
+                .ToArray();
 
             Embed embed = EmbedFactory.Create(builder =>
             {
                 if (commands.Length is 0)
                 {
-                    builder.WithColor(Color.Red);
-                    builder.WithTitle("Error");
-                    builder.WithDescription($"No module compares to {module}... \nSee Help for all available modules");
+                    builder.CreateError($"No module compares to {module}... \nSee Help for all available modules");
                 }
                 else
                 {
@@ -101,7 +103,7 @@ namespace ScrubBot.Modules
                 }
             });
 
-            await ReplyAsync(embed);
+            return new SuccessResult(embed);
         }
 
         [Command("Reply"), Summary("Send a message, with a specific message you want to reply to embedded, by counting the amount of messages of a specific user from new to old. DOES NOT WORK WITH ATTACHMENTS OR OTHER EMBEDS!")]
@@ -117,22 +119,19 @@ namespace ScrubBot.Modules
             if (enumerable.Count() < prevMessageIndex)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle($"There are less than {prevMessageIndex} messages in this channel, let alone from {userToReplyTo.Username}... Please reconsider the command!");
+                    x.CreateError($"There are less than {prevMessageIndex} messages in this channel, let alone from {userToReplyTo.Username}... Please reconsider the command!");
                 }));
 
             if (enumerable.First(x => x.Author == userToReplyTo) is null)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle($"{userToReplyTo.Username} hasn't sent a message in the last {messageLogLength} messages.");
+                    x.CreateError($"{userToReplyTo.Username} hasn't sent a message in the last {messageLogLength} messages.");
                 }));
 
             if (enumerable.Count(x => x.Author == userToReplyTo) < prevMessageIndex)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle($"{userToReplyTo.Username} hasn't sent {prevMessageIndex} messages in the last {messageLogLength} messages.");
+                    x.CreateError($"{userToReplyTo.Username} hasn't sent {prevMessageIndex} messages in the last {messageLogLength} messages.");
                 }));
 
             var messageToReplyTo = enumerable.Where(x => x.Author == userToReplyTo).ToArray()[prevMessageIndex - (userToReplyTo == Context.User ? 0 : 1)];
@@ -140,9 +139,7 @@ namespace ScrubBot.Modules
             if (messageToReplyTo.Attachments.Count > 0 || messageToReplyTo.Embeds.Count > 0)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle("Error");
-                    x.WithDescription("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
+                    x.CreateError("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
                 }));
 
             return new InfoResult(EmbedFactory.Create(x =>
@@ -160,9 +157,7 @@ namespace ScrubBot.Modules
             if (!(Context.Channel is ITextChannel currentChannel))
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle("Error");
-                    x.WithDescription("Sorry, was unable to cast the current channel to ITextChannel");
+                    x.CreateError("Sorry, was unable to cast the current channel to ITextChannel");
                 }));
 
             IMessage message = await currentChannel.GetMessageAsync(messageId);
@@ -170,25 +165,21 @@ namespace ScrubBot.Modules
             if (message is null)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithTitle("Error");
-                    x.WithDescription("Sorry, was unable to find the requested message");
+                    x.CreateError("Sorry, was unable to find the requested message");
                 }));
 
             if (message.Attachments.Count > 0 || message.Embeds.Count > 0)
                 return new ErrorResult(EmbedFactory.Create(x =>
                 {
-                    x.WithColor(Color.Red);
-                    x.WithColor(Color.Red);
-                    x.WithDescription("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
+                    x.CreateError("Sadly, I'm unable to handle replying to messages containing attachments or embeds... sorry 😕");
                 }));
 
             return new InfoResult(EmbedFactory.Create(x =>
             {
                 x.WithColor(Color.Purple);
                 x.WithDescription(message.Author.Mention);
-                x.AddField("Original:", message.Content);
-                x.AddField("Reply:", reply);
+                x.AddField("Original: ", message.Content);
+                x.AddField("Reply: ", reply);
             }));
         }
     }

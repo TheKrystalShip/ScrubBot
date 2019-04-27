@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading.Tasks;
+
+using Discord.Commands;
 
 using ScrubBot.Database;
 using ScrubBot.Database.Domain;
@@ -11,20 +12,26 @@ namespace ScrubBot.Managers
 {
     public class PrefixManager : IPrefixManager
     {
-        private readonly IDbContext _context;
+        private readonly IDbContext _dbContext;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
+        private ICommandContext _context;
 
         public PrefixManager(IDbContext dbContext)
         {
-            _context = dbContext;
+            _dbContext = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
 
-            var guilds = _context.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
+            var guilds = _dbContext.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
 
             foreach (var guild in guilds)
             {
                 _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Bot:Prefix"));
             }
+        }
+
+        public string Get()
+        {
+            return Get(_context.Guild.Id);
         }
 
         public string Get(ulong guildId)
@@ -33,15 +40,27 @@ namespace ScrubBot.Managers
             return hasValue ? value : Configuration.Get("Bot:Prefix");
         }
 
-        public async Task<bool> SetAsync(ulong guildId, string prefix)
+        public bool Set(string prefix)
         {
-            Guild guild = _context.Guilds.Find(guildId);
-            guild.Prefix = prefix;
-            _context.Guilds.Update(guild);
+            return Set(_context.Guild.Id, prefix);
+        }
 
-            await _context.SaveChangesAsync();
+        public bool Set(ulong guildId, string prefix)
+        {
+            Guild guild = _dbContext.Guilds.Find(_context.Guild.Id);
+            guild.Prefix = prefix;
+
+            _dbContext.Guilds.Update(guild);
+            _dbContext.SaveChanges();
+
             _prefixes.AddOrUpdate(guildId, prefix, (key, oldValue) => prefix);
+
             return true;
+        }
+
+        public void SetCommandContext(ICommandContext context)
+        {
+            _context = context;
         }
     }
 }

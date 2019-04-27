@@ -33,7 +33,7 @@ namespace ScrubBot.Modules
         public async Task<RuntimeResult> SetPrefix(string newPrefix)
         {
             string old = Guild.Prefix;
-            await Prefix.SetAsync(Guild.Id, newPrefix);
+            Prefix = newPrefix;
 
             return new SuccessResult($"Changed Command Char Prefix from '{old}' to '{newPrefix}'");
         }
