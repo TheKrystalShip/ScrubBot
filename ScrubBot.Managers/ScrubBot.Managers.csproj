@@ -17,7 +17,6 @@
     <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
     <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
     <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
-    <ProjectReference Include="..\ScrubBot.Middlewares\ScrubBot.Middlewares.csproj" />
   </ItemGroup>
 
 </Project>

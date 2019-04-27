@@ -22,18 +22,37 @@ using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot
 {
+    /// <summary>
+    /// Responsible for loading, configuring and starting all the
+    /// required parts of the project for the Bot client to work.
+    /// </summary>
     public class Startup
     {
         public Startup()
         {
-            Configuration.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"));
-            #if DEBUG
-            Configuration.AddFiles("settings.dev.json");
-            #else
-            Configuration.AddFiles("settings.json");
-            #endif
+
         }
 
+        /// <summary>
+        /// Load settings.json (or settings.dev.json) files into memory
+        /// </summary>
+        /// <returns></returns>
+        public Startup ConfigureSettings()
+        {
+            Configuration.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Properties"));
+#if DEBUG
+            Configuration.AddFiles("settings.dev.json");
+#else
+            Configuration.AddFiles("settings.json");
+#endif
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configure database access and migrate schema
+        /// </summary>
+        /// <returns></returns>
         public Startup ConfigureDatabase()
         {
             DbContextOptionsBuilder<SQLiteContext> builder = new DbContextOptionsBuilder<SQLiteContext>();
@@ -47,9 +66,12 @@ namespace ScrubBot
             return this;
         }
 
+        /// <summary>
+        /// Load up needed dependencies into the IoC Container
+        /// </summary>
+        /// <returns></returns>
         public Startup ConfigureContainer()
         {
-            Container.Add<IMiddlewareManager, MiddlewareManager>();
             Container.Add<IChannelManager, ChannelManager>();
             Container.Add<IGuildManager, GuildManager>();
             Container.Add<IPrefixManager, PrefixManager>();
@@ -64,37 +86,80 @@ namespace ScrubBot
             return this;
         }
 
+        /// <summary>
+        /// Configure background services
+        /// </summary>
+        /// <returns></returns>
         public Startup ConfigureServices()
         {
             ServiceHandler serviceHandler = Container.Get<ServiceHandler>();
 
+            // In 1m
+            int startupDelay = TimeSpan.FromMinutes(1).Milliseconds;
+
+            // Every 30s
+            int interval = TimeSpan.FromSeconds(30).Milliseconds;
+
             EventService eventService = Container.Get<EventService>();
             eventService.Trigger += serviceHandler.OnEventServiceTriggerAsync;
-            eventService.Init(TimeSpan.FromMinutes(1).Milliseconds, TimeSpan.FromSeconds(30).Milliseconds);
+            eventService.Init(startupDelay, interval);
+
+            // Next day @ 07:00
+            startupDelay = DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond;
+
+            // Every 24H
+            interval = TimeSpan.FromDays(1).Milliseconds;
 
             BirthdayService birthdayService = Container.Get<BirthdayService>();
             birthdayService.Trigger += serviceHandler.OnBirthdayServiceTriggerAsync;
-            birthdayService.Init(DateTime.UtcNow.Date.AddDays(1).AddHours(7).Millisecond, TimeSpan.FromDays(1).Milliseconds);
+            birthdayService.Init(startupDelay, interval);
 
             return this;
         }
 
+        /// <summary>
+        /// Configure and start bot client
+        /// </summary>
+        /// <returns></returns>
         public Startup ConfigureClient()
         {
-            Bot client = new Bot(new DiscordSocketConfig()
+#if DEBUG
+            DiscordSocketConfig discordSocketConfig = new DiscordSocketConfig
             {
                 ConnectionTimeout = 5000,
                 DefaultRetryMode = RetryMode.AlwaysRetry,
                 HandlerTimeout = 1000,
                 LogLevel = LogSeverity.Debug
-            });
+            };
+#else
+            DiscordSocketConfig config = new DiscordSocketConfig
+            {
+                ConnectionTimeout = 100,
+                DefaultRetryMode = RetryMode.AlwaysRetry,
+                HandlerTimeout = 1000,
+                LogLevel = LogSeverity.Info
+            };
+#endif
 
-            CommandOperator commandOperator = new CommandOperator(client, new CommandServiceConfig
+            Bot client = new Bot(discordSocketConfig);
+
+#if DEBUG
+            CommandServiceConfig commandServiceConfig = new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async,
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug
-            });
+            };
+#else
+            CommandServiceConfig commandServiceConfig = new CommandServiceConfig
+            {
+                DefaultRunMode = RunMode.Async,
+                CaseSensitiveCommands = false,
+                LogLevel = LogSeverity.Info
+            };
+#endif
+
+            CommandOperator commandOperator = new CommandOperator(client, commandServiceConfig);
 
             commandOperator.CommandExecuted += Dispatcher.Dispatch;
             commandOperator.Log += Logger.Log;
@@ -111,6 +176,10 @@ namespace ScrubBot
             return this;
         }
 
+        /// <summary>
+        /// Hook into the Bot event
+        /// </summary>
+        /// <returns></returns>
         public Startup ConfigureEvents()
         {
             Bot client = Container.Get<Bot>();
@@ -141,6 +210,10 @@ namespace ScrubBot
             return this;
         }
 
+        /// <summary>
+        /// Prevent program from exiting
+        /// </summary>
+        /// <returns></returns>
         public async Task InitAsync()
         {
             await Task.Delay(-1);
