@@ -7,12 +7,14 @@ namespace ScrubBot
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task Main()
         {
             Console.Title = "ScrubBot";
+
             await BotBuilder
                 .UseStartup<Startup>()
                 .ConfigureContainer()
+                .ConfigureSettings()
                 .ConfigureDatabase()
                 .ConfigureClient()
                 .ConfigureEvents()
