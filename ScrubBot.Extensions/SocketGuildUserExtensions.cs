@@ -1,5 +1,6 @@
 ﻿using Discord.WebSocket;
-using ScrubBot.Domain;
+
+using ScrubBot.Database.Domain;
 
 namespace ScrubBot.Extensions
 {

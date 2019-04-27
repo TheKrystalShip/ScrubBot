@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ScrubBot.Core\ScrubBot.Core.csproj" />
+    <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
+    <ProjectReference Include="..\ScrubBot.Managers\ScrubBot.Managers.csproj" />
+    <ProjectReference Include="..\ScrubBot.Modules\ScrubBot.Modules.csproj" />
+  </ItemGroup>
+
+</Project>

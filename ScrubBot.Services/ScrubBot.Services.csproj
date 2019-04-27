@@ -1,12 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Database\ScrubBot.Database.csproj" />
-    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
   </ItemGroup>
 
 </Project>

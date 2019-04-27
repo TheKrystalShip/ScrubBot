@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ScrubBot.Database.Migrations
+namespace ScrubBot.Database.SQLite.Migrations
 {
-    public partial class migration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,7 @@ namespace ScrubBot.Database.Migrations
                     Name = table.Column<string>(maxLength: 100, nullable: true),
                     IconUrl = table.Column<string>(nullable: true),
                     MemberCount = table.Column<int>(nullable: false),
-                    AuditChannelId = table.Column<string>(nullable: false),
+                    AuditChannelId = table.Column<string>(nullable: true),
                     Prefix = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

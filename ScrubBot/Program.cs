@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+
+using ScrubBot.Core;
 
 namespace ScrubBot
 {
@@ -6,11 +9,13 @@ namespace ScrubBot
     {
         public static async Task Main(string[] args)
         {
+            Console.Title = "ScrubBot";
             await BotBuilder
                 .UseStartup<Startup>()
+                .ConfigureContainer()
                 .ConfigureDatabase()
                 .ConfigureClient()
-                .ConfigureManagers()
+                .ConfigureEvents()
                 .ConfigureServices()
                 .InitAsync();
         }

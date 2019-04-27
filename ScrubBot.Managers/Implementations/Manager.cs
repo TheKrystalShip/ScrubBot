@@ -1,4 +1,4 @@
-﻿using ScrubBot.Tools;
+﻿using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Managers
 {
@@ -12,11 +12,11 @@ namespace ScrubBot.Managers
 
         public Manager()
         {
-            Users = Container.Get<UserManager>();
-            Guilds = Container.Get<GuildManager>();
-            Roles = Container.Get<RoleManager>();
-            Channels = Container.Get<ChannelManager>();
-            Prefixes = Container.Get<PrefixManager>();
+            Users = Container.Get<IUserManager>();
+            Guilds = Container.Get<IGuildManager>();
+            Roles = Container.Get<IRoleManager>();
+            Channels = Container.Get<IChannelManager>();
+            Prefixes = Container.Get<IPrefixManager>();
         }
     }
 }

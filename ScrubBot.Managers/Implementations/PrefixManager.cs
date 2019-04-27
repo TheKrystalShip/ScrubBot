@@ -1,19 +1,20 @@
-﻿using ScrubBot.Database;
-using ScrubBot.Domain;
-using ScrubBot.Tools;
-
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+
+using ScrubBot.Database;
+using ScrubBot.Database.Domain;
+
+using TheKrystalShip.Tools.Configuration;
 
 namespace ScrubBot.Managers
 {
     public class PrefixManager : IPrefixManager
     {
-        private readonly SQLiteContext _context;
+        private readonly IDbContext _context;
         private readonly ConcurrentDictionary<ulong, string> _prefixes;
 
-        public PrefixManager(SQLiteContext dbContext)
+        public PrefixManager(IDbContext dbContext)
         {
             _context = dbContext;
             _prefixes = new ConcurrentDictionary<ulong, string>();
@@ -22,14 +23,14 @@ namespace ScrubBot.Managers
 
             foreach (var guild in guilds)
             {
-                _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Prefix:Default"));
+                _prefixes.TryAdd(guild.Id, guild.Prefix ?? Configuration.Get("Bot:Prefix"));
             }
         }
 
         public string Get(ulong guildId)
         {
             bool hasValue = _prefixes.TryGetValue(guildId, out string value);
-            return hasValue ? value : Configuration.Get("Prefix:Default");
+            return hasValue ? value : Configuration.Get("Bot:Prefix");
         }
 
         public async Task<bool> SetAsync(ulong guildId, string prefix)

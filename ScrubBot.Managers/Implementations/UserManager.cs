@@ -1,22 +1,22 @@
-﻿using Discord.WebSocket;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Discord.WebSocket;
 
 using Microsoft.EntityFrameworkCore;
 
 using ScrubBot.Database;
-using ScrubBot.Domain;
+using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScrubBot.Managers
 {
     public class UserManager : IUserManager
     {
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public UserManager(SQLiteContext dbContext)
+        public UserManager(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -48,7 +48,7 @@ namespace ScrubBot.Managers
 
             List<Task> tasks = (from guild in guilds from user in guild.Users where !user.IsBot select AddUserAsync(user)).ToList();
 
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
         }
 
         public async Task RemoveUserAsync(SocketGuildUser user)

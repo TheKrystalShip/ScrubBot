@@ -1,17 +1,17 @@
-﻿using ScrubBot.Database;
-using ScrubBot.Domain;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using ScrubBot.Database;
+using ScrubBot.Database.Domain;
+
 namespace ScrubBot.Services
 {
     public class BirthdayService : IService
     {
-        private readonly SQLiteContext _dbContext;
+        private readonly IDbContext _dbContext;
 
         public Timer Timer { get; set; }
         public event Action Start;
@@ -19,7 +19,7 @@ namespace ScrubBot.Services
         public event Action Tick;
         public event Func<User, Task> Trigger;
 
-        public BirthdayService(SQLiteContext dbContext)
+        public BirthdayService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

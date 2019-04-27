@@ -1,8 +1,0 @@
-{
-  "Prefix": {
-    "Default": ">"
-  },
-  "ConnectionStrings": {
-    "SQLite": "Data source=ScrubBot.db"
-  }
-}

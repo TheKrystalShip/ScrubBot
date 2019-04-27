@@ -19,13 +19,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.2" />
+    <PackageReference Include="Discord.Net" Version="2.0.1" />
+    <PackageReference Include="TheKrystalShip.DependencyInjection" Version="1.0.1" />
+    <PackageReference Include="TheKrystalShip.Tools.Configuration" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScrubBot.Database\ScrubBot.Database.csproj" />
-    <ProjectReference Include="..\ScrubBot.Domain\ScrubBot.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Core.Commands\ScrubBot.Core.Commands.csproj" />
     <ProjectReference Include="..\ScrubBot.Core\ScrubBot.Core.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.Domain\ScrubBot.Database.Domain.csproj" />
+    <ProjectReference Include="..\ScrubBot.Database.SQLite\ScrubBot.Database.SQLite.csproj" />
     <ProjectReference Include="..\ScrubBot.Extensions\ScrubBot.Extensions.csproj" />
     <ProjectReference Include="..\ScrubBot.Managers\ScrubBot.Managers.csproj" />
     <ProjectReference Include="..\ScrubBot.Modules\ScrubBot.Modules.csproj" />
@@ -34,13 +37,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Properties\secrets.json">
+    <None Update="Properties\settings.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\settings.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\settings.example.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ScrubBot.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
