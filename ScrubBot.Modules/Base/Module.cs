@@ -15,17 +15,21 @@ namespace ScrubBot.Modules
 {
     public class Module : ModuleBase<SocketCommandContext>
     {
-        public CommandService CommandService { get; private set; }
-        public IDbContext Database { get; private set; }
-        public IPrefixManager Prefix { get; private set; }
-        public Guild Guild { get; protected set; }
-        public User User { get; protected set; }
+        protected IDbContext Database { get; private set; }
+        protected IPrefixManager PrefixManager { get; private set; }
+        protected Guild Guild { get; private set; }
+        protected User User { get; private set; }
+
+        protected string Prefix
+        {
+            get { return PrefixManager.Get(Context.Guild.Id); }
+            set { PrefixManager.Set(Context.Guild.Id, value); }
+        }
 
         public Module()
         {
-            CommandService = Container.Get<CommandService>();
             Database = Container.Get<IDbContext>();
-            Prefix = Container.Get<IPrefixManager>();
+            PrefixManager = Container.Get<IPrefixManager>();
         }
 
         protected override void BeforeExecute(CommandInfo command)
@@ -36,6 +40,8 @@ namespace ScrubBot.Modules
 
             Guild = Database.Guilds.Find(Context.Guild?.Id);
             User = Database.Users.Find(Context.User?.Id);
+
+            PrefixManager.SetCommandContext(Context);
 
             if (Guild is null)
             {

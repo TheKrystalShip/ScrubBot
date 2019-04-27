@@ -131,19 +131,7 @@ namespace ScrubBot
                 HandlerTimeout = 1000,
                 LogLevel = LogSeverity.Debug
             };
-#else
-            DiscordSocketConfig config = new DiscordSocketConfig
-            {
-                ConnectionTimeout = 100,
-                DefaultRetryMode = RetryMode.AlwaysRetry,
-                HandlerTimeout = 1000,
-                LogLevel = LogSeverity.Info
-            };
-#endif
 
-            Bot client = new Bot(discordSocketConfig);
-
-#if DEBUG
             CommandServiceConfig commandServiceConfig = new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async,
@@ -151,6 +139,14 @@ namespace ScrubBot
                 LogLevel = LogSeverity.Debug
             };
 #else
+            DiscordSocketConfig config = new DiscordSocketConfig
+            {
+                ConnectionTimeout = 1000,
+                DefaultRetryMode = RetryMode.AlwaysRetry,
+                HandlerTimeout = 1000,
+                LogLevel = LogSeverity.Info
+            };
+
             CommandServiceConfig commandServiceConfig = new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async,
@@ -159,6 +155,7 @@ namespace ScrubBot
             };
 #endif
 
+            Bot client = new Bot(discordSocketConfig);
             CommandOperator commandOperator = new CommandOperator(client, commandServiceConfig);
 
             commandOperator.CommandExecuted += Dispatcher.Dispatch;
@@ -168,10 +165,10 @@ namespace ScrubBot
             client.MessageReceived += commandOperator.OnClientMessageReceivedAsync;
             client.InitAsync(Configuration.Get("Bot:Token")).Wait();
 
-            Container.Add(client);
-            Container.Add<CommandService>(commandOperator);
-
             commandOperator.LoadModulesAsync().Wait();
+
+            Container.Add(client);
+            Container.Add(commandOperator);
 
             return this;
         }
