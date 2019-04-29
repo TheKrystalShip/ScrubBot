@@ -28,11 +28,6 @@ namespace ScrubBot
     /// </summary>
     public class Startup
     {
-        public Startup()
-        {
-
-        }
-
         /// <summary>
         /// Load settings.json (or settings.dev.json) files into memory
         /// </summary>
@@ -77,6 +72,7 @@ namespace ScrubBot
             Container.Add<IPrefixManager, PrefixManager>();
             Container.Add<IRoleManager, RoleManager>();
             Container.Add<IUserManager, UserManager>();
+            Container.Add<IReactionManager, ReactionManager>();
             Container.Add<IManager, Manager>();
 
             Container.Add<ServiceHandler>();
@@ -198,6 +194,9 @@ namespace ScrubBot
             client.RoleDeleted += manager.Roles.OnRoleDeletedAsync;
             client.RoleUpdated += manager.Roles.OnRoleUpdatedAsync;
 
+            client.ReactionAdded += manager.Reactions.OnReactionAdded;
+            client.ReactionRemoved += manager.Reactions.OnReactionRemoved;
+
             client.Ready += async () =>
             {
                 await manager.Guilds.AddGuildsAsync(client.Guilds);
@@ -211,9 +210,6 @@ namespace ScrubBot
         /// Prevent program from exiting
         /// </summary>
         /// <returns></returns>
-        public async Task InitAsync()
-        {
-            await Task.Delay(-1);
-        }
+        public async Task InitAsync() => await Task.Delay(-1);
     }
 }

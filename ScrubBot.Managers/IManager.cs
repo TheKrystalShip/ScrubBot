@@ -7,5 +7,6 @@
         IPrefixManager Prefixes { get; }
         IRoleManager Roles { get; }
         IUserManager Users { get; }
+        IReactionManager Reactions { get; }
     }
 }

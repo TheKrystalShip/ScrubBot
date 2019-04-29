@@ -4,11 +4,12 @@ namespace ScrubBot.Managers
 {
     public class Manager : IManager
     {
-        public IUserManager Users { get; private set; }
-        public IGuildManager Guilds { get; private set; }
-        public IRoleManager Roles { get; private set; }
-        public IChannelManager Channels { get; private set; }
-        public IPrefixManager Prefixes { get; private set; }
+        public IUserManager Users { get; }
+        public IGuildManager Guilds { get; }
+        public IRoleManager Roles { get; }
+        public IChannelManager Channels { get; }
+        public IPrefixManager Prefixes { get; }
+        public IReactionManager Reactions { get; }
 
         public Manager()
         {
@@ -17,6 +18,7 @@ namespace ScrubBot.Managers
             Roles = Container.Get<IRoleManager>();
             Channels = Container.Get<IChannelManager>();
             Prefixes = Container.Get<IPrefixManager>();
+            Reactions = Container.Get<IReactionManager>();
         }
     }
 }
