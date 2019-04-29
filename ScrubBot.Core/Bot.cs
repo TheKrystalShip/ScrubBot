@@ -7,10 +7,7 @@ namespace ScrubBot.Core
 {
     public class Bot : DiscordSocketClient
     {
-        public Bot(DiscordSocketConfig config) : base(config)
-        {
-            
-        }
+        public Bot(DiscordSocketConfig config) : base(config) {}
 
         public async Task InitAsync(string token)
         {

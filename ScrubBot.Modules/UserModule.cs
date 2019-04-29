@@ -15,10 +15,10 @@ namespace ScrubBot.Modules
     [Summary("Test")]
     public class UserModule : Module
     {
-        public UserModule()
-        {
+        //public UserModule()
+        //{
 
-        }
+        //}
 
         [Command("Info"), Summary("Display info about the server.")]
         public async Task Info()

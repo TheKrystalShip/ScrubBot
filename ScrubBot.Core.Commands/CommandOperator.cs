@@ -36,13 +36,9 @@ namespace ScrubBot.Core.Commands
             SocketUserMessage message = socketMessage as SocketUserMessage;
 
             if (message is null)
-            {
                 return;
-            }
-
-            string prefix = _prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id);
-
-            if (message.IsValid(prefix, _client.CurrentUser, out int argPos))
+            
+            if (message.IsValid(_prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id), _client.CurrentUser, out int argPos))
             {
                 SocketCommandContext context = new SocketCommandContext(_client, message);
                 _ = await ExecuteAsync(context, argPos, Container.GetServiceProvider());
