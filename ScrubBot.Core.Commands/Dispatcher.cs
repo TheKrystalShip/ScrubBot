@@ -17,22 +17,22 @@ namespace ScrubBot.Core.Commands
                 case SuccessResult successResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: successResult.Reason ?? "Success", isTTS: false, embed: successResult.Embed);
+                        .SendMessageAsync(string.Empty, false, successResult.Embed);
                     break;
                 case ErrorResult errorResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: errorResult.Reason ?? "Error", isTTS: false, embed: errorResult.Embed);
+                        .SendMessageAsync(string.Empty, false, errorResult.Embed);
                     break;
                 case InfoResult infoResult:
                     await context
                         .Channel
-                        .SendMessageAsync(text: infoResult.Reason ?? "Info", isTTS: false, embed: infoResult.Embed);
+                        .SendMessageAsync(string.Empty, false, infoResult.Embed);
                     break;
                 default:
                     await context
                         .Channel
-                        .SendMessageAsync(text: result.ToString());
+                        .SendMessageAsync(result.ToString());
                     break;
             }
         }
