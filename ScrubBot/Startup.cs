@@ -154,15 +154,6 @@ namespace ScrubBot
             Bot client = new Bot(discordSocketConfig);
             CommandOperator commandOperator = new CommandOperator(client, commandServiceConfig);
 
-            commandOperator.CommandExecuted += Dispatcher.Dispatch;
-            commandOperator.Log += Logger.Log;
-            client.Log += Logger.Log;
-
-            client.MessageReceived += commandOperator.OnClientMessageReceivedAsync;
-            client.InitAsync(Configuration.Get("Bot:Token")).Wait();
-
-            commandOperator.LoadModulesAsync().Wait();
-
             Container.Add(client);
             Container.Add(commandOperator);
 
@@ -176,7 +167,11 @@ namespace ScrubBot
         public Startup ConfigureEvents()
         {
             Bot client = Container.Get<Bot>();
+            CommandOperator commandOperator = Container.Get<CommandOperator>();
             IManager manager = Container.Get<IManager>();
+
+            client.Log += Logger.Log;
+            client.MessageReceived += commandOperator.OnClientMessageReceivedAsync;
 
             client.ChannelCreated += manager.Channels.OnChannelCreatedAsync;
             client.ChannelDestroyed += manager.Channels.OnChannelDestroyedAsync;
@@ -197,11 +192,15 @@ namespace ScrubBot
             client.ReactionAdded += manager.Reactions.OnReactionAdded;
             client.ReactionRemoved += manager.Reactions.OnReactionRemoved;
 
-            client.Ready += async () =>
+            client.Ready += () =>
             {
-                await manager.Guilds.AddGuildsAsync(client.Guilds);
-                await manager.Users.AddUsersAsync(client.Guilds);
+                _ = manager.Guilds.AddGuildsAsync(client.Guilds);
+                _ = manager.Users.AddUsersAsync(client.Guilds);
+                return Task.CompletedTask;
             };
+
+            commandOperator.CommandExecuted += Dispatcher.Dispatch;
+            commandOperator.Log += Logger.Log;
 
             return this;
         }
@@ -210,6 +209,15 @@ namespace ScrubBot
         /// Prevent program from exiting
         /// </summary>
         /// <returns></returns>
-        public async Task InitAsync() => await Task.Delay(-1);
+        public async Task InitAsync()
+        {
+            Bot client = Container.Get<Bot>();
+            await client.InitAsync(Configuration.Get("Bot:Token"));
+
+            CommandOperator commandOperator = Container.Get<CommandOperator>();
+            await commandOperator.LoadModulesAsync();
+
+            await Task.Delay(-1);
+        }
     }
 }

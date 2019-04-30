@@ -1,44 +1,30 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using ScrubBot.Database;
-using ScrubBot.Database.Domain;
 
-using TheKrystalShip.Tools.Configuration;
+using Discord;
+using Discord.WebSocket;
 
 namespace ScrubBot.Managers
 {
     public class ReactionManager : IReactionManager
     {
-        private readonly IDbContext _dbContext;
-        private readonly ConcurrentDictionary<ulong, string> _prefixes;
-        private ICommandContext _context;
-
-        public ReactionManager(IDbContext dbContext)
+        public ReactionManager()
         {
-            _dbContext = dbContext;
-            _prefixes = new ConcurrentDictionary<ulong, string>();
 
-            var guilds = _dbContext.Guilds.Select(x => new { x.Id, x.Prefix }).ToList();
         }
 
-        public void SetCommandContext(ICommandContext context)
+        public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            _context = context;
+            Console.WriteLine(new LogMessage(LogSeverity.Info, GetType().Name, $"Reaction {reaction.Emote.Name} has been added to a message in {socketMessageChannel.Name}"));
+
+            await Task.CompletedTask;
         }
 
-        public Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
+        public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            return Task.Run(() => Console.WriteLine($"Reaction {reaction.Emote.Name} has been added to a message in {socketMessageChannel.Name}"));
-        }
+            Console.WriteLine(new LogMessage(LogSeverity.Info, GetType().Name, $"Reaction {reaction.Emote.Name} has been removed to a message in {socketMessageChannel.Name}"));
 
-        public Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
-        {
-            return Task.Run(() => Console.WriteLine($"Reaction {reaction.Emote.Name} has been removed to a message in {socketMessageChannel.Name}"));
+            await Task.CompletedTask;
         }
     }
 }
