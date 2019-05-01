@@ -13,15 +13,9 @@ namespace ScrubBot.Database.SQLite
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
 
-        public SQLiteContext(DbContextOptions options) : base(options)
-        {
+        public SQLiteContext(DbContextOptions options) : base(options) {}
 
-        }
-
-        public void Migrate()
-        {
-            Database.Migrate();
-        }
+        public void Migrate() => Database.Migrate();
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,14 +26,8 @@ namespace ScrubBot.Database.SQLite
             modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 
-        void IDbContext.SaveChanges()
-        {
-            base.SaveChanges();
-        }
+        void IDbContext.SaveChanges() => base.SaveChanges();
 
-        public Task SaveChangesAsync()
-        {
-            return base.SaveChangesAsync();
-        }
+        public Task SaveChangesAsync() => base.SaveChangesAsync();
     }
 }

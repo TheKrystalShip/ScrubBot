@@ -35,7 +35,7 @@ namespace ScrubBot.Services
         public void Loop(object state)
         {
             List<Event> events = _dbContext.Events
-                .Where(x => x.IsDue())
+                .Where(x => x.IsDue)
                 .Include(x => x.Author)
                 .Include(x => x.Subscribers)
                 .Take(10)

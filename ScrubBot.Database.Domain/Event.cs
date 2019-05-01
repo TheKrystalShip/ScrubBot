@@ -17,6 +17,8 @@ namespace ScrubBot.Database.Domain
 
         public DateTime OccurenceDate { get; set; }
 
+        public ulong SubscribeMessageId { get; set; }
+
         public virtual List<User> Subscribers { get; set; } = new List<User>();
 
         public string Title { get; set; }
@@ -25,9 +27,6 @@ namespace ScrubBot.Database.Domain
 
         public int MaxSubscribers { get; set; }
 
-        public bool IsDue()
-        {
-            return OccurenceDate <= DateTime.UtcNow;
-        }
+        public bool IsDue => OccurenceDate <= DateTime.UtcNow;
     }
 }

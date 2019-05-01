@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
-using Microsoft.EntityFrameworkCore.Internal;
-
 using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
 
@@ -15,11 +13,6 @@ namespace ScrubBot.Modules
 {
     public class EventModule : Module
     {
-        public EventModule()
-        {
-
-        }
-
         [Command("ShowEvents"), Summary("Show the first 10 upcoming events")]
         public async Task<RuntimeResult> ShowEvents(int amount = 10)
         {
