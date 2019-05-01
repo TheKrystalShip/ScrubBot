@@ -13,6 +13,9 @@ namespace ScrubBot.Database.SQLite.Configurations
 
             builder.HasOne(x => x.Author)
                 .WithMany(x => x.AuthoringEvents);
+
+            builder.Property(x => x.SubscribeMessageId)
+                .HasConversion<string>();
         }
     }
 }
