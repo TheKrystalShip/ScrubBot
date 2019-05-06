@@ -179,7 +179,7 @@ namespace ScrubBot
 
             client.GuildAvailable += manager.Guilds.OnGuildAvailableAsync;
             client.GuildMembersDownloaded += manager.Guilds.OnGuildMembersDownloadedAsync;
-            client.GuildMemberUpdated += manager.Guilds.OnGuildMemberUpdatedAsync;
+            //client.GuildMemberUpdated += manager.Guilds.OnGuildMemberUpdatedAsync;
             client.GuildUnavailable += manager.Guilds.OnGuildUnavailableAsync;
             client.GuildUpdated += manager.Guilds.OnGuildUpdatedAsync;
             client.JoinedGuild += manager.Guilds.OnJoinedGuildAsync;
