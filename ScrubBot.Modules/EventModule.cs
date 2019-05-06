@@ -46,6 +46,7 @@ namespace ScrubBot.Modules
                 Description = description,
                 Guild = Guild, 
                 OccurenceDate = occurenceDateTimeUTC.ToUniversalTime(),
+                SubscribeMessageId = Context.Message.Id,
                 Author = User,
                 MaxSubscribers = maxSubscribers
             };
@@ -62,12 +63,12 @@ namespace ScrubBot.Modules
 
             if (@event is null)
             {
-                return new ErrorResult(CommandError.ObjectNotFound, "No event with that title was found");
+                return new ErrorResult(CommandError.ObjectNotFound, $"No event with title **{eventTitle}** was found");
             }
 
             if (@event.Author.Id == User.Id)
             {
-                return new ErrorResult($"**{User.Username}** cannot subscribe to their own event!");
+                return new ErrorResult("You cannot subscribe to your own event!");
             }
 
             if (@event.Subscribers.Any(x => x.Id == User.Id))
@@ -80,8 +81,8 @@ namespace ScrubBot.Modules
                 return new ErrorResult($"Event **{eventTitle}** is already full!");
             }
 
-            @event.Subscribers.Add(User);
-            Database.Events.Update(@event);
+            await Task.Run(() => @event.Subscribers.Add(User));
+            await Task.Run(() => Database.Events.Update(@event));
 
             return new SuccessResult($"**{User.Username}** has successfully joined event **{eventTitle}** ({@event.Subscribers.Count}/{@event.MaxSubscribers})");
         }
@@ -101,7 +102,7 @@ namespace ScrubBot.Modules
                 return new ErrorResult("You are not allowed to modify someone else's event");
             }
 
-            Database.Events.Remove(@event);
+            await Task.Run(() => Database.Events.Remove(@event));
 
             return new SuccessResult($"Successfully deleted event **{@event.Title}**!");
         }
