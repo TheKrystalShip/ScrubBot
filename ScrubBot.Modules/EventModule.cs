@@ -81,8 +81,8 @@ namespace ScrubBot.Modules
                 return new ErrorResult($"Event **{eventTitle}** is already full!");
             }
 
-            await Task.Run(() => @event.Subscribers.Add(User));
-            await Task.Run(() => Database.Events.Update(@event));
+            @event.Subscribers.Add(User);
+            Database.Events.Update(@event);
 
             return new SuccessResult($"**{User.Username}** has successfully joined event **{eventTitle}** ({@event.Subscribers.Count}/{@event.MaxSubscribers})");
         }
@@ -102,7 +102,7 @@ namespace ScrubBot.Modules
                 return new ErrorResult("You are not allowed to modify someone else's event");
             }
 
-            await Task.Run(() => Database.Events.Remove(@event));
+            Database.Events.Remove(@event);
 
             return new SuccessResult($"Successfully deleted event **{@event.Title}**!");
         }
