@@ -28,6 +28,7 @@ namespace ScrubBot.Modules
                 x.WithColor(Color.Purple);
                 x.ThumbnailUrl = Guild.IconUrl;
                 x.AddField("Server Name", Guild.Name ?? "null");
+                x.AddField("Created at:", Context.Guild.CreatedAt.DateTime.ToString("dd/MM/yyyy HH:mm"));
 
                 if (Guild.AuditChannelId != null)
                 {
