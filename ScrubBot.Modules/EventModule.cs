@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
-
+using Discord.WebSocket;
 using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
+using ScrubBot.Tools;
 
 namespace ScrubBot.Modules
 {
@@ -44,7 +45,7 @@ namespace ScrubBot.Modules
             {
                 Title = eventTitle,
                 Description = description,
-                Guild = Guild, 
+                Guild = Guild,
                 OccurenceDate = occurenceDateTimeUTC.ToUniversalTime(),
                 SubscribeMessageId = Context.Message.Id,
                 Author = User,
@@ -56,9 +57,51 @@ namespace ScrubBot.Modules
             return new SuccessResult($"Event **{eventTitle}** has been successfully created for **{occurenceDateTimeUTC}** with a max of **{maxSubscribers}** subscribers!");
         }
 
+        [Command("CreateListEvent"), Summary("Create a new event")]
+        public async Task<RuntimeResult> CreateListEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description)
+        {
+            if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Guild.Id))
+            {
+                return new ErrorResult($"An event with the name **{eventTitle}** already exists!");
+            }
+
+            if (!DateTime.TryParse($"{occurenceDate} {occurenceTime}", out var occurenceDateTime))
+            {
+                return new ErrorResult($"Could not parse date ({occurenceDate}) and time ({occurenceTime})");
+            }
+            
+            Event newEvent = new Event
+            {
+                Title = eventTitle,
+                Description = description,
+                Guild = Guild,
+                OccurenceDate = occurenceDateTime.ToUniversalTime(),
+                SubscribeMessageId = Context.Message.Id,
+                Author = User,
+                MaxSubscribers = maxSubscribers
+            };
+
+            await Database.Events.AddAsync(newEvent);
+
+            Embed embed = EmbedFactory.Create(x =>
+            {
+                x.Title = eventTitle;
+                x.Description = description;
+                x.WithColor(Color.Gold);
+
+                x.AddField("Participants", Context.User.Mention);
+            });
+
+            //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions, which may or may not be granted
+            var message = await ReplyAsync(embed);
+            await message.AddReactionsAsync(new IEmote[] { new Emoji("✅"), new Emoji("❌"), new Emoji("💥") });
+
+            return new EmptyResult();
+        }
+
         [Command("JoinEvent"), Summary("Join a specific event")]
         public async Task<RuntimeResult> JoinEvent(string eventTitle)
-        {            
+        {
             Event @event = Database.Events.FirstOrDefault(x => x.Title == eventTitle && x.Guild.Id == Guild.Id);
 
             if (@event is null)
