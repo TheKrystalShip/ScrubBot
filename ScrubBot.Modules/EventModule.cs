@@ -87,9 +87,9 @@ namespace ScrubBot.Modules
             {
                 x.Title = eventTitle;
                 x.Description = description;
-                x.WithColor(Color.Gold);
+                x.WithColor(Color.DarkOrange);
 
-                x.AddField("Participants", Context.User.Mention);
+                x.AddField("Participants", "1. " + Context.User.Mention);
             });
 
             //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions, which may or may not be granted
