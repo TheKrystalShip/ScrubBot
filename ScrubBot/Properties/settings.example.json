@@ -1,7 +1,12 @@
 {
   "Bot": {
     "Token": "BOT_TOKEN",
-    "Prefix": ">"
+    "Prefix": ">",
+    "EventEmoji": {
+      "Join": "\u2705", // ?
+      "Leave": "\u274C", // ?
+      "Destroy": "\u1F4A5" // ??"
+    }
   },
   "ConnectionStrings": {
     "SQLite": "Data source=.\\Properties\\ScrubBot.db"

@@ -14,10 +14,10 @@ namespace ScrubBot.Managers
 {
     public class ReactionManager : IReactionManager
     {
+        protected enum EmojiAction { Join, Leave, Delete, None }
+        //protected DiscordSocketClient Client;
         protected IDbContext Database { get; }
-        protected IPrefixManager PrefixManager { get; private set; }
-        protected Guild Guild { get; private set; }
-        protected User User { get; private set; }
+
         protected readonly Emoji JoinEmoji; // ✅ //
         protected readonly Emoji LeaveEmoji; // ❌ //
         protected readonly Emoji DeleteEmoji; // 💥 //
@@ -25,18 +25,21 @@ namespace ScrubBot.Managers
         public ReactionManager()
         {
             Database = Container.Get<IDbContext>();
-            Emoji[] settingsEmoji = (Emoji[])Configuration.GetSection("ReactionEmoji").GetChildren().ToArray();
+            //Client = Container.Get<DiscordSocketClient>();
 
-            JoinEmoji = settingsEmoji[0];
-            LeaveEmoji = settingsEmoji[1];
-            DeleteEmoji = settingsEmoji[2];
+            var settingsEmoji = Configuration.GetSection("Bot").GetSection("EventEmoji").GetChildren().ToArray();
+
+            JoinEmoji = new Emoji(settingsEmoji[0].Value);
+            LeaveEmoji = new Emoji(settingsEmoji[1].Value);
+            DeleteEmoji = new Emoji(settingsEmoji[2].Value);
         }
 
         public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            //Console.WriteLine(new LogMessage(LogSeverity.Info, GetType().Name, $"Reaction {reaction.Emote.Name} has been added to a message in {socketMessageChannel.Name}"));
+            await cacheable.DownloadAsync();
 
-            await cacheable.GetOrDownloadAsync();
+            if (!cacheable.HasValue)
+                return;
 
             if (!EventExists(cacheable.Value.Id, out Event @event))
             {
@@ -60,23 +63,24 @@ namespace ScrubBot.Managers
 
             Emoji reactionEmoji = (Emoji)reaction.Emote;
 
-            if (Equals(reactionEmoji.Name, JoinEmoji.Name))
+            switch (DetermineEmojiAction(reactionEmoji.Name))
             {
-                @event.Subscribers.Add(Database.Users.Find(reaction.UserId));
-                await Database.SaveChangesAsync();
-            }
-            else if (Equals(reactionEmoji.Name, LeaveEmoji.Name))
-            {
-                @event.Subscribers.Remove(Database.Users.Find(reaction.UserId));
-                await Database.SaveChangesAsync();
-            }
-            else if (Equals(reactionEmoji.Name, DeleteEmoji.Name))
-            {
-                if (reaction.UserId != @event.Author.Id)
-                    return;
+                case EmojiAction.Join:
+                    @event.Subscribers.Add(Database.Users.Find(reaction.UserId));
+                    break;
 
-                await cacheable.Value.DeleteAsync();
-                return;
+                case EmojiAction.Leave:
+                    @event.Subscribers.Remove(Database.Users.Find(reaction.UserId));
+                    break;
+
+                case EmojiAction.Delete:
+                    if (reaction.UserId != @event.Author.Id)
+                    {
+                        await cacheable.Value.RemoveReactionAsync(reactionEmoji, reaction.User.Value);
+                        return;
+                    }
+                    await cacheable.Value.DeleteAsync();
+                    return;
             }
 
             //SocketGuild guild = ; // TODO: Get the guild of this event
@@ -92,21 +96,29 @@ namespace ScrubBot.Managers
                 x.AddField("Participants", participants);
             });
 
+            await Database.SaveChangesAsync();
+            await cacheable.Value.RemoveReactionAsync(reactionEmoji, reaction.User.Value);
             await cacheable.Value.ModifyAsync(properties => properties.Embed = newEventEmbed);
-
-            await Task.CompletedTask;
         }
 
         public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            Console.WriteLine(new LogMessage(LogSeverity.Info, GetType().Name, $"Reaction {reaction.Emote.Name} has been removed to a message in {socketMessageChannel.Name}"));
-
-            await Task.CompletedTask;
+            //if (reaction.UserId == Client.CurrentUser.Id)
+                return;
         }
 
+        protected EmojiAction DetermineEmojiAction(string emojiName)
+        {
+            if (emojiName == JoinEmoji.Name)
+                return EmojiAction.Join;
 
+            if (emojiName == LeaveEmoji.Name)
+                return EmojiAction.Leave;
 
-        private bool EventExists(ulong eventMessageId, out Event @event)
+            return emojiName == DeleteEmoji.Name ? EmojiAction.Delete : EmojiAction.None;
+        }
+
+        protected bool EventExists(ulong eventMessageId, out Event @event)
         {
             @event = Database.Events.FirstOrDefault(x => x.SubscribeMessageId == eventMessageId);
             return @event != null;
