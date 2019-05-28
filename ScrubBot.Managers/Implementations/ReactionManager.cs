@@ -18,33 +18,35 @@ namespace ScrubBot.Managers
         //protected DiscordSocketClient Client;
         protected IDbContext Database { get; }
 
-        protected readonly Emoji JoinEmoji; // ✅ //
-        protected readonly Emoji LeaveEmoji; // ❌ //
-        protected readonly Emoji DeleteEmoji; // 💥 //
+        public readonly Emoji JoinEmoji; // ✅ //
+        public readonly Emoji LeaveEmoji; // ❌ //
+        public readonly Emoji DeleteEmoji; // 💥 //
 
         public ReactionManager()
         {
             Database = Container.Get<IDbContext>();
             //Client = Container.Get<DiscordSocketClient>();
 
-            var settingsEmoji = Configuration.GetSection("Bot").GetSection("EventEmoji").GetChildren().ToArray();
-
-            JoinEmoji = new Emoji(settingsEmoji[0].Value);
-            LeaveEmoji = new Emoji(settingsEmoji[1].Value);
-            DeleteEmoji = new Emoji(settingsEmoji[2].Value);
+            JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value);
+            LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value);
+            DeleteEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Delete").Value);
         }
 
         public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            await cacheable.DownloadAsync();
-
-            if (!cacheable.HasValue)
+            if (reaction.User.Value.IsBot)
                 return;
 
-            if (!EventExists(cacheable.Value.Id, out Event @event))
+            var message = await socketMessageChannel.GetMessageAsync(reaction.MessageId);
+
+            if (message is null)
+                return;
+
+            if (!EventExists(message.Id, out Event @event))
             {
                 SocketGuildUser responder = (SocketGuildUser)reaction.User.Value;
-                if (responder is null)
+
+                if (responder == null)
                 {
                     await cacheable.Value.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
                     return;
@@ -83,16 +85,15 @@ namespace ScrubBot.Managers
                     return;
             }
 
-            //SocketGuild guild = ; // TODO: Get the guild of this event
             Embed newEventEmbed = EmbedFactory.Create(x =>
             {
                 x.Title = @event.Title;
                 x.Description = @event.Description;
                 x.WithColor(Color.DarkOrange);
 
-                string participants = "1. ";
-                //for (int index = 0; index < @event.Subscribers.Count; index++)
-                //    participants += $"{index + 2} {@event.Subscribers[index].}"; // TODO: Mention all subscribers
+                string participants = "1. " + socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention;
+                for (int index = 0; index < @event.Subscribers.Count; index++)
+                    participants += $"{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}"; // TODO: Mention all subscribers
                 x.AddField("Participants", participants);
             });
 
@@ -104,7 +105,7 @@ namespace ScrubBot.Managers
         public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
             //if (reaction.UserId == Client.CurrentUser.Id)
-                return;
+            return;
         }
 
         protected EmojiAction DetermineEmojiAction(string emojiName)

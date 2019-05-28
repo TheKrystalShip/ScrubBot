@@ -8,7 +8,10 @@ using Discord.Commands;
 using Discord.WebSocket;
 using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
+using ScrubBot.Managers;
 using ScrubBot.Tools;
+
+using TheKrystalShip.DependencyInjection;
 
 namespace ScrubBot.Modules
 {
@@ -69,34 +72,36 @@ namespace ScrubBot.Modules
             {
                 return new ErrorResult($"Could not parse date ({occurenceDate}) and time ({occurenceTime})");
             }
-            
-            Event newEvent = new Event
-            {
-                Title = eventTitle,
-                Description = description,
-                Guild = Guild,
-                OccurenceDate = occurenceDateTime.ToUniversalTime(),
-                SubscribeMessageId = Context.Message.Id,
-                Author = User,
-                MaxSubscribers = maxSubscribers
-            };
-
-            await Database.Events.AddAsync(newEvent);
 
             Embed embed = EmbedFactory.Create(x =>
             {
                 x.Title = eventTitle;
                 x.Description = description;
-                x.WithColor(Color.DarkOrange);
+                x.WithColor(Color.Orange);
+                x.AddField("Occurance date:", occurenceDateTime.ToString("f"));
 
                 x.AddField("Participants", "1. " + Context.User.Mention);
             });
 
             //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions, which may or may not be granted
             var message = await ReplyAsync(embed);
-            await message.AddReactionsAsync(new IEmote[] { new Emoji("✅"), new Emoji("❌"), new Emoji("💥") });
 
-            return new EmptyResult();
+            Event newEvent = new Event
+            {
+                Title = eventTitle,
+                Description = description,
+                Guild = Guild,
+                OccurenceDate = occurenceDateTime.ToUniversalTime(),
+                SubscribeMessageId = message.Id,
+                Author = User,
+                MaxSubscribers = maxSubscribers
+            };
+
+            await Database.Events.AddAsync(newEvent);
+            ReactionManager reactionManager = (ReactionManager)Container.Get<IReactionManager>();
+            await message.AddReactionsAsync(new IEmote[] { reactionManager.JoinEmoji, reactionManager.LeaveEmoji, reactionManager.DeleteEmoji });
+
+            return new SuccessResult();
         }
 
         [Command("JoinEvent"), Summary("Join a specific event")]
