@@ -44,9 +44,7 @@ namespace ScrubBot.Managers
 
             if (!EventExists(message.Id, out Event @event))
             {
-                SocketGuildUser responder = (SocketGuildUser)reaction.User.Value;
-
-                if (responder == null)
+                if (!(reaction.User.Value is SocketGuildUser responder))
                 {
                     await cacheable.Value.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
                     return;
