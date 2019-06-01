@@ -40,9 +40,7 @@ namespace ScrubBot.Modules
         public async Task<RuntimeResult> CreateEvent(string eventTitle, string description, DateTime occurenceDateTimeUTC, int maxSubscribers)
         {
             if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Guild.Id))
-            {
                 return new ErrorResult($"An event with the name **{eventTitle}** already exists!");
-            }
 
             Event newEvent = new Event
             {
@@ -63,16 +61,15 @@ namespace ScrubBot.Modules
         [Command("CreateListEvent"), Summary("Create a new event")]
         public async Task<RuntimeResult> CreateListEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description)
         {
+            if (maxSubscribers < 1)
+                return new ErrorResult("Max subscribers cannot be less than 1!");
+            
             if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Guild.Id))
-            {
                 return new ErrorResult($"An event with the name **{eventTitle}** already exists!");
-            }
-
+            
             if (!DateTime.TryParse($"{occurenceDate} {occurenceTime}", out var occurenceDateTime))
-            {
-                return new ErrorResult($"Could not parse date ({occurenceDate}) and time ({occurenceTime})");
-            }
-
+                return new ErrorResult($"Could not parse date ({occurenceDate}) and/or time ({occurenceTime})");
+            
             Embed embed = EmbedFactory.Create(x =>
             {
                 x.Title = eventTitle;
@@ -82,7 +79,7 @@ namespace ScrubBot.Modules
                 x.AddField("Participants", $"1. {Context.User.Mention} (Author)");
             });
 
-            //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions, which may or may not be granted
+            //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions
             var message = await ReplyAsync(embed);
 
             Event newEvent = new Event
@@ -109,25 +106,17 @@ namespace ScrubBot.Modules
             Event @event = Database.Events.FirstOrDefault(x => x.Title == eventTitle && x.Guild.Id == Guild.Id);
 
             if (@event is null)
-            {
                 return new ErrorResult(CommandError.ObjectNotFound, $"No event with title **{eventTitle}** was found");
-            }
-
+            
             if (@event.Author.Id == User.Id)
-            {
                 return new ErrorResult("You cannot subscribe to your own event!");
-            }
-
+            
             if (@event.Subscribers.Any(x => x.Id == User.Id))
-            {
                 return new ErrorResult($"**{User.Username}** is already subscribed to **{eventTitle}**!");
-            }
-
+            
             if (@event.Subscribers.Count == @event.MaxSubscribers)
-            {
                 return new ErrorResult($"Event **{eventTitle}** is already full!");
-            }
-
+            
             @event.Subscribers.Add(User);
             Database.Events.Update(@event);
 

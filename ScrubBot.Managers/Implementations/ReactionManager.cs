@@ -15,7 +15,6 @@ namespace ScrubBot.Managers
     public class ReactionManager : IReactionManager
     {
         protected enum EmojiAction { Join, Leave, Delete, None }
-        //protected DiscordSocketClient Client;
         protected IDbContext Database { get; }
 
         public readonly Emoji JoinEmoji; // ✅ //
@@ -25,7 +24,6 @@ namespace ScrubBot.Managers
         public ReactionManager()
         {
             Database = Container.Get<IDbContext>();
-            //Client = Container.Get<DiscordSocketClient>();
 
             JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value);
             LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value);
@@ -37,7 +35,10 @@ namespace ScrubBot.Managers
             if (reaction.User.Value.IsBot)
                 return;
 
-            var message = await socketMessageChannel.GetMessageAsync(reaction.MessageId);
+            if (reaction.Emote.Name.Equals(JoinEmoji.Name) || reaction.Emote.Name.Equals(LeaveEmoji.Name) || reaction.Emote.Name.Equals(DeleteEmoji.Name)) // At the moment, only events have emoji mechanics
+                return;
+
+            var message = await cacheable.GetOrDownloadAsync();
 
             if (message is null)
                 return;
@@ -46,7 +47,7 @@ namespace ScrubBot.Managers
             {
                 if (!(reaction.User.Value is SocketGuildUser responder))
                 {
-                    await cacheable.Value.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+                    //await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value); // Requires Admin permission
                     return;
                 }
 
@@ -66,38 +67,66 @@ namespace ScrubBot.Managers
             switch (DetermineEmojiAction(reactionEmoji.Name))
             {
                 case EmojiAction.Join:
-                    @event.Subscribers.Add(Database.Users.Find(reaction.UserId));
-                    break;
-
-                case EmojiAction.Leave:
-                    @event.Subscribers.Remove(Database.Users.Find(reaction.UserId));
-                    break;
-
-                case EmojiAction.Delete:
-                    if (reaction.UserId != @event.Author.Id)
+                {
+                    if (@event.Subscribers.Count < @event.MaxSubscribers)
                     {
-                        await cacheable.Value.RemoveReactionAsync(reactionEmoji, reaction.User.Value);
+                        @event.Subscribers.Add(Database.Users.Find(reaction.UserId));
+                        break;
+                    }
+
+                    if (!(reaction.User.Value is SocketGuildUser responder))
+                    {
+                        //await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value); // Requires Admin permission
                         return;
                     }
-                    await cacheable.Value.DeleteAsync();
+
+                    Embed embed = EmbedFactory.Create(x =>
+                    {
+                        x.Title = "Error";
+                        x.Description = "Could not subscribe you to the event. The event has hit the specified max subscriber limit!";
+                        x.WithColor(Color.Red);
+                    });
+
+                    await responder.SendMessageAsync(null, false, embed);
                     return;
+                }
+
+                case EmojiAction.Leave:
+                {
+                    @event.Subscribers.Remove(Database.Users.Find(reaction.UserId));
+                    break;
+                }
+
+                case EmojiAction.Delete:
+                {
+                    if (reaction.UserId != @event.Author.Id)
+                    {
+                        //await message.RemoveReactionAsync(reactionEmoji, reaction.User.Value); // Requires Admin permission
+                        return;
+                    }
+                    await message.DeleteAsync();
+                    return;
+                }
             }
 
-            Embed newEventEmbed = EmbedFactory.Create(x =>
+            Embed updatedEventEmbed = EmbedFactory.Create(x => // TODO: Improve user loading to reduce execution times
             {
                 x.Title = @event.Title;
                 x.Description = @event.Description;
-                x.WithColor(Color.DarkOrange);
+                x.WithColor(Color.Orange);
+                x.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-                string participants = "1. " + socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention;
+                string participants = $"1. {socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention} (Author)";
+
                 for (int index = 0; index < @event.Subscribers.Count; index++)
-                    participants += $"{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}"; // TODO: Mention all subscribers
+                    participants += $"\n{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}"; // TODO: Mention all subscribers
+
                 x.AddField("Participants", participants);
             });
 
             await Database.SaveChangesAsync();
-            await cacheable.Value.RemoveReactionAsync(reactionEmoji, reaction.User.Value);
-            await cacheable.Value.ModifyAsync(properties => properties.Embed = newEventEmbed);
+            //await message.RemoveReactionAsync(reactionEmoji, reaction.User.Value); // Requires admin permissions
+            await message.ModifyAsync(properties => properties.Embed = updatedEventEmbed);
         }
 
         public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
