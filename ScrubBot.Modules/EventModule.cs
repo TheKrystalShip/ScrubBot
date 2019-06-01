@@ -59,7 +59,7 @@ namespace ScrubBot.Modules
         }
 
         [Command("CreateListEvent"), Summary("Create a new event")]
-        public async Task<RuntimeResult> CreateListEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description)
+        public async Task<RuntimeResult> CreateListEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description = "")
         {
             if (maxSubscribers < 1)
                 return new ErrorResult("Max subscribers cannot be less than 1!");
@@ -124,11 +124,11 @@ namespace ScrubBot.Modules
         }
 
         [Command("DeleteEvent"), Summary("Delete one of your events")]
-        public async Task<RuntimeResult> DeleteEvent(string eventTitle)
+        public async Task<RuntimeResult> DeleteEvent([Remainder]string eventTitle)
         {
-            Event @event = Database.Events.FirstOrDefault(x => x.Guild.Id == Guild.Id && x.Title == eventTitle);
+            Event @event = Database.Events.FirstOrDefault(x => x.Title == eventTitle);
 
-            if (@event is null)
+            if (@event is null || @event.Guild.Id != Guild.Id)
             {
                 return new ErrorResult($"Unable to find event **{eventTitle}**!");
             }

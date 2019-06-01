@@ -46,10 +46,7 @@ namespace ScrubBot.Managers
             if (!EventExists(message.Id, out Event @event))
             {
                 if (!(reaction.User.Value is SocketGuildUser responder))
-                {
-                    //await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value); // Requires Admin permission
                     return;
-                }
 
                 Embed embed = EmbedFactory.Create(x =>
                 {
@@ -75,10 +72,7 @@ namespace ScrubBot.Managers
                     }
 
                     if (!(reaction.User.Value is SocketGuildUser responder))
-                    {
-                        //await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value); // Requires Admin permission
                         return;
-                    }
 
                     Embed embed = EmbedFactory.Create(x =>
                     {
@@ -100,10 +94,8 @@ namespace ScrubBot.Managers
                 case EmojiAction.Delete:
                 {
                     if (reaction.UserId != @event.Author.Id)
-                    {
-                        //await message.RemoveReactionAsync(reactionEmoji, reaction.User.Value); // Requires Admin permission
                         return;
-                    }
+                    
                     await message.DeleteAsync();
                     return;
                 }
@@ -125,7 +117,6 @@ namespace ScrubBot.Managers
             });
 
             await Database.SaveChangesAsync();
-            //await message.RemoveReactionAsync(reactionEmoji, reaction.User.Value); // Requires admin permissions
             await message.ModifyAsync(properties => properties.Embed = updatedEventEmbed);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using ScrubBot.Tools;
 
 namespace ScrubBot.Modules
 {
@@ -15,7 +16,12 @@ namespace ScrubBot.Modules
 
         public ErrorResult(string message) : this(CommandError.Unsuccessful, message)
         {
-
+            Embed = EmbedFactory.Create(x =>
+            {
+                x.WithTitle("Error");
+                x.WithColor(Color.Red);
+                x.WithDescription(message);
+            });
         }
 
         public ErrorResult() : this(null, "Error")
