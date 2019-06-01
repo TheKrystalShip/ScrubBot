@@ -78,9 +78,8 @@ namespace ScrubBot.Modules
                 x.Title = eventTitle;
                 x.Description = description;
                 x.WithColor(Color.Orange);
-                x.AddField("Occurance date:", occurenceDateTime.ToString("f"));
-
-                x.AddField("Participants", "1. " + Context.User.Mention);
+                x.AddField("Occurence date", occurenceDateTime);
+                x.AddField("Participants", $"1. {Context.User.Mention} (Author)");
             });
 
             //await Context.Channel.DeleteMessageAsync(Context.Message.Id); // Requires admin permissions, which may or may not be granted
@@ -99,9 +98,9 @@ namespace ScrubBot.Modules
 
             await Database.Events.AddAsync(newEvent);
             ReactionManager reactionManager = (ReactionManager)Container.Get<IReactionManager>();
-            await message.AddReactionsAsync(new IEmote[] { reactionManager.JoinEmoji, reactionManager.LeaveEmoji, reactionManager.DeleteEmoji });
+            await message.AddReactionsAsync(new IEmote[] { reactionManager.JoinEmoji, reactionManager.LeaveEmoji, reactionManager.DeleteEmoji }, RequestOptions.Default);
 
-            return new SuccessResult();
+            return new EmptyResult();
         }
 
         [Command("JoinEvent"), Summary("Join a specific event")]
