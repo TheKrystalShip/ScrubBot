@@ -4,6 +4,7 @@ using Discord;
 using Discord.WebSocket;
 
 using ScrubBot.Database.Domain;
+using ScrubBot.Extensions;
 
 namespace ScrubBot.Extensions
 {
@@ -52,10 +53,10 @@ namespace ScrubBot.Extensions
             embedBuilder.WithColor(Color.Orange);
             embedBuilder.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-            string participants = $"1. {socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention} (Author)";
+            string participants = $"1. {@event.Author.Id.Mention()} (Author)";
 
             for (int index = 0; index < @event.Subscribers.Count; index++)
-                participants += $"\n{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}";
+                participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}";
 
             embedBuilder.AddField("Participants", participants);
             return embedBuilder;

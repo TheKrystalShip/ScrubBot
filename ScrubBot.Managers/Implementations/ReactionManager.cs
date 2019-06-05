@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using ScrubBot.Database;
 using ScrubBot.Database.Domain;
+using ScrubBot.Extensions;
 using ScrubBot.Tools;
 using TheKrystalShip.DependencyInjection;
 using TheKrystalShip.Tools.Configuration;
@@ -95,7 +96,7 @@ namespace ScrubBot.Managers
                 {
                     if (reaction.UserId != @event.Author.Id)
                         return;
-                    
+
                     await message.DeleteAsync();
                     return;
                 }
@@ -108,10 +109,10 @@ namespace ScrubBot.Managers
                 x.WithColor(Color.Orange);
                 x.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-                string participants = $"1. {socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention} (Author)";
+                string participants = $"1. {@event.Author.Id.Mention()} (Author)";
 
                 for (int index = 0; index < @event.Subscribers.Count; index++)
-                    participants += $"\n{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}"; // TODO: Mention all subscribers
+                    participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}"; // TODO: Mention all subscribers
 
                 x.AddField("Participants", participants);
             });
