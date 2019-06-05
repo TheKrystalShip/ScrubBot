@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Discord;
+using Discord.WebSocket;
 
 using ScrubBot.Database.Domain;
 
@@ -39,10 +40,24 @@ namespace ScrubBot.Extensions
                 .WithTitle(title);
 
             foreach (Event @event in events)
-            {
-                embedBuilder.AddField(@event.Title, $"Occurence date: {@event.OccurenceDate:dd-MM-yyyy HH:MM}\nDescription: {@event.Description}\nSubscribers: {@event.Subscribers.Count}/{@event.MaxSubscribers}");
-            }
+                embedBuilder.AddField(@event.Title, $"Occurence date: {@event.OccurenceDate:f}\nDescription: {@event.Description}\nSubscribers: {@event.Subscribers.Count}/{@event.MaxSubscribers}");
 
+            return embedBuilder;
+        }
+
+        public static EmbedBuilder CreateListEventEmbed(this EmbedBuilder embedBuilder, Event @event, ISocketMessageChannel socketMessageChannel)
+        {
+            embedBuilder.Title = @event.Title;
+            embedBuilder.Description = @event.Description;
+            embedBuilder.WithColor(Color.Orange);
+            embedBuilder.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
+
+            string participants = $"1. {socketMessageChannel.GetUserAsync(@event.Author.Id).Result.Mention} (Author)";
+
+            for (int index = 0; index < @event.Subscribers.Count; index++)
+                participants += $"\n{index + 2} {socketMessageChannel.GetUserAsync(@event.Subscribers[index].Id).Result.Mention}";
+
+            embedBuilder.AddField("Participants", participants);
             return embedBuilder;
         }
     }
