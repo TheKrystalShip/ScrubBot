@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using ScrubBot.Database;
 using ScrubBot.Database.Domain;
 using ScrubBot.Extensions;
@@ -93,12 +94,7 @@ namespace ScrubBot.Managers
                     {
                         if (@event.Author.Id == user.Id)
                         {
-                            Embed errorEmbed = EmbedFactory.Create(x =>
-                            {
-                                x.Title = "Error";
-                                x.Description = "We'd like it if you didn't try subscribing to your own event. It doesn't work like that...";
-                                x.WithColor(Color.Red);
-                            });
+                            Embed errorEmbed = EmbedFactory.Create(x => x.CreateInfo("We'd like it if you didn't try subscribing to your own event. It doesn't work like that..."));
                                 
                             await user.SendMessageAsync(null, false, errorEmbed);
                             return;
@@ -170,7 +166,7 @@ namespace ScrubBot.Managers
 
         protected bool EventExists(ulong eventMessageId, out Event @event)
         {
-            @event = Database.Events.FirstOrDefault(x => x.SubscribeMessageId == eventMessageId);
+            @event = Database.Events.Where(x => x.SubscribeMessageId == eventMessageId).Include(x => x.Author).FirstOrDefault();
             return @event != null;
         }
     }
