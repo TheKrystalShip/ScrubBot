@@ -102,7 +102,7 @@ namespace ScrubBot.Managers
                 }
             }
 
-            Embed updatedEventEmbed = EmbedFactory.Create(x => // TODO: Improve user loading to reduce execution times
+            Embed updatedEventEmbed = EmbedFactory.Create(x =>
             {
                 x.Title = @event.Title;
                 x.Description = @event.Description;
@@ -112,7 +112,7 @@ namespace ScrubBot.Managers
                 string participants = $"1. {@event.Author.Id.Mention()} (Author)";
 
                 for (int index = 0; index < @event.Subscribers.Count; index++)
-                    participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}"; // TODO: Mention all subscribers
+                    participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}";
 
                 x.AddField("Participants", participants);
             });
