@@ -75,7 +75,7 @@ namespace ScrubBot.Modules
                 x.Title = eventTitle;
                 x.Description = description;
                 x.WithColor(Color.Orange);
-                x.AddField("Occurence date", occurenceDateTime);
+                x.AddField("Occurence date", occurenceDateTime.ToString("f"));
                 x.AddField("Participants", $"1. {Context.User.Mention} (Author)");
             });
 
