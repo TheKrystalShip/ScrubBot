@@ -6,7 +6,7 @@ namespace ScrubBot.Extensions
 {
     public static class SocketUserMessageExtensions
     {
-        public static bool IsValid(this SocketUserMessage message, in string prefix, in IUser user, out int argPos)
+        public static bool IsGuildMessage(this SocketUserMessage message, in string prefix, in IUser user, out int argPos)
         {
             argPos = 0;
             bool hasPrefix = false;
@@ -33,6 +33,12 @@ namespace ScrubBot.Extensions
             }
 
             return true;
+        }
+
+        public static bool IsPrivateMessage(this SocketUserMessage message, out int argPos)
+        {
+            argPos = 0;
+            return message.Channel is IPrivateChannel;
         }
     }
 }
