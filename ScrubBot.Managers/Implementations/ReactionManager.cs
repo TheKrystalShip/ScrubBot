@@ -40,14 +40,28 @@ namespace ScrubBot.Managers
 
         public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
+            if (reaction.User.Value.IsBot)
+            {
+                return;
+
+            }
+
+            int matches = 0;
             foreach (Emoji emoji in Emojis)
             {
-                if (emoji.Name.Equals(reaction.Emote.Name)) {
-                    return;
+                if (string.CompareOrdinal(emoji.Name, reaction.Emote.Name) is 0)
+                {
+                    matches++;
                 }
             }
 
+            if (matches <= 0)
+            {
+                return;
+            }
+
             IUserMessage message = await cacheable.GetOrDownloadAsync();
+            IUser user = reaction.User.GetValueOrDefault();
 
             if (message is null) {
                 return;
@@ -55,14 +69,14 @@ namespace ScrubBot.Managers
 
             if (!EventExists(message.Id, out Event @event))
             {
-                if (!(reaction.User.GetValueOrDefault() is SocketGuildUser responder)) {
+                if (!(user is SocketGuildUser responder)) {
                     return;
                 }
 
                 Embed embed = EmbedFactory.Create(builder =>
                 {
                     builder.CreateError("Could not subscribe you to the event. Please try again in a bit. " +
-                        "If this error keeps appearing, ask the event owner to fix the event!");
+                        "If this error keeps appearing, ask the bot creator to confirm the event got created properly!");
                 });
 
                 await responder.SendMessageAsync(string.Empty, false, embed);
@@ -77,7 +91,20 @@ namespace ScrubBot.Managers
                 {
                     if (@event.Subscribers.Count < @event.MaxSubscribers)
                     {
-                        @event.Subscribers.Add(Database.Users.Find(reaction.UserId));
+                        if (@event.Author.Id == user.Id)
+                        {
+                            Embed errorEmbed = EmbedFactory.Create(x =>
+                            {
+                                x.Title = "Error";
+                                x.Description = "We'd like it if you didn't try subscribing to your own event. It doesn't work like that...";
+                                x.WithColor(Color.Red);
+                            });
+                                
+                            await user.SendMessageAsync(null, false, errorEmbed);
+                            return;
+                        }
+                        
+                        @event.Subscribers.Add(Database.Users.Find(user.Id));
                         break;
                     }
 
