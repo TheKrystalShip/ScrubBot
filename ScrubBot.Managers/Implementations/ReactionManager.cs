@@ -34,7 +34,7 @@ namespace ScrubBot.Managers
             if (reaction.User.Value.IsBot)
                 return;
 
-            if (reaction.Emote.Name.Equals(JoinEmoji.Name) || reaction.Emote.Name.Equals(LeaveEmoji.Name)) // At the moment, only events have emoji mechanics
+            if (string.Compare(reaction.Emote.Name, JoinEmoji.Name) != 0 && string.Compare(reaction.Emote.Name, LeaveEmoji.Name) != 0) // At the moment, only events have emoji mechanics
                 return;
 
             var message = await cacheable.GetOrDownloadAsync();
