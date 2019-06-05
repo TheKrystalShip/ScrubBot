@@ -15,12 +15,11 @@ namespace ScrubBot.Managers
 {
     public class ReactionManager : IReactionManager
     {
-        protected enum EmojiAction { Join, Leave, Delete, None }
+        protected enum EmojiAction { Join, Leave, None }
         protected IDbContext Database { get; }
 
         public readonly Emoji JoinEmoji; // ✅ //
         public readonly Emoji LeaveEmoji; // ❌ //
-        public readonly Emoji DeleteEmoji; // 💥 //
 
         public ReactionManager()
         {
@@ -28,7 +27,6 @@ namespace ScrubBot.Managers
 
             JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value);
             LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value);
-            DeleteEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Delete").Value);
         }
 
         public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
@@ -36,7 +34,7 @@ namespace ScrubBot.Managers
             if (reaction.User.Value.IsBot)
                 return;
 
-            if (reaction.Emote.Name.Equals(JoinEmoji.Name) || reaction.Emote.Name.Equals(LeaveEmoji.Name) || reaction.Emote.Name.Equals(DeleteEmoji.Name)) // At the moment, only events have emoji mechanics
+            if (reaction.Emote.Name.Equals(JoinEmoji.Name) || reaction.Emote.Name.Equals(LeaveEmoji.Name)) // At the moment, only events have emoji mechanics
                 return;
 
             var message = await cacheable.GetOrDownloadAsync();
@@ -91,15 +89,6 @@ namespace ScrubBot.Managers
                     @event.Subscribers.Remove(Database.Users.Find(reaction.UserId));
                     break;
                 }
-
-                case EmojiAction.Delete:
-                {
-                    if (reaction.UserId != @event.Author.Id)
-                        return;
-
-                    await message.DeleteAsync();
-                    return;
-                }
             }
 
             Embed updatedEventEmbed = EmbedFactory.Create(x =>
@@ -127,16 +116,7 @@ namespace ScrubBot.Managers
             return;
         }
 
-        protected EmojiAction DetermineEmojiAction(string emojiName)
-        {
-            if (emojiName == JoinEmoji.Name)
-                return EmojiAction.Join;
-
-            if (emojiName == LeaveEmoji.Name)
-                return EmojiAction.Leave;
-
-            return emojiName == DeleteEmoji.Name ? EmojiAction.Delete : EmojiAction.None;
-        }
+        protected EmojiAction DetermineEmojiAction(string emojiName) => emojiName == JoinEmoji.Name ? EmojiAction.Join : (emojiName == LeaveEmoji.Name ? EmojiAction.Leave : EmojiAction.None);
 
         protected bool EventExists(ulong eventMessageId, out Event @event)
         {

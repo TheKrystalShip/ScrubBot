@@ -9,6 +9,9 @@ namespace ScrubBot.Database.SQLite.Configurations
     {
         public void Configure(EntityTypeBuilder<Event> builder)
         {
+            builder.Property(x => x.Id)
+                .HasConversion<string>();
+
             builder.HasMany(x => x.Subscribers);
 
             builder.HasOne(x => x.Author)

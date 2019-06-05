@@ -95,7 +95,7 @@ namespace ScrubBot.Modules
 
             await Database.Events.AddAsync(newEvent);
             ReactionManager reactionManager = (ReactionManager)Container.Get<IReactionManager>();
-            await message.AddReactionsAsync(new IEmote[] { reactionManager.JoinEmoji, reactionManager.LeaveEmoji, reactionManager.DeleteEmoji }, RequestOptions.Default);
+            await message.AddReactionsAsync(new IEmote[] { reactionManager.JoinEmoji, reactionManager.LeaveEmoji }, RequestOptions.Default);
 
             return new EmptyResult();
         }
