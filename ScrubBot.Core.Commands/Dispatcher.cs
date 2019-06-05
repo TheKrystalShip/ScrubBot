@@ -30,9 +30,6 @@ namespace ScrubBot.Core.Commands
                         .SendMessageAsync(string.Empty, false, infoResult?.Embed);
                     break;
                 case EmptyResult emptyResult:
-                    await context
-                        .Channel
-                        .SendMessageAsync(string.Empty, false, emptyResult?.Embed);
                     break;
                 default:
                     await context

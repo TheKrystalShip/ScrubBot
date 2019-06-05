@@ -26,6 +26,14 @@ namespace ScrubBot.Extensions
                 .WithDescription(message);
         }
 
+        public static EmbedBuilder CreateInfo(this EmbedBuilder embedBuilder, string message)
+        {
+            return embedBuilder
+                .WithColor(Color.Blue)
+                .WithTitle("Info")
+                .WithDescription(message);
+        }
+
         public static EmbedBuilder CreateMessage(this EmbedBuilder embedBuilder, string title, string message)
         {
             return embedBuilder
@@ -48,15 +56,16 @@ namespace ScrubBot.Extensions
 
         public static EmbedBuilder CreateListEventEmbed(this EmbedBuilder embedBuilder, Event @event, ISocketMessageChannel socketMessageChannel)
         {
-            embedBuilder.Title = @event.Title;
-            embedBuilder.Description = @event.Description;
-            embedBuilder.WithColor(Color.Orange);
-            embedBuilder.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
+            embedBuilder
+                .WithTitle(@event.Title)
+                .WithDescription(@event.Description)
+                .WithColor(Color.Orange)
+                .AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-            string participants = $"1. {@event.Author.Id.Mention()} (Author)";
+            string participants = $"1. {@event.Author.Mention()} (Author)";
 
             for (int index = 0; index < @event.Subscribers.Count; index++)
-                participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}";
+                participants += $"\n{index + 2} {@event.Subscribers[index].Mention()}";
 
             embedBuilder.AddField("Participants", participants);
             return embedBuilder;

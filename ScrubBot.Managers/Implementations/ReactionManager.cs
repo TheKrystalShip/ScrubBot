@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,40 +22,50 @@ namespace ScrubBot.Managers
         public readonly Emoji JoinEmoji; // ✅ //
         public readonly Emoji LeaveEmoji; // ❌ //
 
+        public readonly List<Emoji> Emojis;
+
         public ReactionManager()
         {
             Database = Container.Get<IDbContext>();
 
             JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value);
             LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value);
+
+            Emojis = new List<Emoji>
+            {
+                JoinEmoji,
+                LeaveEmoji
+            };
         }
 
         public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            if (reaction.User.Value.IsBot)
-                return;
+            foreach (Emoji emoji in Emojis)
+            {
+                if (emoji.Name.Equals(reaction.Emote.Name)) {
+                    return;
+                }
+            }
 
-            if (string.Compare(reaction.Emote.Name, JoinEmoji.Name) != 0 && string.Compare(reaction.Emote.Name, LeaveEmoji.Name) != 0) // At the moment, only events have emoji mechanics
-                return;
+            IUserMessage message = await cacheable.GetOrDownloadAsync();
 
-            var message = await cacheable.GetOrDownloadAsync();
-
-            if (message is null)
+            if (message is null) {
                 return;
+            }
 
             if (!EventExists(message.Id, out Event @event))
             {
-                if (!(reaction.User.Value is SocketGuildUser responder))
+                if (!(reaction.User.GetValueOrDefault() is SocketGuildUser responder)) {
                     return;
+                }
 
-                Embed embed = EmbedFactory.Create(x =>
+                Embed embed = EmbedFactory.Create(builder =>
                 {
-                    x.Title = "Error";
-                    x.Description = "Could not subscribe you to the event. Please try again in a bit. If this error keeps appearing, ask the event owner to fix the event!";
-                    x.WithColor(Color.Red);
+                    builder.CreateError("Could not subscribe you to the event. Please try again in a bit. " +
+                        "If this error keeps appearing, ask the event owner to fix the event!");
                 });
 
-                await responder.SendMessageAsync(null, false, embed);
+                await responder.SendMessageAsync(string.Empty, false, embed);
                 return;
             }
 
@@ -91,22 +102,23 @@ namespace ScrubBot.Managers
                 }
             }
 
-            Embed updatedEventEmbed = EmbedFactory.Create(x =>
+            Embed updatedEventEmbed = EmbedFactory.Create(builder =>
             {
-                x.Title = @event.Title;
-                x.Description = @event.Description;
-                x.WithColor(Color.Orange);
-                x.AddField("Occurence date", @event.OccurenceDate.ToString("f"));
+                builder
+                    .WithTitle(@event.Title)
+                    .WithDescription(@event.Description)
+                    .WithColor(Color.Orange)
+                    .AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-                string participants = $"1. {@event.Author.Id.Mention()} (Author)";
+                string participants = $"1. {@event.Author.Mention()} (Author)";
 
-                for (int index = 0; index < @event.Subscribers.Count; index++)
-                    participants += $"\n{index + 2} {@event.Subscribers[index].Id.Mention()}";
+                for (int index = 0; index < @event.Subscribers.Count; index++) {
+                    participants += $"\n{index + 2} {@event.Subscribers[index].Mention()}"; // TODO: Mention all subscribers
+                }
 
-                x.AddField("Participants", participants);
+                builder.AddField("Participants", participants);
             });
 
-            await Database.SaveChangesAsync();
             await message.ModifyAsync(properties => properties.Embed = updatedEventEmbed);
         }
 
@@ -116,7 +128,18 @@ namespace ScrubBot.Managers
             return;
         }
 
-        protected EmojiAction DetermineEmojiAction(string emojiName) => emojiName == JoinEmoji.Name ? EmojiAction.Join : (emojiName == LeaveEmoji.Name ? EmojiAction.Leave : EmojiAction.None);
+        protected EmojiAction DetermineEmojiAction(string emojiName)
+        {
+            if (emojiName == JoinEmoji.Name) {
+                return EmojiAction.Join;
+            }
+
+            if (emojiName == LeaveEmoji.Name) {
+                return EmojiAction.Leave;
+            }
+
+            return EmojiAction.None;
+        }
 
         protected bool EventExists(ulong eventMessageId, out Event @event)
         {

@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using ScrubBot.Extensions;
 using ScrubBot.Tools;
 
 namespace ScrubBot.Modules
@@ -18,9 +19,7 @@ namespace ScrubBot.Modules
         {
             Embed = EmbedFactory.Create(x =>
             {
-                x.WithTitle("Error");
-                x.WithColor(Color.Red);
-                x.WithDescription(message);
+                x.CreateSuccess(message);
             });
         }
 

@@ -1,6 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
 
+using ScrubBot.Extensions;
+using ScrubBot.Tools;
+
 namespace ScrubBot.Modules
 {
     public class InfoResult : RuntimeResult // TODO: Add Color.Purple as standard error embeds
@@ -15,7 +18,10 @@ namespace ScrubBot.Modules
 
         public InfoResult(string message) : this(null, message)
         {
-
+            Embed = EmbedFactory.Create(x =>
+            {
+                x.CreateInfo(message);
+            });
         }
 
         public InfoResult() : this(null, "Info")
@@ -23,12 +29,12 @@ namespace ScrubBot.Modules
 
         }
 
-        public InfoResult(EmbedBuilder embedBuilder) : this(null, string.Empty)
+        public InfoResult(EmbedBuilder embedBuilder) : this(null, "Info")
         {
             Embed = embedBuilder.Build();
         }
 
-        public InfoResult(Embed embed) : this(null, string.Empty)
+        public InfoResult(Embed embed) : this(null, "Info")
         {
             Embed = embed;
         }
