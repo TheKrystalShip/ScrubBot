@@ -36,11 +36,22 @@ namespace ScrubBot.Core.Commands
             SocketUserMessage message = socketMessage as SocketUserMessage;
 
             if (message is null)
-                return;
-            
-            if (message.IsValid(_prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id), _client.CurrentUser, out int argPos))
             {
-                SocketCommandContext context = new SocketCommandContext(_client, message);
+                return;
+            }
+
+            int argPos = 0;
+            SocketCommandContext context = new SocketCommandContext(_client, message);
+
+            // Check for DM channel
+            if (message.IsPrivateMessage(out argPos))
+            {
+                _ = await ExecuteAsync(context, argPos, Container.GetServiceProvider());
+            }
+
+            // Check for Guild channel
+            if (message.IsGuildMessage(_prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id), _client.CurrentUser, out argPos))
+            {
                 _ = await ExecuteAsync(context, argPos, Container.GetServiceProvider());
             }
         }
