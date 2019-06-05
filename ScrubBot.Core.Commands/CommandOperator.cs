@@ -46,13 +46,13 @@ namespace ScrubBot.Core.Commands
             // Check for DM channel
             if (message.IsPrivateMessage(out argPos))
             {
-                _ = await ExecuteAsync(context, argPos, Container.GetServiceProvider());
+                await ExecuteAsync(context, argPos, Container.GetServiceProvider());
             }
 
             // Check for Guild channel
-            if (message.IsGuildMessage(_prefixManager.Get((message.Channel as SocketGuildChannel).Guild.Id), _client.CurrentUser, out argPos))
+            if (message.IsGuildMessage(_prefixManager.Get(((SocketGuildChannel) message.Channel).Guild.Id), _client.CurrentUser, out argPos))
             {
-                _ = await ExecuteAsync(context, argPos, Container.GetServiceProvider());
+                await ExecuteAsync(context, argPos, Container.GetServiceProvider());
             }
         }
     }
