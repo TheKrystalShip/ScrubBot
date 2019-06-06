@@ -72,7 +72,7 @@ namespace ScrubBot.Modules
             
             Embed embed = EmbedFactory.Create(x =>
             {
-                x.Title = eventTitle;
+                x.Title = $"__**{eventTitle}**__";
                 x.Description = description;
                 x.WithColor(Color.Orange);
                 x.AddField("Occurence date", occurenceDateTime.ToString("f"));
