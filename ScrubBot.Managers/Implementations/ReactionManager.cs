@@ -44,7 +44,6 @@ namespace ScrubBot.Managers
             if (reaction.User.Value.IsBot)
             {
                 return;
-
             }
 
             int matches = 0;
@@ -64,13 +63,15 @@ namespace ScrubBot.Managers
             IUserMessage message = await cacheable.GetOrDownloadAsync();
             IUser user = reaction.User.GetValueOrDefault();
 
-            if (message is null) {
+            if (message is null) 
+            {
                 return;
             }
 
             if (!EventExists(message.Id, out Event @event))
             {
-                if (!(user is SocketGuildUser responder)) {
+                if (!(user is SocketGuildUser responder)) 
+                {
                     return;
                 }
 
@@ -107,13 +108,7 @@ namespace ScrubBot.Managers
                     if (!(reaction.User.Value is SocketGuildUser responder))
                         return;
 
-                    Embed embed = EmbedFactory.Create(x =>
-                    {
-                        x.Title = "Error";
-                        x.Description = "Could not subscribe you to the event. The event has hit the specified max subscriber limit!";
-                        x.WithColor(Color.Red);
-                    });
-
+                    Embed embed = EmbedFactory.Create(x => x.CreateError("Could not subscribe you to the event. The event has hit the specified max subscriber limit!"));
                     await responder.SendMessageAsync(null, false, embed);
                     return;
                 }
@@ -125,23 +120,7 @@ namespace ScrubBot.Managers
                 }
             }
 
-            Embed updatedEventEmbed = EmbedFactory.Create(builder =>
-            {
-                builder
-                    .WithTitle(@event.Title)
-                    .WithDescription(@event.Description)
-                    .WithColor(Color.Orange)
-                    .AddField("Occurence date", @event.OccurenceDate.ToString("f"));
-
-                string participants = $"1. {@event.Author.Mention()} (Author)";
-
-                for (int index = 0; index < @event.Subscribers.Count; index++) {
-                    participants += $"\n{index + 2} {@event.Subscribers[index].Mention()}"; // TODO: Mention all subscribers
-                }
-
-                builder.AddField("Participants", participants);
-            });
-
+            Embed updatedEventEmbed = EmbedFactory.Create(builder => builder.CreateListEventEmbed(@event, socketMessageChannel));
             await message.ModifyAsync(properties => properties.Embed = updatedEventEmbed);
         }
 

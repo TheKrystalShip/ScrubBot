@@ -57,12 +57,12 @@ namespace ScrubBot.Extensions
         public static EmbedBuilder CreateListEventEmbed(this EmbedBuilder embedBuilder, Event @event, ISocketMessageChannel socketMessageChannel)
         {
             embedBuilder
-                .WithTitle(@event.Title)
+                .WithTitle($"__**{@event.Title}**__")
                 .WithDescription(@event.Description)
                 .WithColor(Color.Orange)
                 .AddField("Occurence date", @event.OccurenceDate.ToString("f"));
 
-            string participants = $"1. {@event.Author.Mention()} (Author)";
+            string participants = $"1. {@event.Author.Mention()} **(Author)**";
 
             for (int index = 0; index < @event.Subscribers.Count; index++)
                 participants += $"\n{index + 2} {@event.Subscribers[index].Mention()}";
