@@ -29,13 +29,10 @@ namespace ScrubBot.Managers
         {
             Database = Container.Get<IDbContext>();
 
-            JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value);
-            LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value);
-
             Emojis = new List<Emoji>
             {
-                JoinEmoji,
-                LeaveEmoji
+                (JoinEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Join").Value)),
+                (LeaveEmoji = new Emoji(Configuration.GetSection("Bot:EventEmoji:Leave").Value))
             };
         }
 
@@ -61,12 +58,13 @@ namespace ScrubBot.Managers
             }
 
             IUserMessage message = await cacheable.GetOrDownloadAsync();
-            IUser user = reaction.User.GetValueOrDefault();
 
             if (message is null) 
             {
                 return;
             }
+            
+            IUser user = reaction.User.GetValueOrDefault();
 
             if (!EventExists(message.Id, out Event @event))
             {
@@ -85,7 +83,7 @@ namespace ScrubBot.Managers
                 return;
             }
 
-            Emoji reactionEmoji = (Emoji)reaction.Emote;
+            Emoji reactionEmoji = new Emoji(reaction.Emote.Name);
 
             switch (DetermineEmojiAction(reactionEmoji.Name))
             {
@@ -95,9 +93,7 @@ namespace ScrubBot.Managers
                     {
                         if (@event.Author.Id == user.Id)
                         {
-                            Embed errorEmbed = EmbedFactory.Create(x => x.CreateInfo("We'd like it if you didn't try subscribing to your own event. It doesn't work like that..."));
-                                
-                            await user.SendMessageAsync(null, false, errorEmbed);
+                            await user.SendMessageAsync(null, false, EmbedFactory.Create(x => x.CreateInfo("We'd like it if you didn't try subscribing to your own event. It doesn't work like that...")));
                             return;
                         }
                         
@@ -120,14 +116,17 @@ namespace ScrubBot.Managers
                 }
             }
 
-            Embed updatedEventEmbed = EmbedFactory.Create(builder => builder.CreateListEventEmbed(@event, socketMessageChannel));
+            Embed updatedEventEmbed = EmbedFactory.Create(builder => builder.CreateEventEmbed(@event, socketMessageChannel));
             await message.ModifyAsync(properties => properties.Embed = updatedEventEmbed);
         }
 
         public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> cacheable, ISocketMessageChannel socketMessageChannel, SocketReaction reaction)
         {
-            //if (reaction.UserId == Client.CurrentUser.Id)
-            return;
+            if (reaction.User.Value.IsBot)
+            {
+                return;
+            }
+            
         }
 
         protected EmojiAction DetermineEmojiAction(string emojiName)

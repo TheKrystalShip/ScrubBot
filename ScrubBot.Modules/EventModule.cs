@@ -31,13 +31,13 @@ namespace ScrubBot.Modules
                 return new ErrorResult("There are no events to be displayed!");
             }
 
-            await ReplyAsync(new EmbedBuilder().CreateEventEmbed("Upcoming events", events));
+            await ReplyAsync(new EmbedBuilder().CreateOldEventEmbed("Upcoming events", events));
             return new EmptyResult();
         }
 
         // @ScrubBot CreateEvent "Title goes here" "Description goes here" 24/10/2018 20
         [Command("CreateEvent"), Summary("Create a new event")]
-        public async Task<RuntimeResult> CreateEvent(string eventTitle, string description, DateTime occurenceDateTimeUTC, int maxSubscribers)
+        public async Task<RuntimeResult> CreateOldEvent(string eventTitle, string description, DateTime occurenceDateTimeUTC, int maxSubscribers)
         {
             if (Database.Events.Any(x => x.Title == eventTitle && x.Guild.Id == Guild.Id))
                 return new ErrorResult($"An event with the name **{eventTitle}** already exists!");
@@ -59,7 +59,7 @@ namespace ScrubBot.Modules
         }
 
         [Command("CreateListEvent"), Summary("Create a new event")]
-        public async Task<RuntimeResult> CreateListEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description = "")
+        public async Task<RuntimeResult> CreateEvent(string eventTitle, string occurenceDate, string occurenceTime, int maxSubscribers, [Remainder] string description = "")
         {
             if (maxSubscribers < 1)
                 return new ErrorResult("Max subscribers cannot be less than 1!");
@@ -101,7 +101,7 @@ namespace ScrubBot.Modules
         }
 
         [Command("JoinEvent"), Summary("Join a specific event")]
-        public async Task<RuntimeResult> JoinEvent(string eventTitle)
+        public async Task<RuntimeResult> JoinOldEvent(string eventTitle)
         {
             Event @event = Database.Events.FirstOrDefault(x => x.Title == eventTitle && x.Guild.Id == Guild.Id);
 

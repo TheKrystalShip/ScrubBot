@@ -42,7 +42,7 @@ namespace ScrubBot.Extensions
                 .WithDescription(message);
         }
 
-        public static EmbedBuilder CreateEventEmbed(this EmbedBuilder embedBuilder, string title, List<Event> events)
+        public static EmbedBuilder CreateOldEventEmbed(this EmbedBuilder embedBuilder, string title, List<Event> events)
         {
             embedBuilder
                 .WithColor(Color.Purple)
@@ -54,7 +54,7 @@ namespace ScrubBot.Extensions
             return embedBuilder;
         }
 
-        public static EmbedBuilder CreateListEventEmbed(this EmbedBuilder embedBuilder, Event @event, ISocketMessageChannel socketMessageChannel)
+        public static EmbedBuilder CreateEventEmbed(this EmbedBuilder embedBuilder, Event @event, ISocketMessageChannel socketMessageChannel)
         {
             embedBuilder
                 .WithTitle($"__**{@event.Title}**__")
