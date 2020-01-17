@@ -12,7 +12,7 @@ using ScrubBot.Tools;
 
 namespace ScrubBot.Modules
 {
-    [Summary("Test")]
+    [Summary("Basic information commands, accessible to everyone")]
     public class UserModule : Module
     {
         //public UserModule()
@@ -21,7 +21,7 @@ namespace ScrubBot.Modules
         //}
 
         [Command("Info"), Summary("Display info about the server.")]
-        public async Task Info()
+        public async Task<RuntimeResult> Info()
         {
             Embed embed = EmbedFactory.Create(x =>
             {
@@ -39,7 +39,7 @@ namespace ScrubBot.Modules
                 x.AddField("Command prefix", Prefix);
             });
 
-            await ReplyAsync(embed);
+            return new SuccessResult(embed);
         }
 
         [Command("Help")]
